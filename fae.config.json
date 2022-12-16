@@ -1,0 +1,13 @@
+{
+    "main": "test/main.py",
+    "scripts": {},
+    "language": "python",
+    "appendOutputForConsecutiveRuns": false,
+    "sendOutputToFile": null,
+    "shell": "psh",
+    "externalDependencies": {
+        "pygame": "@latest"
+    },
+    "installationCommandVersion": "pip install cosy.pkg==cosy.version",
+    "installationCommandLatest": "pip install cosy.pkg"
+}
