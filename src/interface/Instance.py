@@ -8,6 +8,21 @@ class Instance():
     parent: cliRen.Renderer | Instance;
     children: list[Instance];
 
+    def __setitem__(self, key: str, value: Any):
+        self.__setattr__(key, value);
+
+    def __getitem__(self, key: str):
+        return self.__getattribute__(key) or super().__getattribute__(key);
+
+    def __setattr__(self, prop: str, value: Any) -> None:
+        if prop == 'parent':
+            self.setParent(value);
+        else:
+            super().__setattr__(prop, value);
+
+    def __getattribute__(self, prop: str):
+        return super().__getattribute__(prop);
+
     def setParent(self, to: cliRen.Renderer | Instance | None):
         if to:
             if self in to.children: return;
@@ -23,19 +38,8 @@ class Instance():
     def __init__(self) -> None:
         LoadDefaultGuiProperties('instance', self);
 
-    def __setitem__(self, key: str, value: Any):
-        self.__setattr__(key, value);
+    def update(self, dt: float):
+        pass
 
-    def __getitem__(self, key: str):
-        return self.__getattribute__(key) or super().__getattribute__(key);
-
-    def __setattr__(self, prop: str, value: Any) -> None:
-        if prop == 'parent':
-            self.setParent(value);
-        else:
-            super().__setattr__(prop, value)
-
-    def __getattribute__(self, prop: str):
-        return super().__getattribute__(prop);
 
     from modules.defaultGuiProperties import LoadDefaultGuiProperties
