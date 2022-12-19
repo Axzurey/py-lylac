@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any
 import client.renderer as cliRen
-from modules.defaultGuiProperties import LoadDefaultGuiProperties
 from modules.util import rawSet
 
 class Instance():
@@ -41,5 +40,4 @@ class Instance():
     def update(self, dt: float):
         pass
 
-
-    from modules.defaultGuiProperties import LoadDefaultGuiProperties
+from modules.defaultGuiProperties import LoadDefaultGuiProperties

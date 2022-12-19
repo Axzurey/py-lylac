@@ -1,7 +1,7 @@
 {
-    "main": "test/main.py",
+    "main": "src/main.py",
     "scripts": {},
-    "language": "python",
+    "language": "python3",
     "appendOutputForConsecutiveRuns": false,
     "sendOutputToFile": null,
     "shell": "psh",

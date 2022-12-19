@@ -1,14 +1,15 @@
-import threading
-from typing import Any
-
+import threading;
+from typing import Any, Callable, TypeVar;
 
 def rawGet(obj: object, prop: str): return object.__getattribute__(obj, prop);
 
 def rawSet(obj: object, prop: str, value: Any): return object.__setattr__(obj, prop, value);
 
-def createThread(func: Any, *args: Any):
+A = TypeVar("A");
+
+def createThread(func: Callable[[A], None], *args: A):
 
     thr = threading.Thread(target=func, daemon=True, args=args);
-    thr.start()
+    thr.start();
 
-    return thr
+    return thr;

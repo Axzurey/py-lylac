@@ -313,7 +313,7 @@ keyConvert = {
     pygame.K_AC_BACK: LylacEnum.ANDROID_BACK
 }
 
-class NyleModifiers(Enum):
+class LylacModifiers(Enum):
     NONE = 'None'
     LEFT_SHIFT = 'LEFT_SHIFT'
     RIGHT_SHIFT = 'RIGHT_SHIFT'
@@ -332,22 +332,22 @@ class NyleModifiers(Enum):
     MODE = 'MODE'
 
 modifierConvert = {
-    pygame.KMOD_NONE: NyleModifiers.NONE,
-    pygame.KMOD_LSHIFT: NyleModifiers.LEFT_SHIFT,
-    pygame.KMOD_RSHIFT: NyleModifiers.RIGHT_SHIFT,
-    pygame.KMOD_SHIFT: NyleModifiers.SHIFT,
-    pygame.KMOD_LCTRL: NyleModifiers.LEFT_CONTROL,
-    pygame.KMOD_RCTRL: NyleModifiers.RIGHT_CONTROL,
-    pygame.KMOD_CTRL: NyleModifiers.CONTROL,
-    pygame.KMOD_LALT: NyleModifiers.LEFT_ALT,
-    pygame.KMOD_RALT: NyleModifiers.RIGHT_ALT,
-    pygame.KMOD_ALT: NyleModifiers.ALT,
-    pygame.KMOD_LMETA: NyleModifiers.LEFT_META,
-    pygame.KMOD_RMETA: NyleModifiers.RIGHT_META,
-    pygame.KMOD_META: NyleModifiers.META,
-    pygame.KMOD_CAPS: NyleModifiers.CAPS_LOCK,
-    pygame.KMOD_NUM: NyleModifiers.NUM_LOCK,
-    pygame.KMOD_MODE: NyleModifiers.MODE,
+    pygame.KMOD_NONE: LylacModifiers.NONE,
+    pygame.KMOD_LSHIFT: LylacModifiers.LEFT_SHIFT,
+    pygame.KMOD_RSHIFT: LylacModifiers.RIGHT_SHIFT,
+    pygame.KMOD_SHIFT: LylacModifiers.SHIFT,
+    pygame.KMOD_LCTRL: LylacModifiers.LEFT_CONTROL,
+    pygame.KMOD_RCTRL: LylacModifiers.RIGHT_CONTROL,
+    pygame.KMOD_CTRL: LylacModifiers.CONTROL,
+    pygame.KMOD_LALT: LylacModifiers.LEFT_ALT,
+    pygame.KMOD_RALT: LylacModifiers.RIGHT_ALT,
+    pygame.KMOD_ALT: LylacModifiers.ALT,
+    pygame.KMOD_LMETA: LylacModifiers.LEFT_META,
+    pygame.KMOD_RMETA: LylacModifiers.RIGHT_META,
+    pygame.KMOD_META: LylacModifiers.META,
+    pygame.KMOD_CAPS: LylacModifiers.CAPS_LOCK,
+    pygame.KMOD_NUM: LylacModifiers.NUM_LOCK,
+    pygame.KMOD_MODE: LylacModifiers.MODE,
 }
 
 class RawKeyBuffer(TypedDict):
@@ -356,11 +356,11 @@ class RawKeyBuffer(TypedDict):
 
 class KeyBuffer(TypedDict):
     keys: list[LylacEnum]
-    modifiers: list[NyleModifiers]
+    modifiers: list[LylacModifiers]
 
 def purifyRawKeyBuffer(keyBuffer: RawKeyBuffer) -> KeyBuffer:
     pureKeys: list[LylacEnum] = []
-    pureMods: list[NyleModifiers] = []
+    pureMods: list[LylacModifiers] = []
 
     for key in keyBuffer["keys"]:
 
@@ -373,7 +373,7 @@ def purifyRawKeyBuffer(keyBuffer: RawKeyBuffer) -> KeyBuffer:
         v = modifierConvert.get(mod)
 
         if v: pureMods.append(v)
-        else: raise Exception(f'modifier {mod} has no proper mapping to NyleModifiers')
+        else: raise Exception(f'modifier {mod} has no proper mapping to LylacModifiers')
 
     return {
         "modifiers": pureMods,
