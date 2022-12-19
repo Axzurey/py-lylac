@@ -31,39 +31,38 @@ GUI_DEFAULT_PROPERTIES = {
     "textAlignX": lambda: "left",
     "textAlignY": lambda: "top",
     "enabled": lambda: True,
-    "zindex": lambda: 1,
+    "zIndex": lambda: 1,
     "boundingRect": lambda: pygame.Rect(0, 0, 0, 0)
 }
 
 GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], list[str]]] = {
-    "instance": {
+    "Instance": {
         "properties": ["children"],
     },
-    "guiObject": {
+    "GuiObject": {
         "properties": [
             "size", "position", "backgroundColor",
             "borderColor", "borderWidth", "dropShadowColor", 
             "dropShadowRadius", "dropShadowOffset", "absolutePosition",
-            "absoluteSize", "cornerRadius", "zindex", "boundingRect"
+            "absoluteSize", "cornerRadius", "zIndex", "boundingRect"
         ],
-        "inherits": ["instance"]
+        "inherits": ["Instance"]
     },
-    "textObject": {
+    "TextObject": {
         "properties": ["text", "textColor", "textSize", "textFont", "textAlignX", "textAlignY"],
-        "inherits": ["guiObject"]
+        "inherits": ["GuiObject"]
     },
-    "textLabel": {
+    "TextLabel": {
         "properties": [],
-        "inherits": ["textObject"]
+        "inherits": ["TextObject"]
     },
-    "textButton": {
+    "TextButton": {
         "properties": ["enabled"],
-        "inherits": ["textObject"]
+        "inherits": ["TextObject"]
     }
 }
 
 def LoadDefaultGuiProperties(guiType: str, guiObject: Instance):
-    print('init for', guiType)
     if GUI_PROPERTY_MAP[guiType]:
         #load own properties
         for propKey in GUI_PROPERTY_MAP[guiType]["properties"]:
