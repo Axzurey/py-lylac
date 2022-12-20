@@ -367,13 +367,15 @@ def purifyRawKeyBuffer(keyBuffer: RawKeyBuffer) -> KeyBuffer:
         v = keyConvert.get(key)
 
         if v: pureKeys.append(v)
-        else: raise Exception(f'key {key} has no proper mapping to LylacEnum')
+        else: pass #not recognized
     for mod in keyBuffer["modifiers"]:
 
         v = modifierConvert.get(mod)
 
+        print(keyBuffer)
+
         if v: pureMods.append(v)
-        else: raise Exception(f'modifier {mod} has no proper mapping to LylacModifiers')
+        else: pass #not recognized
 
     return {
         "modifiers": pureMods,

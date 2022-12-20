@@ -4,24 +4,27 @@ from abc import ABC
 from typing import TypedDict
 
 import pygame
-from modules.keymap import KeyBuffer
+from modules.keymap import LylacEnum
 
 from modules.lylacSignal import LylacSignal
 
-class MouseBuffer(TypedDict):
+class InputMouseBuffer(TypedDict):
     position: pygame.Vector2;
     delta: pygame.Vector2;
 
+class InputKeyBuffer(TypedDict):
+    key: LylacEnum;
+
 class InputService(ABC):
 
-    __lastMousePosition: pygame.Vector2 = pygame.Vector2();
+    _lastMousePosition: pygame.Vector2 = pygame.Vector2();
 
-    onKeyUp = LylacSignal[KeyBuffer]();
-    onKeyDown = LylacSignal[KeyBuffer]();
+    onKeyUp = LylacSignal[InputKeyBuffer]();
+    onKeyDown = LylacSignal[InputKeyBuffer]();
     
-    onMouseButton1Down = LylacSignal[MouseBuffer]();
-    onMouseButton1Up = LylacSignal[MouseBuffer]();
-    onMouseButton2Down = LylacSignal[MouseBuffer]();
-    onMouseButton2Up = LylacSignal[MouseBuffer]();
+    onMouseButton1Down = LylacSignal[InputMouseBuffer]();
+    onMouseButton1Up = LylacSignal[InputMouseBuffer]();
+    onMouseButton2Down = LylacSignal[InputMouseBuffer]();
+    onMouseButton2Up = LylacSignal[InputMouseBuffer]();
 
-    onMouseMovement = LylacSignal[MouseBuffer]();
+    onMouseMovement = LylacSignal[InputMouseBuffer]();

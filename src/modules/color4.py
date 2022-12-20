@@ -1,3 +1,9 @@
+def clamp(x: int, minV: int, maxV: int):
+    return x < minV and minV or x > maxV and maxV or x;
+
+def clampAll(minV: int, maxV: int, *nums: int):
+    return (clamp(val, minV, maxV) for val in nums)
+
 class Color4:
 
     r: float;
@@ -13,12 +19,17 @@ class Color4:
 
     @staticmethod
     def fromRGBA(r: int = 0, g: int = 0, b: int = 0, a: int = 255):
+        (r, g, b, a) = clampAll(0, 255, r, g, b, a);
         return Color4(r / 255, g / 255, b / 255, a / 255);
     
-    def toRGBATuple(self):
-        return (self.r * 255, self.g * 255, self.b * 255, self.a * 255);
-    def toRGBAList(self):
-        return [self.r * 255, self.g * 255, self.b * 255, self.a * 255];
+    def toRGBATuple(self) -> tuple[int, int, int, int]:
+        return (int(self.r * 255), int(self.g * 255), int(self.b * 255), int(self.a * 255));
+    def toRGBAList(self) -> list[int]:
+        return [int(self.r * 255), int(self.g * 255), int(self.b * 255), int(self.a * 255)];
+    def toRGBTuple(self) -> tuple[int, int, int]:
+        return (int(self.r * 255), int(self.g * 255), int(self.b * 255));
+    def toRGBList(self) -> list[int]:
+        return [int(self.r * 255), int(self.g * 255), int(self.b * 255)];
     def toTuple(self):
         return (self.r, self.g, self.b, self.a);
     def toList(self):

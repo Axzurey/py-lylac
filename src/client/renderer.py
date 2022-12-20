@@ -7,7 +7,6 @@ from interface.Instance import Instance
 from interface.NominalObjects import Clickable, Hoverable
 from modules.keymap import KeyBuffer, purifyRawKeyBuffer
 from modules.lylacSignal import LylacSignal
-from services.InputService import InputService;
 
 pygame.init();
 pygame.freetype.init();
@@ -46,11 +45,13 @@ class UpdateBuffer(TypedDict):
 FreeColorTuple = tuple[int, int, int, Optional[int]]
 
 class Renderer():
+    
     framerate: int;
     rendererClosing: bool = False;
     lastUpdate: float = 0;
     currentFrameEvents: list[pygame.event.Event] = [];
     screen: pygame.surface.Surface;
+    resolution: tuple[int, int];
 
     children: list[Instance]
 
@@ -60,6 +61,8 @@ class Renderer():
         self.screen = pygame.display.set_mode(resolution);
 
         self.children = [];
+    
+        self.resolution = resolution;
 
     def recurseUpdate(self, inst: Instance, dt: float, update: UpdateBuffer) -> UpdateBuffer:
         inst.update(dt)
@@ -108,6 +111,9 @@ class Renderer():
         return update
 
     def start(self):
+
+        RenderService.renderer = self;
+
         clock = pygame.time.Clock();
 
         while not self.rendererClosing:
@@ -164,14 +170,14 @@ class Renderer():
                 elif event.type == pygame.KEYDOWN:
 
                     keysDown.append(event.key)
-                    if not event.mod in modifiers:
-                        modifiers.append(event.mod)
+                    #if not event.mod in modifiers:
+                        #modifiers.append(event.mod)
 
                 elif event.type == pygame.KEYUP:
 
                     keysUp.append(event.key)
-                    if not event.mod in modifiers:
-                        modifiers.append(event.mod)
+                    #if not event.mod in modifiers:
+                       # modifiers.append(event.mod)
 
 
             upKeyBuffer = purifyRawKeyBuffer({
@@ -185,19 +191,38 @@ class Renderer():
             })
 
             if len(downKeyBuffer['keys']) != 0:
-                InputService.onKeyDown.dispatch(downKeyBuffer);
+                for key in downKeyBuffer['keys']:
+                    InputService.onKeyDown.dispatch({"key": key});
             if len(upKeyBuffer['keys']) != 0:
-                InputService.onKeyUp.dispatch(upKeyBuffer);
+                for key in upKeyBuffer['keys']:
+                    InputService.onKeyUp.dispatch({"key": key});
 
-            old = InputService.__lastMousePosition;
+            old = InputService._lastMousePosition;
 
             if mouseBuffer:
                 deltaMovement = mouseBuffer['position'] - old;
-                InputService.__lastMousePosition = mouseBuffer['position'];
-                InputService.onMouseMovement.dispatch({
+                InputService._lastMousePosition = mouseBuffer['position'];
+
+                positionalData: InputMouseBuffer = {
                     "position": mouseBuffer['position'],
                     "delta": deltaMovement #type: ignore this would still work.
-                });
+                };
+
+                InputService.onMouseMovement.dispatch(positionalData);
+
+                if mouseBuffer['clickType'] == "right":
+                    if passList["mouseLifted"]:
+                        InputService.onMouseButton2Up.dispatch(positionalData);
+                elif mouseBuffer['clickType'] == "right":
+                    if passList["mousePressed"]:
+                        InputService.onMouseButton2Down.dispatch(positionalData);
+                elif mouseBuffer['clickType'] == "left":
+                    if passList["mouseLifted"]:
+                        InputService.onMouseButton1Up.dispatch(positionalData);
+                elif mouseBuffer['clickType'] == "left":
+                    if passList["mousePressed"]:
+                        InputService.onMouseButton1Down.dispatch(positionalData);
+
 
             for child in self.children:
                 updBfr = self.recurseUpdate(child, dt, {
@@ -217,3 +242,6 @@ class Renderer():
             pygame.display.flip();
 
             clock.tick(self.framerate);
+
+from services.InputService import InputMouseBuffer, InputService
+from services.RenderService import RenderService;

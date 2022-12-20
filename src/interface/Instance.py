@@ -35,7 +35,7 @@ class Instance():
         
 
     def __init__(self) -> None:
-        LoadDefaultGuiProperties('instance', self);
+        LoadDefaultGuiProperties('Instance', self);
 
     def update(self, dt: float):
         pass
