@@ -10,7 +10,7 @@ else:
     from collections.abc import Callable
 
 if sys.version_info < (3, 11):
-    Self = TypeVar("Self", bound="ConnectableAttribute")
+    Self = TypeVar("Self", bound="Tether")
 else:
     from typing import Self
 
@@ -18,7 +18,7 @@ T = TypeVar("T")
 VT = TypeVar("VT")
 
 
-class ConnectableAttribute(Generic[T, VT]):
+class Tether(Generic[T, VT]):
     name: str
 
     def __init__(self: Self) -> None:
@@ -52,13 +52,16 @@ class ConnectableAttribute(Generic[T, VT]):
     def connect(self: Self, instance: T, connection: Callable[[VT], object]) -> None:
         setattr(instance, f"{self.name}_connection", connection)
 
-class Example:
-    name: ConnectableAttribute[Example, str] = ConnectableAttribute()
-    date: ConnectableAttribute[Example, float] = ConnectableAttribute()
-    color: ConnectableAttribute[Example, int] = ConnectableAttribute()
+class Instance:
+    name: Tether[Instance, str] = Tether()
+    date: Tether[Instance, float] = Tether()
+    color: Tether[Instance, int] = Tether()
 
-example = Example()
+    def getPropertyChangedSignal(self):
+        return 
 
-Example.color.connect(example, lambda out: print(out))
+example = Instance()
+
+Instance.color.connect(example, lambda out: print(out))
 
 example.color = 100;

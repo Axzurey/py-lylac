@@ -9,5 +9,5 @@
         "pygame": "@latest"
     },
     "installationCommandVersion": "pip install cosy.pkg==cosy.version",
-    "installationCommandLatest": "pip install cosy.pkg"
+    "installationCommandLatest": "py -3.11 -m pip install cosy.pkg"
 }

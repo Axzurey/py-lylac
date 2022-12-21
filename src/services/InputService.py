@@ -17,6 +17,8 @@ class InputKeyBuffer(TypedDict):
 
 class InputService(ABC):
 
+    lastKeyBuffer: InputKeyBuffer[] = []; #TODO: INTEROP THIS INTO THE RENDERER!
+
     _lastMousePosition: pygame.Vector2 = pygame.Vector2();
 
     onKeyUp = LylacSignal[InputKeyBuffer]();
@@ -28,3 +30,7 @@ class InputService(ABC):
     onMouseButton2Up = LylacSignal[InputMouseBuffer]();
 
     onMouseMovement = LylacSignal[InputMouseBuffer]();
+
+    @staticmethod
+    def isKeyDown(key: LylacEnum):
+        
