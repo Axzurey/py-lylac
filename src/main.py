@@ -17,6 +17,6 @@ frame.position = Udim2.fromScale(.25, .25);
 frame.borderColor = Color4(1, 1, 1)
 frame.dropShadowOffset = Udim2.fromOffset(5, 5)
 
-InputService.onKeyDown.connect(lambda b: print(b['key']) if b['key'] == LylacEnum.A else print())
+InputService.onKeyDown.connect(lambda b: print(b['key']))
 
 mainRenderer.start(); #always goes at the bottom!
