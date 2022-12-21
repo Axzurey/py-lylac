@@ -1,11 +1,13 @@
 from __future__ import annotations
 from typing import Any
 import client.renderer as cliRen
+from modules.lylacSignal import LylacSignal
 from modules.util import rawSet
 
 class Instance():
     parent: cliRen.Renderer | Instance;
     children: list[Instance];
+    
 
     def __setitem__(self, key: str, value: Any):
         self.__setattr__(key, value);
