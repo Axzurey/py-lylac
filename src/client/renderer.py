@@ -13,8 +13,8 @@ from modules.lylacSignal import LylacSignal
 pygame.init();
 pygame.freetype.init();
 
-buttonTypeMap: list[Literal['right'] | Literal['left'] | Literal['middle'] | Literal['scrollUp'] | Literal['scrollDown']] = [
-    'left', 'left', 'middle', 'right', 'scrollUp', 'scrollDown']; #the first left is not used but needed to be included.
+buttonTypeMap: list[Literal["NONE"] | Literal['right'] | Literal['left'] | Literal['middle'] | Literal['scrollUp'] | Literal['scrollDown']] = [
+    'NONE', 'left', 'middle', 'right', 'scrollUp', 'scrollDown']; #the first left is not used but needed to be included.
 
 class RendererListeners(TypedDict):
     keyUp: LylacSignal[KeyBuffer];
@@ -36,7 +36,7 @@ class ActionOrdersT(TypedDict):
 
 class MouseClickBuffer(TypedDict):
     position: pygame.Vector2
-    clickType: Literal['right'] | Literal['left'] | Literal['middle'] | Literal['scrollUp'] | Literal['scrollDown']
+    clickType: Literal['right'] | Literal['left'] | Literal['middle'] | Literal['scrollUp'] | Literal['scrollDown'] | Literal["NONE"]
 
 class UpdateBuffer(TypedDict):
     mouseBuffer: MouseClickBuffer | None;
@@ -203,6 +203,8 @@ class Renderer():
                     #if not event.mod in modifiers:
                        # modifiers.append(event.mod)
 
+            if not mouseBuffer:
+                mouseBuffer = {'position': pygame.Vector2(pygame.mouse.get_pos()), 'clickType': 'NONE'}
 
             upKeyBuffer = purifyRawKeyBuffer({
                 "keys": keysUp,
@@ -270,7 +272,7 @@ class Renderer():
 
                     child = aOrder['obj'];
 
-                    if issubclass(type(child), Clickable) and child != updBfr['lastButton']:
+                    if issubclass(type(child), Clickable) and updBfr['lastButton'] and child != updBfr['lastButton']['obj']:
                         if child._isMouse1Down and not InputService.isMouse1Down():
                             child._isMouse1Down = False;
                             child.onMouseButton1Up.dispatch(None);
@@ -282,7 +284,9 @@ class Renderer():
 
                     child = aOrder['obj'];
 
-                    if issubclass(type(child), Hoverable) and child != updBfr['lastHover']:
+                    print(updBfr['lastHover'], child, updBfr['lastHover'] and updBfr['lastHover']['obj'] or None) #type: ignore
+
+                    if issubclass(type(child), Hoverable) and ((updBfr['lastHover'] and child != updBfr['lastHover']['obj']) or False):
                         if child._isHover:
                             child._isHover = False;
                             child.onHoverExit.dispatch(None);
@@ -296,8 +300,9 @@ class Renderer():
                         updBfr['lastButton']['obj'].onMouseButton2Down.dispatch(None);
                         updBfr['lastButton']['obj']._isMouse2Down = True;
                 if updBfr['lastHover']:
-                    updBfr['lastHover']['obj'].onHoverEnter.dispatch(None);
-                    updBfr['lastHover']['obj']._isHover = True;
+                    if not updBfr['lastHover']['obj']._isHover:
+                        updBfr['lastHover']['obj'].onHoverEnter.dispatch(None);
+                        updBfr['lastHover']['obj']._isHover = True;
 
             pygame.display.flip();
 

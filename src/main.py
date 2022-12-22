@@ -6,13 +6,13 @@ from modules.keymap import KeyCode
 from modules.udim2 import Udim2
 from services.InputService import InputService
 
-mainRenderer = Renderer((1280, 720), 60);
+mainRenderer = Renderer((700, 350), 60);
 
 frame = GuiObject()
 frame.parent = mainRenderer;
 
 frame.borderWidth = 2;
-frame.size = Udim2.fromOffset(700, 300);
+frame.size = Udim2.fromOffset(200, 300);
 frame.backgroundColor = Color4(0, 1, 1, 1);
 frame.position = Udim2.fromScale(.25, .25);
 frame.borderColor = Color4(1, 1, 1)
@@ -26,7 +26,7 @@ btn2.textAlignY = 'center'
 btn2.textSize = 40
 btn2.parent = frame
 btn2.position = Udim2(0, .4, 0, .4)
-btn2.size = Udim2.fromOffset(400, 200)
+btn2.size = Udim2.fromOffset(150, 100)
 btn2.cornerRadius = 45
 
 btn2.onMouseButton1Down.connect(lambda _: print('clicked!'));
