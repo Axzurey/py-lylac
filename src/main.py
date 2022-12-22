@@ -1,9 +1,11 @@
+import time
 from client.renderer import Renderer
 from interface.GuiObject import GuiObject
 from interface.TextButton import TextButton
 from modules.color4 import Color4
 from modules.keymap import KeyCode
 from modules.udim2 import Udim2
+from modules.util import createThread
 from services.InputService import InputService
 
 mainRenderer = Renderer((700, 350), 60);
@@ -35,5 +37,20 @@ btn2.onHoverEnter.connect(lambda _: print('enter'));
 btn2.onHoverExit.connect(lambda _: print('leave'));
 
 InputService.onKeyDown.connect(lambda b: print(b['key']))
+
+def smth(a: ...):
+    time.sleep(1.5)
+    frame = GuiObject()
+    frame.parent = mainRenderer;
+
+    frame.borderWidth = 2;
+    frame.size = Udim2.fromOffset(10, 10);
+    frame.backgroundColor = Color4(1, 0, 0, 0);
+    frame.position = Udim2.fromOffset(btn2.absolutePosition.x, btn2.absolutePosition.y)
+    frame.borderColor = Color4(1, 1, 1)
+    frame.dropShadowOffset = Udim2.fromOffset(5, 5);
+    frame.cornerRadius = 45;
+
+createThread(smth, None)
 
 mainRenderer.start(); #always goes at the bottom!
