@@ -3,6 +3,7 @@ import time
 
 from pygame import Vector2
 from client.renderer import Renderer
+from hooks.useActionState import useActionState
 from interface.GuiObject import GuiObject
 from interface.TextButton import TextButton
 from modules.color4 import Color4
@@ -49,18 +50,15 @@ btn2.cornerRadius = 45
 btn2.rotation = 75;
 
 
-def changeColor(t: int):
-    if t == 2:
-        btn2.backgroundColor = Color4(.5, 1, .5);
-    elif t == 1:
-        btn2.backgroundColor = Color4(1, 1, 1);
-    else:
-        btn2.backgroundColor = Color4(.8, .8, .8);
-
-btn2.onMouseButton1Up.connect(lambda _: changeColor(1))
-btn2.onMouseButton1Down.connect(lambda _: changeColor(2))
-btn2.onHoverEnter.connect(lambda _: changeColor(1));
-btn2.onHoverExit.connect(lambda _: changeColor(0));
+useActionState(btn2, {
+    "backgroundColor": Color4(1, 1, 1)
+}, {
+    "backgroundColor": Color4(.8, 1, .8)
+}, {
+    "backgroundColor": Color4(1, 0, 0)
+}, {
+    "backgroundColor": Color4(0, 0, 1)
+})
 
 InputService.onKeyDown.connect(lambda b: print(b['key']))
 

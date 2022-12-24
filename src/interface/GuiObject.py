@@ -33,7 +33,6 @@ class GuiObject(Instance):
     zIndex: int;
     boundingRect: pygame.Rect;
     rotation: float;
-    
 
     surfaces: dict[Literal["dropShadowSurf"] | Literal["backgroundSurf"] | Literal["borderSurf"], tuple[pygame.Surface, pygame.Rect]];
 
