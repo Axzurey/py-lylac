@@ -1,6 +1,7 @@
 from typing import Literal
 from interface.GuiObject import GuiObject;
 from modules.color4 import Color4
+from services.FontService import FontService
 from services.RenderService import RenderService
 from modules.defaultGuiProperties import LoadDefaultGuiProperties;
 
@@ -16,11 +17,16 @@ class TextObject(GuiObject):
         super().__init__();
         LoadDefaultGuiProperties('TextObject', self);
 
+    def update(self):
+        super().update();
+    def render(self, dt: float):
+        super().render(dt);
+
     def renderText(self):
 
         renderer = RenderService.renderer;
 
-        (textSurf, _) = renderer.fonts[self.textFont].render(self.text, self.textColor.toRGBATuple(), size=self.textSize)
+        (textSurf, _) = FontService.fonts[self.textFont].render(self.text, self.textColor.toRGBATuple(), size=self.textSize)
 
         textOffsetX = 0
         textOffsetY = 0

@@ -1,6 +1,6 @@
+import time
 from typing import Literal
 from interface.Instance import Instance
-from interface.uifx import create_neon
 from modules.defaultGuiProperties import LoadDefaultGuiProperties;
 from modules.color4 import Color4;
 from modules.udim2 import Udim2;
@@ -33,12 +33,20 @@ class GuiObject(Instance):
     zIndex: int;
     boundingRect: pygame.Rect;
     rotation: float;
+    
+
+    surfaces: dict[Literal["dropShadowSurf"] | Literal["backgroundSurf"] | Literal["borderSurf"], tuple[pygame.Surface, pygame.Rect]];
 
     def __init__(self) -> None:
+        self.surfaces = {};
+
         super().__init__();
+            
         LoadDefaultGuiProperties('GuiObject', self);
 
+
     def udim2RelativeToSelfSize(self, udim: Udim2, relative: Literal['xx'] | Literal['xy'] | Literal['yy'] = 'xy'):
+
         size = self.absoluteSize
 
         fS = udim.toScale()
@@ -87,27 +95,13 @@ class GuiObject(Instance):
 
             return (position, size)
 
-    def update(self, dt: float):
-
-        screen = RenderService.renderer.screen;
-
-        #background
+    def update(self):
+        if not self.parent or not RenderService.rendererStarted: return;
 
         (position, size) = self.getSizeAndPositionFromUdim2(self.position, self.size)
 
         self.absolutePosition = position
         self.absoluteSize = size
-
-        backgroundRect = pygame.Rect(position.x, position.y, size.x, size.y)
-
-        borderRect = pygame.Rect(position.x - self.borderWidth, position.y - self.borderWidth, size.x + self.borderWidth * 2, size.y + self.borderWidth * 2)
-
-        backgroundSurf = pygame.Surface((backgroundRect.width, backgroundRect.height), pygame.SRCALPHA);
-        borderSurf = pygame.Surface((borderRect.width, borderRect.height), pygame.SRCALPHA);
-
-        pygame.draw.rect(borderSurf, self.borderColor.toRGBATuple(), ((0, 0), borderRect.size), 0, border_radius=self.cornerRadius)
-
-        pygame.draw.rect(backgroundSurf, self.backgroundColor.toRGBATuple(), ((0, 0), backgroundRect.size), 0, border_radius=self.cornerRadius)
 
         dropOffset = self.udim2RelativeToSelfSize(self.dropShadowOffset, 'xx')
 
@@ -118,25 +112,47 @@ class GuiObject(Instance):
             size.y + self.dropShadowRadius)
 
         dropNeonRect = pygame.Rect(dropPos, dropSize)
+        backgroundRect = pygame.Rect(position.x, position.y, size.x, size.y)
+        borderRect = pygame.Rect(position.x - self.borderWidth, position.y - self.borderWidth, size.x + self.borderWidth * 2, size.y + self.borderWidth * 2)
 
-        scrSize = screen.get_size()
+        dropShadowSurf = pygame.Surface((dropNeonRect.width, dropNeonRect.height), pygame.SRCALPHA);
+        backgroundSurf = pygame.Surface((backgroundRect.width, backgroundRect.height), pygame.SRCALPHA);
+        borderSurf = pygame.Surface((borderRect.width, borderRect.height), pygame.SRCALPHA);
 
-        dropShadowSurface = pygame.Surface((scrSize[1], scrSize[0]), pygame.SRCALPHA)
+        pygame.draw.rect(borderSurf, self.borderColor.toRGBATuple(), ((0, 0), borderRect.size), 0, border_radius=self.cornerRadius)
 
-        pygame.draw.rect(dropShadowSurface, self.dropShadowColor.toRGBTuple(), (dropNeonRect.y, dropNeonRect.x, dropNeonRect.h, dropNeonRect.w), border_radius=self.cornerRadius)
+        pygame.draw.rect(backgroundSurf, self.backgroundColor.toRGBATuple(), ((0, 0), backgroundRect.size), 0, border_radius=self.cornerRadius)
 
-        dropNeonSurface = create_neon(dropShadowSurface)
+        pygame.draw.rect(dropShadowSurf, self.dropShadowColor.toRGBTuple(), ((0, 0), dropNeonRect.size), border_radius=self.cornerRadius)
+       
+        (borderSurf, bdPos) = rotateAroundCenter(borderSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2);
 
-        screen.blit(dropNeonSurface, (0, 0), special_flags = pygame.BLEND_PREMULTIPLIED)
+        (backgroundSurf, bgPos) = rotateAroundCenter(backgroundSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2);
 
-        (borderSurf, bdPos) = rotateAroundCenter(borderSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2)
+        (dropShadowSurf, dsPos) = rotateAroundCenter(dropShadowSurf, self.rotation, dropPos + dropSize / 2);
 
-        (backgroundSurf, bgPos) = rotateAroundCenter(backgroundSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2)
+        self.boundingRect = backgroundRect;
+
+        self.surfaces = {
+            "dropShadowSurf": (dropShadowSurf, dsPos),
+            "borderSurf": (borderSurf, bdPos),
+            "backgroundSurf": (backgroundSurf, bgPos)
+        };
+
+        super().update()
+    
+    def render(self, dt: float):
+
+        screen = RenderService.renderer.screen;
+        
+        if len(self.surfaces.keys()) < 1: return
+
+        (dropShadowSurf, dsPos) = self.surfaces['dropShadowSurf'];
+        (borderSurf, bdPos) = self.surfaces['borderSurf'];
+        (backgroundSurf, bgPos) = self.surfaces['backgroundSurf'];
+
+        screen.blit(dropShadowSurf, dsPos, special_flags = pygame.BLEND_PREMULTIPLIED);
 
         screen.blit(borderSurf, bdPos, special_flags = pygame.BLEND_PREMULTIPLIED);
 
         screen.blit(backgroundSurf, bgPos, special_flags = pygame.BLEND_PREMULTIPLIED);
-
-        self.boundingRect = backgroundRect
-
-        super().update(dt)

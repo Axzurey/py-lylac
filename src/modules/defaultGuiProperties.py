@@ -71,7 +71,8 @@ def LoadDefaultGuiProperties(guiType: str, guiObject: Instance):
             if propKey in GUI_DEFAULT_PROPERTIES:
                 rawSet(guiObject, propKey, GUI_DEFAULT_PROPERTIES[propKey]())
             else:
-                raise Exception(f"property {propKey} is not a valid property in the Default Properties map!")
+                raise Exception(f"property {propKey} is not a valid property in the Default Properties map!");
+        return GUI_PROPERTY_MAP[guiType]["properties"];
 
     else:
         raise Exception(f"guiType {guiType} is not a valid type in the property map!")

@@ -132,6 +132,8 @@ class Hoverable(HasBounding):
 class Clickable(HasBounding):
     onMouseButton1Down: LylacSignal[None];
     onMouseButton1Up: LylacSignal[None];
+    onMouseButton2Down: LylacSignal[None];
+    onMouseButton2Up: LylacSignal[None];
 
     _isMouse1Down: bool = False;
     _isMouse2Down: bool = False;
@@ -141,3 +143,5 @@ class Clickable(HasBounding):
         
         self.onMouseButton1Down = LylacSignal[None]();
         self.onMouseButton1Up = LylacSignal[None]();
+        self.onMouseButton2Down = LylacSignal[None]();
+        self.onMouseButton2Up = LylacSignal[None]();

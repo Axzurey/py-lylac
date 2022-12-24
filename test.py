@@ -57,9 +57,6 @@ class Instance:
     date: Tether[Instance, float] = Tether()
     color: Tether[Instance, int] = Tether()
 
-    def getPropertyChangedSignal(self):
-        return 
-
 example = Instance()
 
 Instance.color.connect(example, lambda out: print(out))

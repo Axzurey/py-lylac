@@ -1,7 +1,5 @@
 from __future__ import annotations
-import os
-import pathlib
-from typing import Literal, Optional, TypedDict;
+from typing import Literal, TypedDict;
 import pygame;
 import pygame.freetype;
 import time
@@ -45,15 +43,6 @@ class UpdateBuffer(TypedDict):
     lastButton: ActionOrder | None;
     lastHover: ActionOrder | None;
 
-FreeColorTuple = tuple[int, int, int, Optional[int]]
-
-class FreeFont:
-
-    def render(
-        self, text: str, fgcolor: FreeColorTuple = (255, 255, 255, 255), bgColor: FreeColorTuple = (0, 0, 0, 0),
-        rotation: int = 0, size: int = 16
-    ) -> tuple[pygame.Surface, pygame.Rect]: ...
-
 class Renderer():
     
     framerate: int;
@@ -63,8 +52,6 @@ class Renderer():
     screen: pygame.surface.Surface;
     resolution: tuple[int, int];
 
-    fonts: dict[str, FreeFont]
-
     children: list[Instance]
 
     def __init__(self, resolution: tuple[int, int], framerate: int = 60) -> None:
@@ -73,15 +60,15 @@ class Renderer():
         self.screen = pygame.display.set_mode(resolution);
 
         self.children = [];
-
-        self.fonts = {}
     
         self.resolution = resolution;
 
-        self.loadDefaultFonts();
+        FontService.loadDefaultFonts();
+
+        RenderService.renderer = self;
 
     def recurseUpdate(self, inst: Instance, dt: float, update: UpdateBuffer) -> UpdateBuffer:
-        inst.update(dt) #TODO: hover doesn't seem to work right
+        inst.render(dt)
 
         childrenPriority: list[Instance] = []
         childrenLast: list[Instance] = []
@@ -98,7 +85,7 @@ class Renderer():
             if issubclass(type(child), Clickable):
                 update['actionOrders']['click'].append({"obj": child, "at": time.time()})
 
-                if update['mouseBuffer']:
+                if update['mouseBuffer'] and update['mouseBuffer']['clickType'] in ('left', 'right'):
 
                     t = time.time()
                     if child.isPointInBounding(update['mouseBuffer']['position']):
@@ -121,7 +108,7 @@ class Renderer():
             if issubclass(type(child), Clickable):
                 update['actionOrders']['click'].append({"obj": child, "at": time.time()})
 
-                if update['mouseBuffer']:
+                if update['mouseBuffer'] and update['mouseBuffer']['clickType'] in ('left', 'right'):
 
                     t = time.time()
                     if child.isPointInBounding(update['mouseBuffer']['position']):
@@ -134,11 +121,19 @@ class Renderer():
 
         return update
 
+    def shortUpdate(self, child: Instance):
+        child.update();
+        for c in child.children:
+            self.shortUpdate(c);
+
     def start(self):
 
-        RenderService.renderer = self;
-
         clock = pygame.time.Clock();
+
+        RenderService.rendererStarted = True;
+
+        for child in self.children:
+            self.shortUpdate(child);
 
         while not self.rendererClosing:
             now = time.time();
@@ -226,7 +221,6 @@ class Renderer():
             old = InputService._lastMousePosition;
             InputService.lastKeyDownBuffer = [{'key': v} for v in downKeyBuffer['keys']];
 
-
             if mouseBuffer:
                 deltaMovement = mouseBuffer['position'] - old;
                 InputService._lastMousePosition = mouseBuffer['position'];
@@ -238,23 +232,10 @@ class Renderer():
 
                 InputService.onMouseMovement.dispatch(positionalData);
 
-                if mouseBuffer['clickType'] == "right":
-                    if passList["mouseLifted"]:
-                        InputService.onMouseButton2Up.dispatch(positionalData);
-                        InputService._isMouseButton2Down = False;
-                if mouseBuffer['clickType'] == "right":
-                    if passList["mousePressed"]:
-                        InputService.onMouseButton2Down.dispatch(positionalData);
-                        InputService._isMouseButton2Down = True;
-                if mouseBuffer['clickType'] == "left":
-                    if passList["mouseLifted"]:
-                        InputService.onMouseButton1Up.dispatch(positionalData);
-                        InputService._isMouseButton1Down = False;
-                if mouseBuffer['clickType'] == "left":
-                    if passList["mousePressed"]:
-                        InputService.onMouseButton1Down.dispatch(positionalData);
-                        InputService._isMouseButton1Down = True;
-
+                if mouseBuffer['clickType'] == 'left':
+                    InputService._isMouseButton1Down = True if passList['mousePressed'] else False;
+                elif mouseBuffer['clickType'] == 'right':
+                    InputService._isMouseButton2Down = True if passList['mousePressed'] else False;
 
             for child in self.children:
                 updBfr = self.recurseUpdate(child, dt, {
@@ -271,8 +252,7 @@ class Renderer():
                 for aOrder in updBfr['actionOrders']['click']:
 
                     child = aOrder['obj'];
-
-                    if issubclass(type(child), Clickable) and updBfr['lastButton'] and child != updBfr['lastButton']['obj']:
+                    if issubclass(type(child), Clickable) and not updBfr['lastButton'] or ((updBfr['lastButton'] and child != updBfr['lastButton']['obj']) or False):
                         if child._isMouse1Down and not InputService.isMouse1Down():
                             child._isMouse1Down = False;
                             child.onMouseButton1Up.dispatch(None);
@@ -305,30 +285,8 @@ class Renderer():
                         updBfr['lastHover']['obj']._isHover = True;
 
             pygame.display.flip();
-
             clock.tick(self.framerate);
-    def loadFont(self, fontAlias: str, fontPath: str, defaultFontSize: int = 20):
-        """
-        parameter [fontAlias] is automatically made lowercase
-        parameter [fontPath] should be the absolute path to the font file
-        """
-        try:
-            if os.path.isfile(fontPath) and fontPath.split('.')[len(fontPath.split('.')) - 1] == 'ttf':
-                font: freeFont = pygame.freetype.Font(fontPath, defaultFontSize) #type: ignore
-
-                self.fonts[fontAlias.lower()] = font
-            else:
-                print(f'[nyle]: Unable to load font "{fontAlias.lower()}" from path {fontPath} as it is not .ttf file')
-        except Exception:
-            print(f'[nyle]: (Unexpected) Unable to load font "{fontAlias.lower()}" from path {fontPath}')
-    
-    def loadDefaultFonts(self):
-        searchDir = os.path.join(str(pathlib.Path(__file__).parent.parent.resolve()), 'fonts')
-        if os.path.isdir(searchDir):
-            for p in os.listdir(searchDir):
-                self.loadFont(os.path.basename(p.split('.')[0]), os.path.join(searchDir, p))
-        else:
-            print(f'[nyle]: Unable to load default fonts from {searchDir} as it is not a folder')
 
 from services.InputService import InputMouseBuffer, InputService
 from services.RenderService import RenderService;
+from services.FontService import FontService;

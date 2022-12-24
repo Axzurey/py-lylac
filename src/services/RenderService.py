@@ -5,3 +5,4 @@ from client.renderer import Renderer
 
 class RenderService(ABC):
     renderer: Renderer
+    rendererStarted: bool = False;

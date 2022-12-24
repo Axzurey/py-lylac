@@ -17,6 +17,9 @@ class TextButton(TextObject, Clickable, Hoverable):
 
         LoadDefaultGuiProperties('TextButton', self);
 
-    def update(self, dt: float):
-        super().update(dt)
-        self.renderText()
+    def update(self):
+        super().update();
+
+    def render(self, dt: float):
+        super().render(dt);
+        self.renderText();
