@@ -284,9 +284,9 @@ class Renderer():
 
                     child = aOrder['obj'];
 
-                    print(updBfr['lastHover'], child, updBfr['lastHover'] and updBfr['lastHover']['obj'] or None) #type: ignore
+                    #print(updBfr['lastHover'], child, updBfr['lastHover'] and updBfr['lastHover']['obj'] or None) #type: ignore
 
-                    if issubclass(type(child), Hoverable) and ((updBfr['lastHover'] and child != updBfr['lastHover']['obj']) or False):
+                    if issubclass(type(child), Hoverable) and not updBfr['lastHover'] or ((updBfr['lastHover'] and child != updBfr['lastHover']['obj']) or False):
                         if child._isHover:
                             child._isHover = False;
                             child.onHoverExit.dispatch(None);

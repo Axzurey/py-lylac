@@ -9,6 +9,14 @@ import pygame
 
 from services.RenderService import RenderService;
 
+def rotateAroundCenter(image: pygame.Surface, angle: float, center: pygame.Vector2) -> tuple[pygame.Surface, pygame.Rect]:
+    
+    x, y = center.xy
+
+    rotated_image = pygame.transform.rotate(image, angle);
+    new_rect = rotated_image.get_rect(center = image.get_rect(center = (x, y)).center);
+    return (rotated_image, new_rect);
+
 class GuiObject(Instance):
 
     size: Udim2;
@@ -24,6 +32,7 @@ class GuiObject(Instance):
     cornerRadius: int;
     zIndex: int;
     boundingRect: pygame.Rect;
+    rotation: float;
 
     def __init__(self) -> None:
         super().__init__();
@@ -59,7 +68,7 @@ class GuiObject(Instance):
 
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
-            
+
             return (position, size)
         
         else:
@@ -89,17 +98,16 @@ class GuiObject(Instance):
         self.absolutePosition = position
         self.absoluteSize = size
 
-        realSurf = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-
         backgroundRect = pygame.Rect(position.x, position.y, size.x, size.y)
 
         borderRect = pygame.Rect(position.x - self.borderWidth, position.y - self.borderWidth, size.x + self.borderWidth * 2, size.y + self.borderWidth * 2)
 
-        #borderSurf = pygame.Surface(borderRect.size, pygame.SRCALPHA)
+        backgroundSurf = pygame.Surface((backgroundRect.width, backgroundRect.height), pygame.SRCALPHA);
+        borderSurf = pygame.Surface((borderRect.width, borderRect.height), pygame.SRCALPHA);
 
-        pygame.draw.rect(realSurf, self.borderColor.toRGBATuple(), borderRect, 0, border_radius=self.cornerRadius)
+        pygame.draw.rect(borderSurf, self.borderColor.toRGBATuple(), ((0, 0), borderRect.size), 0, border_radius=self.cornerRadius)
 
-        pygame.draw.rect(realSurf, self.backgroundColor.toRGBATuple(), backgroundRect, 0, border_radius=self.cornerRadius)
+        pygame.draw.rect(backgroundSurf, self.backgroundColor.toRGBATuple(), ((0, 0), backgroundRect.size), 0, border_radius=self.cornerRadius)
 
         dropOffset = self.udim2RelativeToSelfSize(self.dropShadowOffset, 'xx')
 
@@ -121,11 +129,13 @@ class GuiObject(Instance):
 
         screen.blit(dropNeonSurface, (0, 0), special_flags = pygame.BLEND_PREMULTIPLIED)
 
-        #screen.blit(borderSurf, borderRect)
+        (borderSurf, bdPos) = rotateAroundCenter(borderSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2)
 
-        #screen.blit(backSurf, backgroundRect)
+        (backgroundSurf, bgPos) = rotateAroundCenter(backgroundSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2)
 
-        screen.blit(realSurf, (0, 0), special_flags = pygame.BLEND_PREMULTIPLIED)
+        screen.blit(borderSurf, bdPos, special_flags = pygame.BLEND_PREMULTIPLIED);
+
+        screen.blit(backgroundSurf, bgPos, special_flags = pygame.BLEND_PREMULTIPLIED);
 
         self.boundingRect = backgroundRect
 
