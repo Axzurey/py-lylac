@@ -8,7 +8,7 @@ PROPERTIES_THAT_FORCE_RERENDER = [
     "size", "parent", "position", "children", "backgroundColor", "borderColor",
     "cornerRadius", "borderWidth", "dropShadowColor", "dropShadowRadius", "dropShadowOffset",
     "text", "textColor", "textSize", "textFont", "textAlignX", "textAlignY", "enabled",
-    "zIndex", "rotation"
+    "zIndex", "rotation", "points", "width", "color", "showControlPoints"
 ];
 
 class Instance():
@@ -47,6 +47,9 @@ class Instance():
 
     def __init__(self) -> None:
         LoadDefaultGuiProperties('Instance', self);
+
+    def destroy(self):
+        self.parent = None;
 
     def update(self):
         pass

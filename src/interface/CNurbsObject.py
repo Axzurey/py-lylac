@@ -9,6 +9,7 @@ from interface.Instance import Instance
 from modules.color4 import Color4
 from modules.defaultGuiProperties import LoadDefaultGuiProperties
 from geomdl import BSpline, utilities
+from modules.lylacSignal import LylacConnection
 from modules.udim2 import Udim2
 from services.InputService import InputService
 
@@ -24,17 +25,23 @@ class CNurbsObject(Instance):
 
     partitions: list[list[tuple[float, float]]];
 
+    connections: list[LylacConnection]
+
     def __init__(self, parent: Instance | Renderer | None = None) -> None:
         super().__init__();
 
         self.partitions = [];
+        self.pointButtons = [];
+        self.connections = [];
 
         LoadDefaultGuiProperties("CNurbsObject", self);
 
         self.parent = parent;
 
+        self._createButtons();
+
+    def _createButtons(self):
         def startPointListening(btn: EmptyButton, index: int):
-            print('clickd')
             def cancelStep(_):
                 nonlocal c1;
                 nonlocal c2;
@@ -45,25 +52,57 @@ class CNurbsObject(Instance):
 
                 mousePos = InputService.getMousePosition();
 
-                self.points[index] = mousePos;
-                btn.position = Udim2.fromOffset(mousePos.x + 15 / 2, mousePos.x + 15 / 2)
+                if mousePos != self.points[index]:
+                    self.points[index] = mousePos;
+                    self.points = self.points;
+                
+                btn.position = Udim2.fromOffset(mousePos.x - 15 / 2, mousePos.y - 15 / 2)
 
             c1 = RenderService.postRender.connect(updatePos);
 
             c2 = btn.onMouseButton1Up.connect(cancelStep);
 
-        for i in range(len(self.points)):
-            z = i;
-            point = self.points[i];
+            self.connections.extend((c1, c2));
 
-            btn = EmptyButton();
-            btn.backgroundColor = Color4(1, 0, 0);
-            btn.size = Udim2.fromOffset(150, 150);
-            btn.position = Udim2.fromOffset(point.x, point.y);
-            btn.parent = self.parent;
-            btn.onHoverEnter.connect(lambda _: print("h"))
-            firstDown = btn.onMouseButton1Down.connect(lambda _: startPointListening(btn, z));
+        for i in range(len(self.points)):
+            def t():
+                z = i;
+                point = self.points[i];
+
+                btn = EmptyButton();
+                btn.backgroundColor = Color4(1, 0, 0);
+                btn.size = Udim2.fromOffset(15, 15);
+                btn.position = Udim2.fromOffset(point.x, point.y);
+                btn.parent = self.parent;
+
+                btn.borderWidth = 1;
+                btn.dropShadowOffset = Udim2();
+                btn.dropShadowRadius = 0;
+                
+                firstDown = btn.onMouseButton1Down.connect(lambda _: startPointListening(btn, z));
+
+                self.pointButtons.append(btn);
+                self.connections.append(firstDown);
+            t()
             
+    def _destroyButtons(self):
+        for connection in self.connections:
+            connection.disconnect();
+        for button in self.pointButtons:
+            button.destroy();
+
+    def createPoint(self, at: Vector2):
+        self._destroyButtons();
+        self.points.append(at);
+        self._createButtons();
+        self.update();
+
+    def removeLastPoint(self):
+        self._destroyButtons();
+        self.points.pop();
+        self._createButtons();
+        self.update();
+
 
     def drawLineAA(self, a: Vector2, b: Vector2):
         #https://stackoverflow.com/questions/30578068/pygame-draw-anti-aliased-thick-line

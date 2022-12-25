@@ -80,6 +80,28 @@ class Renderer():
 
         childrenPriority.sort(key=lambda x: x["zIndex"]);
 
+        for child in childrenLast:
+            if issubclass(type(child), Clickable):
+                update['actionOrders']['click'].append({"obj": child, "at": time.time()})
+
+                if update['mouseBuffer'] and update['mouseBuffer']['clickType'] in ('left', 'right'):
+
+                    t = time.time()
+                    if child.isPointInBounding(update['mouseBuffer']['position']):
+                        update['lastButton'] = {'at': t, 'obj': child}
+
+            if issubclass(type(child), Hoverable):
+                update['actionOrders']['hover'].append({"obj": child, "at": time.time()});
+                
+                if update['mouseBuffer']:
+
+                    t = time.time();
+
+                    if child.isPointInBounding(update['mouseBuffer']['position']):
+                        update['lastHover'] = {'at': t, 'obj': child};
+
+            update = self.recurseUpdate(child, dt, update)
+
         for child in childrenPriority:
             if issubclass(type(child), Clickable):
                 update['actionOrders']['click'].append({"obj": child, "at": time.time()})
@@ -102,21 +124,6 @@ class Renderer():
 
 
             update = self.recurseUpdate(child, dt, update);
-
-        for child in childrenLast:
-            if issubclass(type(child), Clickable):
-                update['actionOrders']['click'].append({"obj": child, "at": time.time()})
-
-                if update['mouseBuffer'] and update['mouseBuffer']['clickType'] in ('left', 'right'):
-
-                    t = time.time()
-                    if child.isPointInBounding(update['mouseBuffer']['position']):
-                        update['lastButton'] = {'at': t, 'obj': child}
-
-            if issubclass(type(child), Hoverable):
-                update['actionOrders']['hover'].append({"obj": child, "at": time.time()})
-
-            update = self.recurseUpdate(child, dt, update)
 
         return update
 
@@ -237,7 +244,7 @@ class Renderer():
                     InputService._isMouseButton2Down = True if passList['mousePressed'] else False;
 
             for child in self.children:
-                update: UpdateBuffer = {
+                updBfr = self.recurseUpdate(child, dt, {
                     "actionOrders": {
                         'hover': [],
                         'click': []
@@ -246,26 +253,7 @@ class Renderer():
                     "mouseBuffer": mouseBuffer,
                     "lastButton": None,
                     "lastHover": None
-                }
-                if issubclass(type(child), Clickable):
-                    update['actionOrders']['click'].append({"obj": child, "at": time.time()})
-
-                    if update['mouseBuffer'] and update['mouseBuffer']['clickType'] in ('left', 'right'):
-
-                        t = time.time()
-                        if child.isPointInBounding(update['mouseBuffer']['position']):
-                            update['lastButton'] = {'at': t, 'obj': child}
-
-                if issubclass(type(child), Hoverable):
-                    update['actionOrders']['hover'].append({"obj": child, "at": time.time()});
-                    
-                    if update['mouseBuffer']:
-
-                        t = time.time();
-
-                        if child.isPointInBounding(update['mouseBuffer']['position']):
-                            update['lastHover'] = {'at': t, 'obj': child};
-                updBfr = self.recurseUpdate(child, dt, update)
+                })
 
                 for aOrder in updBfr['actionOrders']['click']:
 
