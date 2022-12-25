@@ -25,16 +25,18 @@ class CNurbsObject(Instance):
 
     partitions: list[list[tuple[float, float]]];
 
-    connections: list[LylacConnection]
+    connections: list[LylacConnection];
+
+    curvePoints: list[list[float]] = [];
 
     def __init__(self, parent: Instance | Renderer | None = None) -> None:
         super().__init__();
 
+        LoadDefaultGuiProperties("CNurbsObject", self);
+
         self.partitions = [];
         self.pointButtons = [];
         self.connections = [];
-
-        LoadDefaultGuiProperties("CNurbsObject", self);
 
         self.parent = parent;
 
@@ -140,7 +142,9 @@ class CNurbsObject(Instance):
 
         points: list[Vector2] = curve.evalpts;
 
-        finalPoints: list[list[tuple[float, float]]] = []
+        finalPoints: list[list[tuple[float, float]]] = [];
+
+        self.curvePoints = points; #type: ignore
 
         pointIndex = 0;
         for point in points:

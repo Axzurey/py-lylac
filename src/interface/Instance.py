@@ -8,7 +8,8 @@ PROPERTIES_THAT_FORCE_RERENDER = [
     "size", "parent", "position", "children", "backgroundColor", "borderColor",
     "cornerRadius", "borderWidth", "dropShadowColor", "dropShadowRadius", "dropShadowOffset",
     "text", "textColor", "textSize", "textFont", "textAlignX", "textAlignY", "enabled",
-    "zIndex", "rotation", "points", "width", "color", "showControlPoints"
+    "zIndex", "rotation", "points", "width", "color", "showControlPoints",
+    "imagePath"
 ];
 
 class Instance():

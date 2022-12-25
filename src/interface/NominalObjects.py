@@ -1,8 +1,8 @@
+from __future__ import annotations
 import math
 from typing import Any, Sequence 
 from pygame import Vector2
 from modules.color4 import clamp
-
 from modules.lylacSignal import LylacSignal
 
 def isPointInCircle(point: Vector2, circleOrigin: Vector2, circleRadius: float) -> bool:
@@ -113,9 +113,19 @@ def isPointInBounding(pos: Vector2, size: Vector2, point: Vector2, cornerRadius:
     return True;
 
 
-class HasBounding:
+class NominalObject: ...
+
+class HasBounding(NominalObject):
     def isPointInBounding(self: Any, point: Vector2):
-        return isPointInRotatedBounding(self.absolutePosition, self.absoluteSize, point, clamp(self.cornerRadius, 0, min(self.absoluteSize.x, self.absoluteSize.y)), self.rotation)
+        from interface.GuiObject import GuiObject
+        cRadius = clamp(self.cornerRadius, 0, min(self.absoluteSize.x, self.absoluteSize.y)) if isinstance(self, GuiObject) else 0; #type: ignore
+        return isPointInRotatedBounding(self.absolutePosition, self.absoluteSize, point, cRadius, self.rotation)
+
+class SupportsOrdering(NominalObject):
+    zIndex: int;
+
+    def __init__(self) -> None:
+        self.zIndex = 1;
 
 class Hoverable(HasBounding):
     onHoverEnter: LylacSignal;

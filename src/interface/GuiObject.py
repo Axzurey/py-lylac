@@ -1,13 +1,12 @@
 import time
 from typing import Literal
 from interface.Instance import Instance
+from interface.NominalObjects import SupportsOrdering
 from modules.defaultGuiProperties import LoadDefaultGuiProperties;
 from modules.color4 import Color4;
 from modules.udim2 import Udim2;
 import modules.mathf as mathf;
 import pygame
-
-from services.RenderService import RenderService;
 
 def rotateAroundCenter(image: pygame.Surface, angle: float, center: pygame.Vector2) -> tuple[pygame.Surface, pygame.Rect]:
     
@@ -17,7 +16,7 @@ def rotateAroundCenter(image: pygame.Surface, angle: float, center: pygame.Vecto
     new_rect = rotated_image.get_rect(center = image.get_rect(center = (x, y)).center);
     return (rotated_image, new_rect);
 
-class GuiObject(Instance):
+class GuiObject(Instance, SupportsOrdering):
 
     size: Udim2;
     position: Udim2;
@@ -30,7 +29,6 @@ class GuiObject(Instance):
     absolutePosition: pygame.Vector2;
     absoluteSize: pygame.Vector2;
     cornerRadius: int;
-    zIndex: int;
     boundingRect: pygame.Rect;
     rotation: float;
 
@@ -39,7 +37,8 @@ class GuiObject(Instance):
     def __init__(self) -> None:
         self.surfaces = {};
 
-        super().__init__();
+        Instance.__init__(self);
+        SupportsOrdering.__init__(self);
             
         LoadDefaultGuiProperties('GuiObject', self);
 
@@ -155,3 +154,6 @@ class GuiObject(Instance):
         screen.blit(borderSurf, bdPos, special_flags = pygame.BLEND_PREMULTIPLIED);
 
         screen.blit(backgroundSurf, bgPos, special_flags = pygame.BLEND_PREMULTIPLIED);
+
+
+from services.RenderService import RenderService;

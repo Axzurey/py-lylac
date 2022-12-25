@@ -3,9 +3,10 @@ from typing import Any, Dict, Literal
 from pygame import Vector2
 import pygame
 from interface.Instance import Instance
-from modules.color4 import Color4;
+from interface.NominalObjects import NominalObject
+from modules.color4 import Color4
 from modules.udim2 import Udim2
-from modules.util import rawSet;
+from modules.util import rawSet
 
 def blankAnyTypedList() -> list[Any]:
     return list()
@@ -37,7 +38,9 @@ GUI_DEFAULT_PROPERTIES = {
     "points": lambda: [Vector2(150, 75), Vector2(300, 150), Vector2(150, 200), Vector2(400, 400)],
     "color": lambda: Color4(0, 1, 1),
     "width": lambda: 15,
-    "showControlPoints": lambda: True
+    "showControlPoints": lambda: True,
+    "imagePath": lambda: 'PLEASE SET ME',
+    "curvePoints": lambda: []
 }
 
 GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], list[str]]] = {
@@ -48,14 +51,24 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
         "properties": ["points", "color", "width", "showControlPoints"]
     },
     "CNurbsObject": {
-        "properties": ["points", "color", "width"]
+        "properties": ["points", "color", "width", "curvePoints"]
+    },
+    "Sprite": {
+        "properties": [
+            "size", "position", "absoluteSize", 
+            "absolutePosition", "rotation", "boundingRect",
+            "imagePath"
+        ]
+    },
+    "SupportsOrdering": {
+        "properties": ["zIndex"]
     },
     "GuiObject": {
         "properties": [
             "size", "position", "backgroundColor",
             "borderColor", "borderWidth", "dropShadowColor", 
             "dropShadowRadius", "dropShadowOffset", "absolutePosition",
-            "absoluteSize", "cornerRadius", "zIndex", "boundingRect",
+            "absoluteSize", "cornerRadius", "boundingRect",
             "rotation"
         ],
         "inherits": ["Instance"]
@@ -77,7 +90,7 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
     }
 }
 
-def LoadDefaultGuiProperties(guiType: str, guiObject: Instance):
+def LoadDefaultGuiProperties(guiType: str, guiObject: Instance | NominalObject):
     if GUI_PROPERTY_MAP[guiType]:
         #load own properties
         for propKey in GUI_PROPERTY_MAP[guiType]["properties"]:

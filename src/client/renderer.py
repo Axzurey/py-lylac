@@ -3,7 +3,7 @@ from typing import Literal, TypedDict;
 import pygame;
 import pygame.freetype;
 import time
-from interface.NominalObjects import Clickable, Hoverable
+from interface.NominalObjects import Clickable, Hoverable, SupportsOrdering
 from modules.keymap import KeyBuffer, purifyRawKeyBuffer
 from modules.lylacSignal import LylacSignal
 
@@ -73,7 +73,7 @@ class Renderer():
         childrenLast: list[Instance] = []
 
         for child in inst.children:
-            if isinstance(child, GuiObject) and type(child["zIndex"]) is int:
+            if isinstance(child, SupportsOrdering) and type(child["zIndex"]) is int:
                 childrenPriority.append(child)
             else:
                 childrenLast.append(child)
@@ -82,7 +82,7 @@ class Renderer():
 
         for child in childrenLast:
             if issubclass(type(child), Clickable):
-                update['actionOrders']['click'].append({"obj": child, "at": time.time()})
+                update['actionOrders']['click'].append({"obj": child, "at": time.time()});
 
                 if update['mouseBuffer'] and update['mouseBuffer']['clickType'] in ('left', 'right'):
 
