@@ -33,12 +33,22 @@ GUI_DEFAULT_PROPERTIES = {
     "enabled": lambda: True,
     "zIndex": lambda: 1,
     "boundingRect": lambda: pygame.Rect(0, 0, 0, 0),
-    "rotation": lambda: 0
+    "rotation": lambda: 0,
+    "points": lambda: [Vector2(150, 75), Vector2(300, 150), Vector2(150, 200), Vector2(400, 400)],
+    "color": lambda: Color4(0, 1, 1),
+    "width": lambda: 15,
+    "showControlPoints": lambda: True
 }
 
 GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], list[str]]] = {
     "Instance": {
         "properties": ["children"],
+    },
+    "NurbsObject": {
+        "properties": ["points", "color", "width", "showControlPoints"]
+    },
+    "CNurbsObject": {
+        "properties": ["points", "color", "width"]
     },
     "GuiObject": {
         "properties": [
@@ -61,6 +71,9 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
     "TextButton": {
         "properties": ["enabled"],
         "inherits": ["TextObject"]
+    },
+    "EmptyButton": {
+        "properties": ["enabled"]
     }
 }
 

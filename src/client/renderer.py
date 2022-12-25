@@ -3,7 +3,6 @@ from typing import Literal, TypedDict;
 import pygame;
 import pygame.freetype;
 import time
-from interface.Instance import Instance
 from interface.NominalObjects import Clickable, Hoverable
 from modules.keymap import KeyBuffer, purifyRawKeyBuffer
 from modules.lylacSignal import LylacSignal
@@ -74,12 +73,12 @@ class Renderer():
         childrenLast: list[Instance] = []
 
         for child in inst.children:
-            if type(child["zindex"]) is int:
+            if isinstance(child, GuiObject) and type(child["zIndex"]) is int:
                 childrenPriority.append(child)
             else:
                 childrenLast.append(child)
 
-        childrenPriority.sort(key=lambda x: x["zindex"]);
+        childrenPriority.sort(key=lambda x: x["zIndex"]);
 
         for child in childrenPriority:
             if issubclass(type(child), Clickable):
@@ -238,7 +237,7 @@ class Renderer():
                     InputService._isMouseButton2Down = True if passList['mousePressed'] else False;
 
             for child in self.children:
-                updBfr = self.recurseUpdate(child, dt, {
+                update: UpdateBuffer = {
                     "actionOrders": {
                         'hover': [],
                         'click': []
@@ -247,7 +246,26 @@ class Renderer():
                     "mouseBuffer": mouseBuffer,
                     "lastButton": None,
                     "lastHover": None
-                })
+                }
+                if issubclass(type(child), Clickable):
+                    update['actionOrders']['click'].append({"obj": child, "at": time.time()})
+
+                    if update['mouseBuffer'] and update['mouseBuffer']['clickType'] in ('left', 'right'):
+
+                        t = time.time()
+                        if child.isPointInBounding(update['mouseBuffer']['position']):
+                            update['lastButton'] = {'at': t, 'obj': child}
+
+                if issubclass(type(child), Hoverable):
+                    update['actionOrders']['hover'].append({"obj": child, "at": time.time()});
+                    
+                    if update['mouseBuffer']:
+
+                        t = time.time();
+
+                        if child.isPointInBounding(update['mouseBuffer']['position']):
+                            update['lastHover'] = {'at': t, 'obj': child};
+                updBfr = self.recurseUpdate(child, dt, update)
 
                 for aOrder in updBfr['actionOrders']['click']:
 
@@ -284,9 +302,14 @@ class Renderer():
                         updBfr['lastHover']['obj'].onHoverEnter.dispatch(None);
                         updBfr['lastHover']['obj']._isHover = True;
 
+            RenderService.postRender.dispatch(dt);
+
             pygame.display.flip();
             clock.tick(self.framerate);
 
 from services.InputService import InputMouseBuffer, InputService
 from services.RenderService import RenderService;
 from services.FontService import FontService;
+
+from interface.GuiObject import GuiObject
+from interface.Instance import Instance

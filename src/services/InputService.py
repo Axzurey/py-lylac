@@ -35,6 +35,10 @@ class InputService(ABC):
     onMouseMovement = LylacSignal[InputMouseBuffer]();
 
     @staticmethod
+    def getMousePosition():
+        return InputService._lastMousePosition;
+
+    @staticmethod
     def isMouse1Down():
         return InputService._isMouseButton1Down;
 
