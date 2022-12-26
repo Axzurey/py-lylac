@@ -37,9 +37,9 @@ btn.parent = frame;
 btn.onMouseButton1Down.connect(lambda _: curve.createPoint(Vector2(500, 400)));
 
 spr = Sprite();
-spr.imagePath = "C:\\Users\\Phxie\\Pictures\\unknown.png";
+spr.imagePath = "assets/asteroid.png";
 spr.parent = frame;
-spr.size = Udim2.fromOffset(15, 15);
+spr.size = Udim2.fromOffset(50, 50);
 spr.position = Udim2(.2, .2);
 
 def toggle(t: bool):

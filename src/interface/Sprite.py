@@ -100,7 +100,7 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
         self.absolutePosition = position;
         self.absoluteSize = size;
 
-        img = pygame.image.load(self.imagePath).convert();
+        img = pygame.image.load(self.imagePath).convert_alpha();
 
         img = pygame.transform.scale(img, size);
 
