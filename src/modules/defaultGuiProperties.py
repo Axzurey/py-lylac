@@ -40,7 +40,10 @@ GUI_DEFAULT_PROPERTIES = {
     "width": lambda: 15,
     "showControlPoints": lambda: True,
     "imagePath": lambda: 'PLEASE SET ME',
-    "curvePoints": lambda: []
+    "curvePoints": lambda: [],
+    "anchorPoint": lambda: Vector2(),
+    "controlPointColor": lambda: Color4(0, 0, 1),
+    "controlPointRadius": lambda: 10,
 }
 
 GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], list[str]]] = {
@@ -48,16 +51,28 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
         "properties": ["children"],
     },
     "NurbsObject": {
-        "properties": ["points", "color", "width", "showControlPoints"]
+        "properties": ["points", "color", "width", "showControlPoints", "controlPointColor", "controlPointRadius"]
     },
-    "CNurbsObject": {
+    "DraggableNurbsObject": {
         "properties": ["points", "color", "width", "curvePoints"]
+    },
+    "PolygonObject": {
+        "properties": ["points", "color", "width", "showControlPoints", "controlPointColor", "controlPointRadius"]
+    },
+    "DraggablePolygonObject": {
+        "properties": ["points", "color", "width"]
+    },
+    "SegmentedLineObject": {
+        "properties": ["points", "color", "width", "showControlPoints", "controlPointColor", "controlPointRadius"]
+    },
+    "DraggableSegmentedLineObject": {
+        "properties": ["points", "color", "width"]
     },
     "Sprite": {
         "properties": [
             "size", "position", "absoluteSize", 
             "absolutePosition", "rotation", "boundingRect",
-            "imagePath"
+            "imagePath", "anchorPoint"
         ]
     },
     "SupportsOrdering": {
@@ -69,7 +84,7 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
             "borderColor", "borderWidth", "dropShadowColor", 
             "dropShadowRadius", "dropShadowOffset", "absolutePosition",
             "absoluteSize", "cornerRadius", "boundingRect",
-            "rotation"
+            "rotation", "anchorPoint"
         ],
         "inherits": ["Instance"]
     },

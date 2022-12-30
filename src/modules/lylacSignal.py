@@ -1,5 +1,5 @@
 from __future__ import annotations;
-from typing import Generic, TypeVar, Callable
+from typing import Any, Generic, TypeVar, Callable
 
 from modules.util import createThread;
 
@@ -11,7 +11,7 @@ class LylacConnection(Generic[A]):
     connected: bool = False;
     once: bool = False;
 
-    def __init__(self, callback: Callable[[A], None], signal: LylacSignal[A], once: bool = False) -> None:
+    def __init__(self, callback: Callable[[A], Any], signal: LylacSignal[A], once: bool = False) -> None:
         self.callback = callback;
         self.signal = signal;
         self.connected = True;
@@ -32,12 +32,12 @@ class LylacSignal(Generic[A]):
     def __init__(self):
         self.listeners = [];
 
-    def connect(self, callback: Callable[[A], None]) -> LylacConnection:
+    def connect(self, callback: Callable[[A], Any]) -> LylacConnection:
         connection = LylacConnection(callback, self);
         self.listeners.append(connection);
         return connection;
 
-    def once(self, callback: Callable[[A], None]) -> LylacConnection:
+    def once(self, callback: Callable[[A], Any]) -> LylacConnection:
         connection = LylacConnection(callback, self, True);
         self.listeners.append(connection);
         return connection;

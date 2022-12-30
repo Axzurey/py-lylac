@@ -1,8 +1,5 @@
-def clamp(x: int, minV: int, maxV: int):
-    return x < minV and minV or x > maxV and maxV or x;
-
-def clampAll(minV: int, maxV: int, *nums: int):
-    return (clamp(val, minV, maxV) for val in nums)
+from __future__ import annotations;
+from modules.mathf import clampAll, lerp;
 
 class Color4:
 
@@ -10,6 +7,12 @@ class Color4:
     g: float;
     b: float;
     a: float;
+
+    def __repr__(self) -> str:
+        return f"Color4[{','.join([str(self.r), str(self.g), str(self.b), str(self.a)])}]";
+
+    def __eq__(self, other: Color4):
+        return self.r == other.r and self.g == other.g and self.b == other.b and self.a == other.a;
 
     def __init__(self, r: float = 0, g: float = 0, b: float = 0, a: float = 1) -> None:
         self.r = r;
@@ -34,3 +37,10 @@ class Color4:
         return (self.r, self.g, self.b, self.a);
     def toList(self):
         return [self.r, self.g, self.b, self.a];
+    def lerp(self, other: Color4, t: float):
+        return Color4(
+            lerp(self.r, other.r, t),
+            lerp(self.g, other.g, t),
+            lerp(self.b, other.b, t),
+            lerp(self.a, other.a, t)
+        )

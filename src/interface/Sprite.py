@@ -19,6 +19,7 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
     rotation: int;
     boundingRect: pygame.Rect;
     imagePath: str;
+    anchorPoint: Vector2; #TODO: IMPLEMENT THIS
 
     surfaces: dict[Literal['image'], tuple[pygame.Surface, pygame.Rect]];
     
@@ -64,7 +65,9 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
 
-            return (position, size)
+            position -= size.elementwise() * self.anchorPoint.elementwise();
+
+            return (position, pygame.Vector2(mathf.clamp(0, size.x, size.x), mathf.clamp(0, size.y, size.y)))
         
         else:
             container = RenderService.renderer.resolution
@@ -80,7 +83,9 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
 
-            return (position, size)
+            position -= size.elementwise() * self.anchorPoint.elementwise();
+
+            return (position, pygame.Vector2(mathf.clamp(0, size.x, size.x), mathf.clamp(0, size.y, size.y)))
 
     def render(self, dt: float):
         screen = RenderService.renderer.screen;

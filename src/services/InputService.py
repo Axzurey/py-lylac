@@ -17,7 +17,7 @@ class InputKeyBuffer(TypedDict):
 
 class InputService(ABC):
 
-    lastKeyDownBuffer: list[InputKeyBuffer] = []; #TODO: INTEROP THIS INTO THE RENDERER!
+    lastKeyDownBuffer: list[InputKeyBuffer] = [];
 
     _lastMousePosition: pygame.Vector2 = pygame.Vector2();
 

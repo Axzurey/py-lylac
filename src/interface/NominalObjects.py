@@ -2,8 +2,87 @@ from __future__ import annotations
 import math
 from typing import Any, Sequence 
 from pygame import Vector2
-from modules.color4 import clamp
+from modules.mathf import clamp
 from modules.lylacSignal import LylacSignal
+
+class line:
+    def __init__(self, p1: Vector2, p2: Vector2):
+        self.p1 = p1
+        self.p2 = p2
+
+def onLine(l1, p):
+    # Check whether p is on the line or not
+    if (
+        p.x <= max(l1.p1.x, l1.p2.x)
+        and p.x <= min(l1.p1.x, l1.p2.x)
+        and (p.y <= max(l1.p1.y, l1.p2.y) and p.y <= min(l1.p1.y, l1.p2.y))
+    ):
+        return True
+    return False
+ 
+def direction(a, b, c):
+    val = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y)
+    if val == 0:
+        # Colinear
+        return 0
+    elif val < 0:
+        # Anti-clockwise direction
+        return 2
+    # Clockwise direction
+    return 1
+ 
+def isIntersect(l1, l2):
+    # Four direction for two lines and points of other line
+    dir1 = direction(l1.p1, l1.p2, l2.p1)
+    dir2 = direction(l1.p1, l1.p2, l2.p2)
+    dir3 = direction(l2.p1, l2.p2, l1.p1)
+    dir4 = direction(l2.p1, l2.p2, l1.p2)
+ 
+    # When intersecting
+    if dir1 != dir2 and dir3 != dir4:
+        return True
+ 
+    # When p2 of line2 are on the line1
+    if dir1 == 0 and onLine(l1, l2.p1):
+        return True
+ 
+    # When p1 of line2 are on the line1
+    if dir2 == 0 and onLine(l1, l2.p2):
+        return True
+ 
+    # When p2 of line1 are on the line2
+    if dir3 == 0 and onLine(l2, l1.p1):
+        return True
+ 
+    # When p1 of line1 are on the line2
+    if dir4 == 0 and onLine(l2, l1.p2):
+        return True
+ 
+    return False
+ 
+def isPointInPolygon(poly: list[Vector2], p: Vector2):
+    #https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
+    #more reliable than testing if it lies to the right of each line?
+    n = len(poly);
+    if n < 3:
+        return False
+ 
+    exline = line(p, Vector2(-999999, p.y))
+    count = 0
+    i = 0
+    while True:
+        side = line(poly[i], poly[(i + 1) % n])
+        if isIntersect(side, exline):
+            if (direction(side.p1, p, side.p2) == 0):
+                return onLine(side, p);
+            count += 1
+         
+        i = (i + 1) % n;
+        if i == 0:
+            break
+ 
+    # When count is odd
+    return count & 1;
 
 def isPointInCircle(point: Vector2, circleOrigin: Vector2, circleRadius: float) -> bool:
     return (point - circleOrigin).magnitude() < circleRadius;
@@ -30,15 +109,6 @@ def rotatedCorner(point: Vector2, centerOfRotation: Vector2, theta: float) -> Ve
     rotatedY = tX * math.sin(theta) + tY * math.cos(theta);
 
     return Vector2(rotatedX + centerOfRotation.x, rotatedY + centerOfRotation.y);
-
-def isPointInPolygon(vertices: Sequence[Vector2], point: Vector2):
-    for i in range(len(vertices)):
-        vertex = vertices[i];
-        nextIndex = 0 if i == len(vertices) - 1 else i + 1
-        nextVertex = vertices[nextIndex]
-        if isRightOrOn(vertex, nextVertex, point):
-            return False;
-    return True;
 
 
 def isPointInRotatedBounding(pos: Vector2, size: Vector2, point: Vector2, cornerRadius: float, rotation: float):
@@ -121,6 +191,12 @@ class HasBounding(NominalObject):
         cRadius = clamp(self.cornerRadius, 0, min(self.absoluteSize.x, self.absoluteSize.y)) if isinstance(self, GuiObject) else 0; #type: ignore
         return isPointInRotatedBounding(self.absolutePosition, self.absoluteSize, point, cRadius, self.rotation)
 
+class IsPolygonal(NominalObject):
+    def isPointInPolygon(self, point: Vector2):
+        points: list[Vector2] = self.points; #type: ignore
+
+        return isPointInPolygon(points, point);
+
 class SupportsOrdering(NominalObject):
     zIndex: int;
 
@@ -140,10 +216,10 @@ class Hoverable(HasBounding):
         self.onHoverExit = LylacSignal();
 
 class Clickable(HasBounding):
-    onMouseButton1Down: LylacSignal[None];
-    onMouseButton1Up: LylacSignal[None];
-    onMouseButton2Down: LylacSignal[None];
-    onMouseButton2Up: LylacSignal[None];
+    onMouseButton1Down: LylacSignal[Any];
+    onMouseButton1Up: LylacSignal[Any];
+    onMouseButton2Down: LylacSignal[Any];
+    onMouseButton2Up: LylacSignal[Any];
 
     _isMouse1Down: bool = False;
     _isMouse2Down: bool = False;
@@ -151,7 +227,7 @@ class Clickable(HasBounding):
     def __init__(self) -> None:
         super().__init__();
         
-        self.onMouseButton1Down = LylacSignal[None]();
-        self.onMouseButton1Up = LylacSignal[None]();
-        self.onMouseButton2Down = LylacSignal[None]();
-        self.onMouseButton2Up = LylacSignal[None]();
+        self.onMouseButton1Down = LylacSignal[Any]();
+        self.onMouseButton1Up = LylacSignal[Any]();
+        self.onMouseButton2Down = LylacSignal[Any]();
+        self.onMouseButton2Up = LylacSignal[Any]();

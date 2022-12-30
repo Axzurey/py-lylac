@@ -134,6 +134,8 @@ class Renderer():
 
     def start(self):
 
+        self.lastUpdate = time.time();
+
         clock = pygame.time.Clock();
 
         RenderService.rendererStarted = True;
@@ -240,8 +242,16 @@ class Renderer():
 
                 if mouseBuffer['clickType'] == 'left':
                     InputService._isMouseButton1Down = True if passList['mousePressed'] else False;
+                    if passList['mousePressed']:
+                        InputService.onMouseButton1Down.dispatch(positionalData);
+                    else:
+                        InputService.onMouseButton1Up.dispatch(positionalData);
                 elif mouseBuffer['clickType'] == 'right':
                     InputService._isMouseButton2Down = True if passList['mousePressed'] else False;
+                    if passList['mousePressed']:
+                        InputService.onMouseButton2Down.dispatch(positionalData);
+                    else:
+                        InputService.onMouseButton2Up.dispatch(positionalData);
 
             for child in self.children:
                 updBfr = self.recurseUpdate(child, dt, {
@@ -269,8 +279,6 @@ class Renderer():
                 for aOrder in updBfr['actionOrders']['hover']:
 
                     child = aOrder['obj'];
-
-                    #print(updBfr['lastHover'], child, updBfr['lastHover'] and updBfr['lastHover']['obj'] or None) #type: ignore
 
                     if issubclass(type(child), Hoverable) and not updBfr['lastHover'] or ((updBfr['lastHover'] and child != updBfr['lastHover']['obj']) or False):
                         if child._isHover:

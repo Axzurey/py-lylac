@@ -1,31 +1,64 @@
 import math
-from math import cos, sin
+from math import cos, dist, sin, sqrt
+from typing import Iterator
 from pygame import Vector2
 import pygame
-import pygame.gfxdraw;
+import pygame.gfxdraw
+from client.renderer import Renderer
+from interface.EmptyButton import EmptyButton
+from interface.GuiObject import GuiObject;
 from interface.Instance import Instance
 from modules.color4 import Color4
 from modules.defaultGuiProperties import LoadDefaultGuiProperties
-from geomdl import BSpline, utilities
-
+from geomdl import utilities, NURBS
+from modules.lylacSignal import LylacConnection
+from modules.udim2 import Udim2
+from services.InputService import InputService
 from services.RenderService import RenderService
 
-#https://nurbs-python.readthedocs.io/en/5.x/basics.html
+def evenly_split(
+    curve: NURBS.Curve,
+    distance: float,
+    include_last: bool = True,
+    du: float = 1,
+    iterations: int = 1,
+) -> Iterator[list[float]]:
+    u = 0
+    y = curve.evaluate_single(0)
+    yield y.copy()
+    while u + du <= 1:
+        for _ in range(iterations):
+            du *= sqrt(distance / dist(curve.evaluate_single(u + du), y))
+            if u + du > 1:
+                break
+        else:
+            u += du
+            y = curve.evaluate_single(u)
+            yield y.copy()
+    if include_last:
+        yield curve.evaluate_single(1)
 
 class NurbsObject(Instance):
     points: list[Vector2];
     color: Color4;
     width: float;
-    showControlPoints: bool;
 
     partitions: list[list[tuple[float, float]]];
 
-    def __init__(self) -> None:
+    curvePoints: list[list[float]] = [];
+    
+    showControlPoints: bool;
+    controlPointColor: Color4;
+    controlPointRadius: int;
+
+    def __init__(self, parent: Instance | Renderer | None = None) -> None:
         super().__init__();
+
+        LoadDefaultGuiProperties("NurbsObject", self);
 
         self.partitions = [];
 
-        LoadDefaultGuiProperties("NurbsObject", self);
+        self.parent = parent;
 
     def drawLineAA(self, a: Vector2, b: Vector2):
         #https://stackoverflow.com/questions/30578068/pygame-draw-anti-aliased-thick-line
@@ -47,7 +80,7 @@ class NurbsObject(Instance):
         return [UL, UR, BL, BR];
 
     def update(self):
-        curve = BSpline.Curve()
+        curve = NURBS.Curve()
 
         # Set up the curve
         curve.degree = len(self.points) - 1;
@@ -57,13 +90,15 @@ class NurbsObject(Instance):
         curve.knotvector = utilities.generate_knot_vector(curve.degree, len(curve.ctrlpts))
 
         # Set evaluation delta
-        curve.delta = 0.001
+        curve.delta = 0.01;
 
         # Evaluate curve
 
-        points: list[Vector2] = curve.evalpts;
+        points: list[Vector2] = list(evenly_split(curve, .5)); #type: ignore (I really don't give a shit)
 
-        finalPoints: list[list[tuple[float, float]]] = []
+        finalPoints: list[list[tuple[float, float]]] = [];
+
+        self.curvePoints = points; #type: ignore
 
         pointIndex = 0;
         for point in points:
@@ -78,17 +113,24 @@ class NurbsObject(Instance):
         self.partitions = finalPoints;
 
     def render(self, dt: float):
+
         screen = RenderService.renderer.screen;
 
-        surf = pygame.Surface((1280, 720));
+        size = screen.get_size();
+
+        if self.parent and isinstance(self.parent, GuiObject):
+            size = self.parent.absolutePosition.xy;
+        
+        surf = pygame.Surface(size, pygame.SRCALPHA, 32);
+        surf.convert_alpha()
+
+        if self.showControlPoints:
+            for point in self.points:
+                pygame.draw.circle(surf, self.controlPointColor.toRGBList(), point, self.controlPointRadius);
 
         for point in self.partitions:
             (UL, UR, BR, BL) = point;
             pygame.gfxdraw.aapolygon(surf, (UL, UR, BR, BL), self.color.toRGBATuple())
             pygame.gfxdraw.filled_polygon(surf, (UL, UR, BR, BL), self.color.toRGBATuple())
-
-        if self.showControlPoints:
-            for point in self.points:
-                pygame.draw.circle(surf, (255, 0, 0), point, 5);
 
         screen.blit(surf, (0, 0));

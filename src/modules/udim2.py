@@ -1,10 +1,21 @@
+from __future__ import annotations;
+
 from pygame import Vector2
+
+from modules.mathf import lerp
 
 class Udim2:
     xScale: float = 0
     yScale: float = 0
     xOffset: float = 0
     yOffset: float = 0
+
+    def __repr__(self) -> str:
+        return f"Udim2[{','.join([str(round(self.xOffset, 2)), str(round(self.xScale, 2)), str(round(self.yOffset, 2)), str(round(self.yScale, 2))])}]";
+
+    def __eq__(self, other: Udim2):
+        return self.xScale == other.xScale and self.yScale == other.yScale and self.xOffset == other.xOffset and self.yOffset == other.yOffset;
+
     def __init__(self, xOffset: float = 0, xScale: float = 0, yOffset: float = 0, yScale: float = 0):
         self.xOffset = xOffset
         self.xScale = xScale
@@ -24,3 +35,12 @@ class Udim2:
 
     def toOffset(self):
         return Vector2(self.xOffset, self.yOffset)
+
+    def lerp(self, other: Udim2, t: float):
+        return Udim2(
+            lerp(self.xOffset, other.xOffset, t),
+            lerp(self.xScale, other.xScale, t),
+            lerp(self.yOffset, other.yOffset, t),
+            lerp(self.yScale, other.yScale, t)
+        )
+

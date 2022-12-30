@@ -31,6 +31,7 @@ class GuiObject(Instance, SupportsOrdering):
     cornerRadius: int;
     boundingRect: pygame.Rect;
     rotation: float;
+    anchorPoint: pygame.Vector2;
 
     surfaces: dict[Literal["dropShadowSurf"] | Literal["backgroundSurf"] | Literal["borderSurf"], tuple[pygame.Surface, pygame.Rect]];
 
@@ -75,7 +76,9 @@ class GuiObject(Instance, SupportsOrdering):
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
 
-            return (position, size)
+            position -= size.elementwise() * self.anchorPoint.elementwise();
+
+            return (position, pygame.Vector2(mathf.clamp(0, size.x, size.x), mathf.clamp(0, size.y, size.y)))
         
         else:
             container = RenderService.renderer.resolution
@@ -91,7 +94,9 @@ class GuiObject(Instance, SupportsOrdering):
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
 
-            return (position, size)
+            position -= size.elementwise() * self.anchorPoint.elementwise();
+
+            return (position, pygame.Vector2(mathf.clamp(0, size.x, size.x), mathf.clamp(0, size.y, size.y)))
 
     def update(self):
         if not self.parent or not RenderService.rendererStarted: return;
@@ -112,7 +117,7 @@ class GuiObject(Instance, SupportsOrdering):
         dropNeonRect = pygame.Rect(dropPos, dropSize)
         backgroundRect = pygame.Rect(position.x, position.y, size.x, size.y)
         borderRect = pygame.Rect(position.x - self.borderWidth, position.y - self.borderWidth, size.x + self.borderWidth * 2, size.y + self.borderWidth * 2)
-
+        
         dropShadowSurf = pygame.Surface((dropNeonRect.width, dropNeonRect.height), pygame.SRCALPHA);
         backgroundSurf = pygame.Surface((backgroundRect.width, backgroundRect.height), pygame.SRCALPHA);
         borderSurf = pygame.Surface((borderRect.width, borderRect.height), pygame.SRCALPHA);

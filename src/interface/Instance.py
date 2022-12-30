@@ -15,6 +15,7 @@ PROPERTIES_THAT_FORCE_RERENDER = [
 class Instance():
     parent: cliRen.Renderer | Instance | None = None;
     children: list[Instance];
+    _ongoingAnimations: list[Animation]
 
     def __setitem__(self, key: str, value: Any):
         self.__setattr__(key, value);
@@ -48,6 +49,7 @@ class Instance():
 
     def __init__(self) -> None:
         LoadDefaultGuiProperties('Instance', self);
+        self._ongoingAnimations = [];
 
     def destroy(self):
         self.parent = None;
@@ -58,3 +60,4 @@ class Instance():
         pass
 
 from modules.defaultGuiProperties import LoadDefaultGuiProperties
+from services.AnimationService import Animation
