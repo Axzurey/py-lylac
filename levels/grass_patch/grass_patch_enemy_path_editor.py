@@ -3,22 +3,7 @@ import math
 import time
 
 from pygame import Vector2
-from client.renderer import Renderer
-from hooks.useActionState import useActionState
-from interface.DraggableNurbsObject import DraggableNurbsObject
-from interface.DraggablePolygonObject import DraggablePolygonObject
-from interface.DraggableSegmentedLineObject import DraggableSegmentedLineObject
-from interface.EmptyButton import EmptyButton
-from interface.GuiObject import GuiObject
-from interface.Sprite import Sprite
-from interface.TextButton import TextButton
-from modules.color4 import Color4
-from modules.keymap import KeyCode
-from modules.udim2 import Udim2
-from modules.util import createThread
-from services.AnimationService import AnimationService, InterpolationMode
-from services.InputService import InputService
-from services.RenderService import RenderService
+from lylac import *
 
 mainRenderer = Renderer((1280, 720), 60);
 
