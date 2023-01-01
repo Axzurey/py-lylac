@@ -4,7 +4,9 @@ import time
 
 from pygame import Vector2
 from custom.towerWidget import TowerWidget
+from data.towers.StarBlue import StarBlue
 from lylac import *
+from lylac.services.DebugService import DebugService
 
 mainRenderer = Renderer((1280, 720), 60);
 
@@ -18,8 +20,8 @@ frame.borderColor = Color4(1, 1, 1)
 frame.dropShadowOffset = Udim2.fromOffset(5, 5);
 
 spr = Sprite();
-spr.imagePath = "assets/environment/grass patch-01.png";
 spr.parent = frame;
+spr.imagePath = "assets/environment/grass patch-01.png";
 spr.size = Udim2.fromOffset(1280, 720);
 spr.position = Udim2();
 
@@ -37,16 +39,6 @@ with open('levels/grass_patch/enemyPath.json', 'r') as f:
 
 areaPolygons: list[PolygonObject] = [];
 
-def checkPoly(x: InputMouseBuffer):
-    for poly in areaPolygons:
-        if poly.isPointInPolygon(x['position']):
-            poly.color = Color4(0, 1, 0);
-        else:
-            poly.color = Color4(1, 0, 0);
-
-def checkContext():
-    ...
-
 with open('levels/grass_patch/towerAreas.json', 'r') as f:
     areas: list[list[list[float]]] = json.loads(f.read());
 
@@ -59,9 +51,6 @@ with open('levels/grass_patch/towerAreas.json', 'r') as f:
             a.points.append(p);
         areaPolygons.append(a);
     f.close();
-
-InputService.onMouseButton1Down.connect(checkPoly)
-
 
 s = Sprite();
 s.imagePath = "assets/asteroid.png";
@@ -77,18 +66,31 @@ def upd(dt: float):
     t = clamp(0, 1, t + dt / 25);
 
     if t >= 1: return;
-
     point = curve.getDeltaAlongLine(t);
 
     if not point:
-        print('NO POINT', t);
         return;
 
     s.position = Udim2.fromOffset(point.x, point.y)
 
 RenderService.postRender.connect(upd);
 
-towerWidget = TowerWidget(spr, [])
+towerWidget = TowerWidget(spr, [
+    {
+        "name": "Star Blue",
+        "imagePath": "assets/towers/star-blue.png",
+        "cost": 100,
+        "radius": 200,
+        "link": StarBlue
+    },
+    {
+        "name": "Eclipse Red",
+        "imagePath": "assets/towers/star-blue.png",
+        "cost": 150,
+        "radius": 250,
+        "link": StarBlue
+    }
+], areaPolygons);
 
 mainRenderer.start(); #always goes at the bottom!
 

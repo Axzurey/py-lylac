@@ -50,6 +50,8 @@ class DraggableNurbsObject(Instance):
 
     curvePoints: list[list[float]] = [];
 
+    _surf: pygame.Surface | None = None;
+
     def __init__(self, parent: Instance | Renderer | None = None) -> None:
         super().__init__();
 
@@ -147,6 +149,8 @@ class DraggableNurbsObject(Instance):
         return [UL, UR, BL, BR];
 
     def update(self):
+        if not RenderService.rendererStarted: return;
+
         curve = NURBS.Curve()
 
         # Set up the curve
@@ -179,8 +183,6 @@ class DraggableNurbsObject(Instance):
 
         self.partitions = finalPoints;
 
-    def render(self, dt: float):
-
         screen = RenderService.renderer.screen;
 
         size = screen.get_size();
@@ -189,11 +191,19 @@ class DraggableNurbsObject(Instance):
             size = self.parent.absolutePosition.xy;
         
         surf = pygame.Surface(size, pygame.SRCALPHA, 32);
-        surf.convert_alpha()
+        surf = surf.convert_alpha()
 
         for point in self.partitions:
             (UL, UR, BR, BL) = point;
             pygame.gfxdraw.aapolygon(surf, (UL, UR, BR, BL), self.color.toRGBTuple())
             pygame.gfxdraw.filled_polygon(surf, (UL, UR, BR, BL), self.color.toRGBTuple())
 
-        screen.blit(surf, (0, 0));
+        self._surf = surf;
+
+    def render(self, dt: float):
+
+        if not self._surf: return;
+
+        screen = RenderService.renderer.screen;
+
+        screen.blit(self._surf, (0, 0));

@@ -12,7 +12,7 @@ def clamp(Min: number, Max: number, t: number) -> number:
     return t;
 
 def clampAll(minV: number, maxV: number, *nums: number) -> list[number]:
-    return [clamp(val, minV, maxV) for val in nums];
+    return [clamp(minV, maxV, val) for val in nums];
 
 def denormalize(a: number, b: number, x: number) -> number:
     return x * (b - a) + a;

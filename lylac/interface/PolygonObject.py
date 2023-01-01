@@ -28,6 +28,8 @@ class PolygonObject(Instance, IsPolygonal):
     controlPointColor: Color4;
     controlPointRadius: int;
 
+    _surf: pygame.Surface | None = None;
+
     def __init__(self, parent: Instance | Renderer | None = None) -> None:
         Instance.__init__(self);
         IsPolygonal.__init__(self);
@@ -38,9 +40,8 @@ class PolygonObject(Instance, IsPolygonal):
 
         self.parent = parent;
 
-    def update(self): ...
-
-    def render(self, dt: float):
+    def update(self):
+        if not RenderService.rendererStarted: return;
 
         screen = RenderService.renderer.screen;
 
@@ -50,7 +51,7 @@ class PolygonObject(Instance, IsPolygonal):
             size = self.parent.absolutePosition.xy;
         
         surf = pygame.Surface(size, pygame.SRCALPHA, 32);
-        surf.convert_alpha()
+        surf = surf.convert_alpha()
 
         pointIndex = 0;
         for point in self.points:
@@ -63,5 +64,13 @@ class PolygonObject(Instance, IsPolygonal):
             else:
                 pygame.draw.line(surf, self.color.toRGBList(), point, self.points[pointIndex + 1], int(self.width));
             pointIndex += 1;
+    
+        self._surf = surf;
 
-        screen.blit(surf, (0, 0));
+    def render(self, dt: float):
+
+        if not self._surf: return;
+
+        screen = RenderService.renderer.screen;
+
+        screen.blit(self._surf, (0, 0));

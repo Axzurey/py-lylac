@@ -2,8 +2,10 @@ from __future__ import annotations
 import math
 from typing import Any, Sequence 
 from pygame import Vector2
+from lylac.modules.color4 import Color4
 from lylac.modules.mathf import clamp
 from lylac.modules.lylacSignal import LylacSignal
+from lylac.services.DebugService import DebugService
 
 class line:
     def __init__(self, p1: Vector2, p2: Vector2):
@@ -67,7 +69,7 @@ def isPointInPolygon(poly: list[Vector2], p: Vector2):
     if n < 3:
         return False
  
-    exline = line(p, Vector2(-999999, p.y))
+    exline = line(p, Vector2(9999, p.y))
     count = 0
     i = 0
     while True:
@@ -142,7 +144,6 @@ def isPointInRotatedBounding(pos: Vector2, size: Vector2, point: Vector2, corner
     
     #https://math.stackexchange.com/questions/2207331/finding-the-fourth-point-of-a-perfect-square-without-knowing-order-of-points
     cornerIndex = 0;
-    print('start')
     for corner in corners:
         
         rI = 0 if cornerIndex == 3 else cornerIndex + 1;
@@ -153,17 +154,16 @@ def isPointInRotatedBounding(pos: Vector2, size: Vector2, point: Vector2, corner
         rightPush = corner + (right - corner).normalize() * cornerRadius;
         upPush = corner + (up - corner).normalize() * cornerRadius;
 
-        center = pos + size / 2;
+        dR = (right - corner).normalize();
+        dU = (up - corner).normalize();
 
-        directionToCenter = (center - corner).normalize();
+        directionToCenter = dU.lerp(dR, .5).normalize();
 
         lengthToCenterOfSquare = math.sqrt(2 * cornerRadius ** 2);
 
         centerPointOfSquare = corner + directionToCenter * (lengthToCenterOfSquare / 2);
 
         lastVertex = 4 * centerPointOfSquare - (rightPush + upPush + corner);
-
-        print(f'corner {cornerIndex}', isPointInPolygonSidecheck([upPush, corner, rightPush, lastVertex], point), isPointInCircle(point, lastVertex, cornerRadius))
 
         if isPointInPolygonSidecheck([upPush, corner, rightPush, lastVertex], point) and not isPointInCircle(point, lastVertex, cornerRadius):
             return False;
@@ -205,9 +205,7 @@ class CanEnable:
 class HasBounding(NominalObject):
     def isPointInBounding(self: Any, point: Vector2):
         from lylac.interface.GuiObject import GuiObject
-        from lylac.interface.Frame import Frame
         cRadius = clamp(0, min(self.absoluteSize.x, self.absoluteSize.y), self.cornerRadius) if isinstance(self, GuiObject) else 0; #type: ignore
-        if not isinstance(self, Frame): return;
 
         return isPointInRotatedBounding(self.absolutePosition, self.absoluteSize, point, cRadius, self.rotation)
 

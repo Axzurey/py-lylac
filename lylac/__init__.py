@@ -6,6 +6,7 @@ from lylac.services.AnimationService import AnimationService, InterpolationMode,
 from lylac.services.FontService import FontService;
 from lylac.services.RenderService import RenderService;
 from lylac.services.InputService import InputService, InputKeyBuffer, InputMouseBuffer;
+from lylac.services.DebugService import DebugService;
 
 #modules
 from lylac.modules.keymap import KeyCode;

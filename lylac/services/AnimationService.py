@@ -105,7 +105,9 @@ class Animation(Generic[T]):
         self.timeValue += dt;
         tV = clamp(0, self.animationLength, self.timeValue);
 
-        trueTime = normalize(0, self.animationLength, TIME_INTERPOLATIONS[self.interpolationMode](tV));
+        timeDelta = tV / self.animationLength;
+
+        trueTime = TIME_INTERPOLATIONS[self.interpolationMode](timeDelta);
 
         match self.origin:
             case pygame.Vector2():
@@ -121,7 +123,7 @@ class Animation(Generic[T]):
 
         self.onUpdate(self.value);
 
-        if tV >= self.animationLength:
+        if self.timeValue >= self.animationLength:
             self.disconnect();
 
 class AnimationService(ABC):
@@ -142,9 +144,6 @@ class AnimationService(ABC):
         originalValue: T = obj[property];
 
         if originalValue == targetValue: return;
-
-        for anim in obj._ongoingAnimations:
-            anim.disconnect();
 
         anim = Animation(originalValue, targetValue, animationDuration, interpolationMode, setValue);
         obj._ongoingAnimations.append(anim);

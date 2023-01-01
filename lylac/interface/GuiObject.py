@@ -8,12 +8,13 @@ from lylac.modules.udim2 import Udim2;
 import lylac.modules.mathf as mathf;
 import pygame
 
-def rotateAroundCenter(image: pygame.Surface, angle: float, center: pygame.Vector2) -> tuple[pygame.Surface, pygame.Rect]:
-    
-    x, y = center.xy
+def calculate_rect_for_image(image: pygame.Surface, center: pygame.Vector2):
+    x, y = center.xy;
+    return image.get_rect(center = image.get_rect(center = (x, y)).center);
 
+def rotateAroundCenter(image: pygame.Surface, angle: float, center: pygame.Vector2) -> tuple[pygame.Surface, pygame.Rect]:
     rotated_image = pygame.transform.rotate(image, angle);
-    new_rect = rotated_image.get_rect(center = image.get_rect(center = (x, y)).center);
+    new_rect = calculate_rect_for_image(image, center);
     return (rotated_image, new_rect);
 
 class GuiObject(Instance, SupportsOrdering):
@@ -32,16 +33,18 @@ class GuiObject(Instance, SupportsOrdering):
     boundingRect: pygame.Rect;
     rotation: float;
     anchorPoint: pygame.Vector2;
+    relativeSize: Literal['xx'] | Literal['xy'] | Literal['yy'];
+    relativePosition: Literal['xx'] | Literal['xy'] | Literal['yy'];
 
     surfaces: dict[Literal["dropShadowSurf"] | Literal["backgroundSurf"] | Literal["borderSurf"], tuple[pygame.Surface, pygame.Rect]];
 
     def __init__(self) -> None:
         self.surfaces = {};
 
+        LoadDefaultGuiProperties('GuiObject', self);
+
         Instance.__init__(self);
         SupportsOrdering.__init__(self);
-            
-        LoadDefaultGuiProperties('GuiObject', self);
 
 
     def udim2RelativeToSelfSize(self, udim: Udim2, relative: Literal['xx'] | Literal['xy'] | Literal['yy'] = 'xy'):
@@ -76,6 +79,15 @@ class GuiObject(Instance, SupportsOrdering):
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
 
+            if self.relativeSize == "xx":
+                size = pygame.Vector2(size.x, size.x);
+            elif self.relativeSize == "yy":
+                size = pygame.Vector2(size.y, size.y);
+            if self.relativePosition == "xx":
+                position = pygame.Vector2(position.x, position.x);
+            elif self.relativePosition == "yy":
+                position = pygame.Vector2(position.y, position.y);
+
             position -= size.elementwise() * self.anchorPoint.elementwise();
 
             return (position, pygame.Vector2(mathf.clamp(0, size.x, size.x), mathf.clamp(0, size.y, size.y)))
@@ -94,17 +106,24 @@ class GuiObject(Instance, SupportsOrdering):
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
 
+            if self.relativeSize == "xx":
+                size = pygame.Vector2(size.x, size.x);
+            elif self.relativeSize == "yy":
+                size = pygame.Vector2(size.y, size.y);
+            if self.relativePosition == "xx":
+                position = pygame.Vector2(position.x, position.x);
+            elif self.relativePosition == "yy":
+                position = pygame.Vector2(position.y, position.y);
+
             position -= size.elementwise() * self.anchorPoint.elementwise();
 
             return (position, pygame.Vector2(mathf.clamp(0, size.x, size.x), mathf.clamp(0, size.y, size.y)))
 
-    def update(self):
-        if not self.parent or not RenderService.rendererStarted: return;
+    def update_surfaces(self):
 
-        (position, size) = self.getSizeAndPositionFromUdim2(self.position, self.size)
+        self.update();
 
-        self.absolutePosition = position
-        self.absoluteSize = size
+        size, position = self.absoluteSize, self.absolutePosition;
 
         dropOffset = self.udim2RelativeToSelfSize(self.dropShadowOffset, 'xx')
 
@@ -118,16 +137,16 @@ class GuiObject(Instance, SupportsOrdering):
         backgroundRect = pygame.Rect(position.x, position.y, size.x, size.y)
         borderRect = pygame.Rect(position.x - self.borderWidth, position.y - self.borderWidth, size.x + self.borderWidth * 2, size.y + self.borderWidth * 2)
         
-        dropShadowSurf = pygame.Surface((dropNeonRect.width, dropNeonRect.height), pygame.SRCALPHA);
-        backgroundSurf = pygame.Surface((backgroundRect.width, backgroundRect.height), pygame.SRCALPHA);
-        borderSurf = pygame.Surface((borderRect.width, borderRect.height), pygame.SRCALPHA);
+        dropShadowSurf = pygame.Surface((dropNeonRect.width, dropNeonRect.height), pygame.SRCALPHA, 32).convert_alpha();
+        backgroundSurf = pygame.Surface((backgroundRect.width, backgroundRect.height), pygame.SRCALPHA, 32).convert_alpha();
+        borderSurf = pygame.Surface((borderRect.width, borderRect.height), pygame.SRCALPHA, 32).convert_alpha();
 
         pygame.draw.rect(borderSurf, self.borderColor.toRGBATuple(), ((0, 0), borderRect.size), 0, border_radius=self.cornerRadius)
 
         pygame.draw.rect(backgroundSurf, self.backgroundColor.toRGBATuple(), ((0, 0), backgroundRect.size), 0, border_radius=self.cornerRadius)
 
-        pygame.draw.rect(dropShadowSurf, self.dropShadowColor.toRGBTuple(), ((0, 0), dropNeonRect.size), border_radius=self.cornerRadius)
-       
+        pygame.draw.rect(dropShadowSurf, self.dropShadowColor.toRGBATuple(), ((0, 0), dropNeonRect.size), border_radius=self.cornerRadius)
+        
         (borderSurf, bdPos) = rotateAroundCenter(borderSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2);
 
         (backgroundSurf, bgPos) = rotateAroundCenter(backgroundSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2);
@@ -136,11 +155,48 @@ class GuiObject(Instance, SupportsOrdering):
 
         self.boundingRect = backgroundRect;
 
-        self.surfaces = {
-            "dropShadowSurf": (dropShadowSurf, dsPos),
-            "borderSurf": (borderSurf, bdPos),
-            "backgroundSurf": (backgroundSurf, bgPos)
-        };
+        self.surfaces['borderSurf'] = (borderSurf, bdPos);
+        self.surfaces['dropShadowSurf'] = (dropShadowSurf, dsPos);
+        self.surfaces['backgroundSurf'] = (backgroundSurf, bgPos);
+
+    def recalculate_surface_positions_for_position_change(self):
+        self.update();
+        if len(self.surfaces) < 3: return;
+
+        size, position = self.absoluteSize, self.absolutePosition;
+
+        dropOffset = self.udim2RelativeToSelfSize(self.dropShadowOffset, 'xx')
+
+        dropPos = pygame.Vector2(position.x + dropOffset.x,
+            position.y + dropOffset.y)
+
+        dropSize = pygame.Vector2(size.x + self.dropShadowRadius,
+            size.y + self.dropShadowRadius)
+
+
+        self.surfaces['borderSurf'] = (
+            self.surfaces['borderSurf'][0], 
+            calculate_rect_for_image(self.surfaces['borderSurf'][0], position + size / 2)
+        );
+        self.surfaces['backgroundSurf'] = (
+            self.surfaces['backgroundSurf'][0],
+            calculate_rect_for_image(self.surfaces['backgroundSurf'][0], position + size / 2)
+        );
+        
+        self.surfaces['dropShadowSurf'] = (
+            self.surfaces['dropShadowSurf'][0], 
+            calculate_rect_for_image(self.surfaces['dropShadowSurf'][0], dropPos + dropSize / 2)
+        );
+        
+    def update(self):
+        if not self.parent or not RenderService.rendererStarted: return;
+
+        (position, size) = self.getSizeAndPositionFromUdim2(self.position, self.size);
+
+        if size.x < 1 or size.y < 1: return;
+
+        self.absolutePosition = position
+        self.absoluteSize = size
 
         super().update()
     
@@ -148,17 +204,13 @@ class GuiObject(Instance, SupportsOrdering):
 
         screen = RenderService.renderer.screen;
         
-        if len(self.surfaces.keys()) < 1: return
+        if len(self.surfaces.keys()) < 3: return;
 
         (dropShadowSurf, dsPos) = self.surfaces['dropShadowSurf'];
         (borderSurf, bdPos) = self.surfaces['borderSurf'];
         (backgroundSurf, bgPos) = self.surfaces['backgroundSurf'];
 
-        screen.blit(dropShadowSurf, dsPos, special_flags = pygame.BLEND_PREMULTIPLIED);
-
-        screen.blit(borderSurf, bdPos, special_flags = pygame.BLEND_PREMULTIPLIED);
-
-        screen.blit(backgroundSurf, bgPos, special_flags = pygame.BLEND_PREMULTIPLIED);
+        screen.blits([(dropShadowSurf, dsPos), (borderSurf, bdPos), (backgroundSurf, bgPos)]);
 
 
 from lylac.services.RenderService import RenderService;

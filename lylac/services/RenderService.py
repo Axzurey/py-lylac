@@ -9,3 +9,6 @@ class RenderService(ABC):
     rendererStarted: bool = False;
 
     postRender = LylacSignal[float]();
+    renderBegin = LylacSignal();
+
+    _preliminary_update_calls = ["update", "update_image", "update_surfaces", "recalculate_surface_positions_for_position_change"];

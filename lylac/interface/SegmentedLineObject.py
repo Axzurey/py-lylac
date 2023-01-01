@@ -30,6 +30,8 @@ class SegmentedLineObject(Instance):
 
     lineLength: float = 0;
 
+    _surf: pygame.Surface | None = None;
+
     def __init__(self, parent: Instance | Renderer | None = None) -> None:
         super().__init__();
 
@@ -40,6 +42,7 @@ class SegmentedLineObject(Instance):
         self.parent = parent;
 
     def getDeltaAlongLine(self, delta: float) -> None | Vector2:
+        self.calculate_line_length();
         """
         Delta should be constrainted between the range [0, 1]. Values outside this range will be out of the line bounds.
         In such a case, the function will return None.
@@ -64,26 +67,28 @@ class SegmentedLineObject(Instance):
                 lengthTravelled += magnitude;
                 currentPointIndex += 1;
 
-    def update(self):
-
+    def calculate_line_length(self):
         l = 0;
         for i in range(len(self.points)):
             if i == len(self.points) - 1: break;
 
             l += (self.points[i] - self.points[i + 1]).magnitude();
         self.lineLength = l;
+        return l;
 
-    def render(self, dt: float):
+    def update(self):
+
+        if not RenderService.rendererStarted: return;
 
         screen = RenderService.renderer.screen;
 
         size = screen.get_size();
 
         if self.parent and isinstance(self.parent, GuiObject):
-            size = self.parent.absolutePosition.xy;
+            size = self.parent.absoluteSize.xy;
         
         surf = pygame.Surface(size, pygame.SRCALPHA, 32);
-        surf.convert_alpha()
+        surf = surf.convert_alpha()
 
         pointIndex = 0;
         for point in self.points:
@@ -95,4 +100,12 @@ class SegmentedLineObject(Instance):
             pygame.draw.line(surf, self.color.toRGBList(), point, self.points[pointIndex + 1], self.width);
             pointIndex += 1;
 
-        screen.blit(surf, (0, 0));
+        self._surf = surf;
+
+    def render(self, dt: float):
+
+        if not self._surf: return;
+
+        screen = RenderService.renderer.screen;
+
+        screen.blit(self._surf, (0, 0));

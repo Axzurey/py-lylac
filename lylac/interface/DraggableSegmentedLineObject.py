@@ -26,6 +26,8 @@ class DraggableSegmentedLineObject(Instance):
 
     connections: list[LylacConnection];
 
+    _surf: pygame.Surface | None = None;
+
     def __init__(self, parent: Instance | Renderer | None = None) -> None:
         super().__init__();
 
@@ -102,9 +104,8 @@ class DraggableSegmentedLineObject(Instance):
         self._createButtons();
         self.update();
 
-    def update(self): ...
-
-    def render(self, dt: float):
+    def update(self):
+        if not RenderService.rendererStarted: return;
 
         screen = RenderService.renderer.screen;
 
@@ -122,5 +123,12 @@ class DraggableSegmentedLineObject(Instance):
 
             pygame.draw.line(surf, self.color.toRGBList(), point, self.points[pointIndex + 1], int(self.width));
             pointIndex += 1;
+        self._surf = surf;
 
-        screen.blit(surf, (0, 0));
+    def render(self, dt: float):
+
+        if not self._surf: return;
+
+        screen = RenderService.renderer.screen;
+
+        screen.blit(self._surf, (0, 0));

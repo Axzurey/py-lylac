@@ -1,0 +1,141 @@
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.7
+-------------------------------------------------------------------------------
+count time : 2023-01-01 15:55:06
+count workspace : c:\Users\Phxie\Documents\projects\blind-nue
+total files : 120
+total code lines : 42815
+total comment lines : 32252
+total blank lines : 1178
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |            .py|           2768|             71|            823|    6.5|
+   |          .json|            241|              0|              0|   0.56|
+   |           .txt|              1|              0|              0| 0.0023|
+   |            .ai|          39803|          32179|            355|     93|
+   |               |              2|              2|              0| 0.0047|
+   -------------------------------------------------------------------------
+.gitignore, code is 2, comment is 2, blank is 0.
+assets\asteroid.png, it is a binary file.
+assets\asteroid.psd, it is a binary file.
+assets\environment\blurry tree.ai, code is 1017, comment is 2, blank is 23.
+assets\environment\detailed tree.ai, code is 1096, comment is 1, blank is 24.
+assets\environment\detailed tree.png, it is a binary file.
+assets\environment\grass patch-01.png, it is a binary file.
+assets\environment\grass patch.ai, code is 32623, comment is 31824, blank is 158.
+assets\environment\grass patch.png, it is a binary file.
+assets\environment\green bloat diag.ai, code is 727, comment is 3, blank is 21.
+assets\environment\green bloat vert.ai, code is 745, comment is 1, blank is 21.
+assets\environment\paratic tree.ai, code is 812, comment is 2, blank is 22.
+assets\environment\paratic tree.png, it is a binary file.
+assets\environment\tree1-spike.ai, code is 783, comment is 1, blank is 23.
+assets\environment\tree1.ai, code is 709, comment is 85, blank is 21.
+assets\environment\tree1.png, it is a binary file.
+assets\hazes\eye of midnight.ai, code is 606, comment is 258, blank is 21.
+assets\solar.jpg, it is a binary file.
+assets\towers\star-blue.ai, code is 685, comment is 2, blank is 21.
+assets\towers\star-blue.png, it is a binary file.
+custom\__pycache__\towerWidget.cpython-311.pyc, it is a binary file.
+custom\towerWidget.py, code is 133, comment is 1, blank is 34.
+data\__pycache__\tower.cpython-311.pyc, it is a binary file.
+data\Enemy.py, code is 0, comment is 0, blank is 0.
+data\tower.py, code is 27, comment is 0, blank is 9.
+data\towers\__pycache__\StarBlue.cpython-311.pyc, it is a binary file.
+data\towers\StarBlue.py, code is 18, comment is 0, blank is 7.
+fae-lock.json, code is 3, comment is 0, blank is 0.
+fae.config.json, code is 14, comment is 0, blank is 0.
+levels\grass_patch\enemyPath.json, code is 26, comment is 0, blank is 0.
+levels\grass_patch\grass_patch_enemy_path_editor.py, code is 47, comment is 1, blank is 13.
+levels\grass_patch\grass_patch_tower_area_editor.py, code is 51, comment is 1, blank is 15.
+levels\grass_patch\towerAreas.json, code is 198, comment is 0, blank is 0.
+lylac\__init__.py, code is 26, comment is 5, blank is 4.
+lylac\__pycache__\__init__.cpython-311.pyc, it is a binary file.
+lylac\client\__pycache__\renderer.cpython-310.pyc, it is a binary file.
+lylac\client\__pycache__\renderer.cpython-311.pyc, it is a binary file.
+lylac\client\renderer.py, code is 236, comment is 8, blank is 93.
+lylac\fonts\NotoSansMono-Regular.ttf, it is a binary file.
+lylac\hooks\__pycache__\useActionState.cpython-310.pyc, it is a binary file.
+lylac\hooks\__pycache__\useActionState.cpython-311.pyc, it is a binary file.
+lylac\hooks\useActionState.py, code is 60, comment is 0, blank is 15.
+lylac\images\lilac.png, it is a binary file.
+lylac\interface\__pycache__\CNurbsObject.cpython-310.pyc, it is a binary file.
+lylac\interface\__pycache__\CNurbsObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\DraggableNurbsObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\DraggablePolygonObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\DraggableSegmentedLineObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\EmptyButton.cpython-310.pyc, it is a binary file.
+lylac\interface\__pycache__\EmptyButton.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\Frame.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\GuiObject.cpython-310.pyc, it is a binary file.
+lylac\interface\__pycache__\GuiObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\ImageButton.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\Instance.cpython-310.pyc, it is a binary file.
+lylac\interface\__pycache__\Instance.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\NominalObjects.cpython-310.pyc, it is a binary file.
+lylac\interface\__pycache__\NominalObjects.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\NurbsObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\PolygonObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\SegmentedLineObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\Sprite.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\TextButton.cpython-310.pyc, it is a binary file.
+lylac\interface\__pycache__\TextButton.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\TextObject.cpython-310.pyc, it is a binary file.
+lylac\interface\__pycache__\TextObject.cpython-311.pyc, it is a binary file.
+lylac\interface\__pycache__\uifx.cpython-310.pyc, it is a binary file.
+lylac\interface\__pycache__\uifx.cpython-311.pyc, it is a binary file.
+lylac\interface\DraggableNurbsObject.py, code is 148, comment is 8, blank is 55.
+lylac\interface\DraggablePolygonObject.py, code is 100, comment is 0, blank is 37.
+lylac\interface\DraggableSegmentedLineObject.py, code is 98, comment is 0, blank is 36.
+lylac\interface\EmptyButton.py, code is 17, comment is 0, blank is 5.
+lylac\interface\Frame.py, code is 11, comment is 0, blank is 4.
+lylac\interface\GuiObject.py, code is 149, comment is 0, blank is 65.
+lylac\interface\ImageButton.py, code is 34, comment is 0, blank is 21.
+lylac\interface\Instance.py, code is 86, comment is 0, blank is 17.
+lylac\interface\NominalObjects.py, code is 174, comment is 21, blank is 61.
+lylac\interface\NurbsObject.py, code is 102, comment is 8, blank is 38.
+lylac\interface\PolygonObject.py, code is 55, comment is 0, blank is 21.
+lylac\interface\SegmentedLineObject.py, code is 77, comment is 0, blank is 31.
+lylac\interface\Sprite.py, code is 104, comment is 0, blank is 44.
+lylac\interface\TextButton.py, code is 14, comment is 0, blank is 5.
+lylac\interface\TextObject.py, code is 43, comment is 0, blank is 13.
+lylac\modules\__pycache__\color4.cpython-310.pyc, it is a binary file.
+lylac\modules\__pycache__\color4.cpython-311.pyc, it is a binary file.
+lylac\modules\__pycache__\defaultGuiProperties.cpython-310.pyc, it is a binary file.
+lylac\modules\__pycache__\defaultGuiProperties.cpython-311.pyc, it is a binary file.
+lylac\modules\__pycache__\keymap.cpython-310.pyc, it is a binary file.
+lylac\modules\__pycache__\keymap.cpython-311.pyc, it is a binary file.
+lylac\modules\__pycache__\lylacSignal.cpython-310.pyc, it is a binary file.
+lylac\modules\__pycache__\lylacSignal.cpython-311.pyc, it is a binary file.
+lylac\modules\__pycache__\mathf.cpython-310.pyc, it is a binary file.
+lylac\modules\__pycache__\mathf.cpython-311.pyc, it is a binary file.
+lylac\modules\__pycache__\udim2.cpython-310.pyc, it is a binary file.
+lylac\modules\__pycache__\udim2.cpython-311.pyc, it is a binary file.
+lylac\modules\__pycache__\util.cpython-310.pyc, it is a binary file.
+lylac\modules\__pycache__\util.cpython-311.pyc, it is a binary file.
+lylac\modules\color4.py, code is 44, comment is 0, blank is 7.
+lylac\modules\defaultGuiProperties.py, code is 122, comment is 1, blank is 7.
+lylac\modules\keymap.py, code is 361, comment is 12, blank is 20.
+lylac\modules\lylacSignal.py, code is 38, comment is 0, blank is 11.
+lylac\modules\mathf.py, code is 14, comment is 0, blank is 7.
+lylac\modules\udim2.py, code is 34, comment is 0, blank is 12.
+lylac\modules\util.py, code is 9, comment is 0, blank is 6.
+lylac\services\__pycache__\AnimationService.cpython-311.pyc, it is a binary file.
+lylac\services\__pycache__\DebugService.cpython-311.pyc, it is a binary file.
+lylac\services\__pycache__\FontService.cpython-310.pyc, it is a binary file.
+lylac\services\__pycache__\FontService.cpython-311.pyc, it is a binary file.
+lylac\services\__pycache__\InputService.cpython-310.pyc, it is a binary file.
+lylac\services\__pycache__\InputService.cpython-311.pyc, it is a binary file.
+lylac\services\__pycache__\RenderService.cpython-310.pyc, it is a binary file.
+lylac\services\__pycache__\RenderService.cpython-311.pyc, it is a binary file.
+lylac\services\AnimationService.py, code is 115, comment is 1, blank is 36.
+lylac\services\DebugService.py, code is 20, comment is 0, blank is 7.
+lylac\services\FontService.py, code is 31, comment is 1, blank is 10.
+lylac\services\InputService.py, code is 37, comment is 0, blank is 16.
+lylac\services\RenderService.py, code is 10, comment is 0, blank is 4.
+main.py, code is 77, comment is 2, blank is 19.
+notes.txt, code is 1, comment is 0, blank is 0.
+test.py, code is 46, comment is 1, blank is 18.
+===============================================================================

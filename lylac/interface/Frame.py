@@ -10,3 +10,6 @@ class Frame(GuiObject, Clickable, Hoverable):
         Hoverable.__init__(self);
 
         LoadDefaultGuiProperties('Frame', self);
+
+    def update(self):
+        super().update()

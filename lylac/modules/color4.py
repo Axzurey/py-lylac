@@ -15,6 +15,7 @@ class Color4:
         return self.r == other.r and self.g == other.g and self.b == other.b and self.a == other.a;
 
     def __init__(self, r: float = 0, g: float = 0, b: float = 0, a: float = 1) -> None:
+        (r, g, b, a) = clampAll(0, 1, r, g, b, a);
         self.r = r;
         self.g = g;
         self.b = b;
@@ -24,6 +25,10 @@ class Color4:
     def fromRGBA(r: int = 0, g: int = 0, b: int = 0, a: int = 255):
         (r, g, b, a) = clampAll(0, 255, r, g, b, a);
         return Color4(r / 255, g / 255, b / 255, a / 255);
+    @staticmethod
+    def fromRGB(r: int = 0, g: int = 0, b: int = 0):
+        (r, g, b) = clampAll(0, 255, r, g, b);
+        return Color4(r / 255, g / 255, b / 255, 1);
     
     def toRGBATuple(self) -> tuple[int, int, int, int]:
         return (int(self.r * 255), int(self.g * 255), int(self.b * 255), int(self.a * 255));

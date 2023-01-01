@@ -1,7 +1,7 @@
 from typing import Literal
 from pygame import Vector2
 import pygame
-from lylac.interface.GuiObject import rotateAroundCenter
+from lylac.interface.GuiObject import calculate_rect_for_image, rotateAroundCenter
 from lylac.interface.Instance import Instance
 from lylac.interface.NominalObjects import Clickable, Hoverable, SupportsOrdering
 from lylac.modules.defaultGuiProperties import LoadDefaultGuiProperties
@@ -19,9 +19,13 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
     rotation: int;
     boundingRect: pygame.Rect;
     imagePath: str;
-    anchorPoint: Vector2; #TODO: IMPLEMENT THIS
+    anchorPoint: Vector2;
+    relativeSize: Literal['xx'] | Literal['xy'] | Literal['yy'];
+    relativePosition: Literal['xx'] | Literal['xy'] | Literal['yy'];
 
     surfaces: dict[Literal['image'], tuple[pygame.Surface, pygame.Rect]];
+
+    _img: pygame.Surface | None = None;
     
     def __init__(self) -> None:
         Instance.__init__(self);
@@ -65,6 +69,15 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
 
+            if self.relativeSize == "xx":
+                size = pygame.Vector2(size.x, size.x);
+            elif self.relativeSize == "yy":
+                size = pygame.Vector2(size.y, size.y);
+            if self.relativePosition == "xx":
+                position = pygame.Vector2(position.x, position.x);
+            elif self.relativePosition == "yy":
+                position = pygame.Vector2(position.y, position.y);
+
             position -= size.elementwise() * self.anchorPoint.elementwise();
 
             return (position, pygame.Vector2(mathf.clamp(0, size.x, size.x), mathf.clamp(0, size.y, size.y)))
@@ -83,34 +96,55 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
             position = pygame.Vector2(mathf.lerp(pPos.x, pPos.x + pSize.x, fP.x) + fpO.x, mathf.lerp(pPos.y, pPos.y + pSize.y, fP.y) + fpO.y)
             size = pygame.Vector2(mathf.lerp(0, pSize.x, fS.x) + fsO.x, mathf.lerp(0, pSize.y, fS.y) + fsO.y)
 
+            if self.relativeSize == "xx":
+                size = pygame.Vector2(size.x, size.x);
+            elif self.relativeSize == "yy":
+                size = pygame.Vector2(size.y, size.y);
+            if self.relativePosition == "xx":
+                position = pygame.Vector2(position.x, position.x);
+            elif self.relativePosition == "yy":
+                position = pygame.Vector2(position.y, position.y);
+
             position -= size.elementwise() * self.anchorPoint.elementwise();
 
             return (position, pygame.Vector2(mathf.clamp(0, size.x, size.x), mathf.clamp(0, size.y, size.y)))
 
     def render(self, dt: float):
         screen = RenderService.renderer.screen;
-
         if len(self.surfaces.keys()) < 1: return;
 
         (imageSurf, imageRect) = self.surfaces['image'];
 
-        screen.blit(imageSurf, imageRect, special_flags=pygame.BLEND_PREMULTIPLIED);
+        screen.blit(imageSurf, imageRect);
+
+    def update_image(self):
+        self._img = pygame.image.load(self.imagePath).convert_alpha();
+
+        img = pygame.transform.scale(self._img, self.absoluteSize)
+
+        (img, imgPos) = rotateAroundCenter(img, self.rotation, self.absolutePosition + self.absoluteSize / 2);
+
+        self.surfaces['image'] = (img, imgPos);
+
+    def recalculate_surface_positions_for_position_change(self):
+        self.update();
+
+        if len(self.surfaces) < 1: return;
+
+        self.surfaces['image'] = (
+            self.surfaces['image'][0],
+            calculate_rect_for_image(self.surfaces['image'][0], self.absolutePosition + self.absoluteSize / 2)
+        );
 
     def update(self):
         
-        if not self.parent or not RenderService.rendererStarted: return;
+        if not self.parent or not self._img: return;
 
         (position, size) = self.getSizeAndPositionFromUdim2(self.position, self.size);
 
+        if size.x < 1 or size.y < 1: return;
+
         self.absolutePosition = position;
         self.absoluteSize = size;
-
-        img = pygame.image.load(self.imagePath).convert_alpha();
-
-        img = pygame.transform.scale(img, size);
-
-        (img, imgPos) = rotateAroundCenter(img, self.rotation, position + size / 2);
-
-        self.surfaces['image'] = (img, imgPos);
 
         return super().update();

@@ -7,6 +7,7 @@ from lylac.interface.NominalObjects import NominalObject
 from lylac.modules.color4 import Color4
 from lylac.modules.udim2 import Udim2
 from lylac.modules.util import rawSet
+import uuid
 
 def blankAnyTypedList() -> list[Any]:
     return list()
@@ -38,16 +39,19 @@ GUI_DEFAULT_PROPERTIES = {
     "color": lambda: Color4(0, 1, 1),
     "width": lambda: 15,
     "showControlPoints": lambda: True,
-    "imagePath": lambda: 'PLEASE SET ME',
+    "imagePath": lambda: 'lylac/images/lilac.png',
     "curvePoints": lambda: [],
     "anchorPoint": lambda: Vector2(),
     "controlPointColor": lambda: Color4(0, 0, 1),
     "controlPointRadius": lambda: 10,
+    "relativeSize": lambda: 'xy',
+    "relativePosition": lambda: 'xy',
+    "name": lambda: f"instance-{uuid.uuid4().hex}"
 }
 
 GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], list[str]]] = {
     "Instance": {
-        "properties": ["children"],
+        "properties": ["children", "name"],
     },
     "Frame": {
         "properties": []
@@ -74,7 +78,8 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
         "properties": [
             "size", "position", "absoluteSize", 
             "absolutePosition", "rotation", "boundingRect",
-            "imagePath", "anchorPoint"
+            "imagePath", "anchorPoint", "relativeSize",
+            "relativePosition"
         ]
     },
     "SupportsOrdering": {
@@ -86,7 +91,8 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
             "borderColor", "borderWidth", "dropShadowColor", 
             "dropShadowRadius", "dropShadowOffset", "absolutePosition",
             "absoluteSize", "cornerRadius", "boundingRect",
-            "rotation", "anchorPoint"
+            "rotation", "anchorPoint", "relativeSize",
+            "relativePosition"
         ],
         "inherits": ["Instance"]
     },

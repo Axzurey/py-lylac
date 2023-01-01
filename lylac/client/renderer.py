@@ -6,6 +6,7 @@ import time
 from lylac.interface.NominalObjects import Clickable, Hoverable, SupportsOrdering
 from lylac.modules.keymap import KeyBuffer, purifyRawKeyBuffer
 from lylac.modules.lylacSignal import LylacSignal
+from lylac.services.DebugService import DebugService
 
 pygame.init();
 pygame.freetype.init();
@@ -128,7 +129,9 @@ class Renderer():
         return update
 
     def shortUpdate(self, child: Instance):
-        child.update();
+        for c in RenderService._preliminary_update_calls:
+            if hasattr(child.__class__, c) and callable(getattr(child.__class__, c)):
+                getattr(child.__class__, c)(child);
         for c in child.children:
             self.shortUpdate(c);
 
@@ -142,6 +145,8 @@ class Renderer():
 
         for child in self.children:
             self.shortUpdate(child);
+
+        RenderService.renderBegin.dispatch(None);
 
         while not self.rendererClosing:
             now = time.time();
@@ -174,20 +179,25 @@ class Renderer():
                     self.rendererClosing = True;
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
+                    
+                    if event.button < 5:
 
-                    passList['mousePressed'] = True;
-                    mouseBuffer = {
-                        'position': pygame.Vector2(event.pos),
-                        'clickType': buttonTypeMap[event.button],
-                    }
+                        passList['mousePressed'] = True;
+                        
+                        mouseBuffer = {
+                            'position': pygame.Vector2(event.pos),
+                            'clickType': buttonTypeMap[event.button],
+                        }
 
                 elif event.type == pygame.MOUSEBUTTONUP:
 
-                    passList['mouseLifted'] = True;
-                    mouseBuffer = {
-                        'position': pygame.Vector2(event.pos),
-                        'clickType': buttonTypeMap[event.button],
-                    }
+                    if event.button < 5:
+                        passList['mouseLifted'] = True;
+
+                        mouseBuffer = {
+                            'position': pygame.Vector2(event.pos),
+                            'clickType': buttonTypeMap[event.button],
+                        }
                     
                 elif event.type == pygame.MOUSEWHEEL:
 
@@ -263,7 +273,7 @@ class Renderer():
                     "mouseBuffer": mouseBuffer,
                     "lastButton": None,
                     "lastHover": None
-                })
+                });
 
                 for aOrder in updBfr['actionOrders']['click']:
 
@@ -298,9 +308,22 @@ class Renderer():
                         updBfr['lastHover']['obj'].onHoverEnter.dispatch(None);
                         updBfr['lastHover']['obj']._isHover = True;
 
+            
+            if len(DebugService.points) > 0:
+                surf = pygame.Surface(self.resolution, pygame.SRCALPHA, 32);
+                surf = surf.convert_alpha();
+                    
+                for point in DebugService.points:
+                    
+                    pygame.draw.circle(surf, point.color.toRGBTuple(), point.vertex, 5);
+                    if not point.static:
+                        point.remove();
+                self.screen.blit(surf, (0, 0))
+
             RenderService.postRender.dispatch(dt);
 
             pygame.display.flip();
+            pygame.display.set_caption(f"Blind Nue [@{str(round(clock.get_fps()))}fps]")
             clock.tick(self.framerate);
 
 from lylac.services.InputService import InputMouseBuffer, InputService
