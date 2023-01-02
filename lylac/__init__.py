@@ -7,6 +7,7 @@ from lylac.services.FontService import FontService;
 from lylac.services.RenderService import RenderService;
 from lylac.services.InputService import InputService, InputKeyBuffer, InputMouseBuffer;
 from lylac.services.DebugService import DebugService;
+from lylac.services.CleanupService import CleanupService;
 
 #modules
 from lylac.modules.keymap import KeyCode;

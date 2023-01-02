@@ -32,18 +32,29 @@ class TowerWidget:
     areaPolygons: list[lylac.PolygonObject];
 
     def checkInArea(self, point: Vector2):
+        for tower in TowerManager.towers:
+            if (tower.position - point).magnitude() <= tower.towerObject.size.xOffset - tower.allowedPaddingInset:
+                return False;
         for poly in self.areaPolygons:
             if poly.isPointInPolygon(point):
                 return True;
-        for tower in TowerManager.towers:
-            if (tower.position - point).magnitude() < 80: #80 is 70(the size of every tower) plus 5(padding)
-                return False;
         return False;
 
     def startTowerPlacement(self, towerIndex: int):
         self.close();
 
         towerInfo = self.towerInfos[towerIndex];
+
+        f = lylac.TextObject();
+        f.zIndex = 10000;
+        f.parent = self.frame;
+        f.text = "X";
+        f.textAlignX = 'center';
+        f.backgroundColor = lylac.Color4(.25, 0, 0);
+        f.textColor = lylac.Color4(1, 0, 0)
+        f.textSize = 40;
+        f.textAlignY = 'center';
+        f.size = lylac.Udim2.fromScale(1, 1);
 
         back = lylac.Frame();
         back.backgroundColor = lylac.Color4(1, 0, 0, .5);
@@ -60,7 +71,7 @@ class TowerWidget:
 
         spr = lylac.Sprite();
         spr.imagePath = towerInfo["imagePath"];
-        spr.size = lylac.Udim2.fromOffset(75, 75);
+        spr.size = lylac.Udim2.fromOffset(towerInfo["targetSize"] / 1.5, towerInfo["targetSize"] / 1.5);
         spr.parent = self.display;
         spr.anchorPoint = Vector2(.5, .5);
         spr.name = "hover sprite";
@@ -70,6 +81,7 @@ class TowerWidget:
             c1.disconnect();
             back.destroy();
             spr.destroy();
+            f.destroy();
 
         def place():
             tower = towerInfo["link"](self.display, InputService.getMousePosition());

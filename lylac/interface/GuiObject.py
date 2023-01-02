@@ -13,8 +13,8 @@ def calculate_rect_for_image(image: pygame.Surface, center: pygame.Vector2):
     return image.get_rect(center = image.get_rect(center = (x, y)).center);
 
 def rotateAroundCenter(image: pygame.Surface, angle: float, center: pygame.Vector2) -> tuple[pygame.Surface, pygame.Rect]:
-    rotated_image = pygame.transform.rotate(image, angle);
-    new_rect = calculate_rect_for_image(image, center);
+    rotated_image = pygame.transform.rotate(image, -angle);
+    new_rect = calculate_rect_for_image(rotated_image, center);
     return (rotated_image, new_rect);
 
 class GuiObject(Instance, SupportsOrdering):

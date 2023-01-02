@@ -1,9 +1,12 @@
 import json
 import math
 import time
-
+from data.enemies.MidnightEye import MidnightEye
+from data.tower import TowerManager
+from lylac.modules.util import createThread
 from pygame import Vector2
 from custom.towerWidget import TowerWidget
+from data.Enemy import Enemy, EnemyManager
 from data.towers.StarBlue import StarBlue
 from lylac import *
 from lylac.services.DebugService import DebugService
@@ -37,6 +40,8 @@ with open('levels/grass_patch/enemyPath.json', 'r') as f:
         curve.points.append(v);
     f.close();
 
+    EnemyManager.curve = curve;
+
 areaPolygons: list[PolygonObject] = [];
 
 with open('levels/grass_patch/towerAreas.json', 'r') as f:
@@ -59,21 +64,13 @@ s.anchorPoint = Vector2(.5, .5)
 s.size = Udim2.fromOffset(20, 20);
 s.position = Udim2();
 
-t = 0;
-def upd(dt: float):
-    global curve;
-    global t;
-    t = clamp(0, 1, t + dt / 25);
+def summon_enemies(_):
+    for i in range(50):
+        time.sleep(.25);
+        enemy = MidnightEye(spr)
+        EnemyManager.addEnemy(enemy);
 
-    if t >= 1: return;
-    point = curve.getDeltaAlongLine(t);
-
-    if not point:
-        return;
-
-    s.position = Udim2.fromOffset(point.x, point.y)
-
-RenderService.postRender.connect(upd);
+createThread(summon_enemies, None);
 
 towerWidget = TowerWidget(spr, [
     {
@@ -81,16 +78,21 @@ towerWidget = TowerWidget(spr, [
         "imagePath": "assets/towers/star-blue.png",
         "cost": 100,
         "radius": 200,
-        "link": StarBlue
+        "link": StarBlue,
+        "targetSize": 125,
     },
     {
         "name": "Eclipse Red",
         "imagePath": "assets/towers/star-blue.png",
         "cost": 150,
         "radius": 250,
-        "link": StarBlue
+        "link": StarBlue,
+        "targetSize": 125,
     }
 ], areaPolygons);
+
+RenderService.postRender.connect(EnemyManager.update)
+RenderService.postRender.connect(TowerManager.update)
 
 mainRenderer.start(); #always goes at the bottom!
 

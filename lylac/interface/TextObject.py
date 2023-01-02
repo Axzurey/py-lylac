@@ -21,6 +21,7 @@ class TextObject(GuiObject):
         super().update();
     def render(self, dt: float):
         super().render(dt);
+        self.renderText();
 
     def renderText(self):
 

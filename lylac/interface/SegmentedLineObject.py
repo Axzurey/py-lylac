@@ -42,6 +42,7 @@ class SegmentedLineObject(Instance):
         self.parent = parent;
 
     def getDeltaAlongLine(self, delta: float) -> None | Vector2:
+        if delta == 0: return self.points[0];
         self.calculate_line_length();
         """
         Delta should be constrainted between the range [0, 1]. Values outside this range will be out of the line bounds.

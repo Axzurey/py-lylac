@@ -9,10 +9,16 @@ class TowerInformation(TypedDict):
     imagePath: str;
     radius: int;
     link: Type[Tower];
+    targetSize: int;
 
 class TowerManager:
 
     towers: list[Tower] = [];
+
+    @staticmethod
+    def update(dt: float):
+        for tower in TowerManager.towers:
+            tower.update();
 
     @staticmethod
     def addTower(t: Tower):
@@ -28,6 +34,8 @@ class Tower:
     towerObject: lylac.Sprite;
     screen: lylac.Instance;
     position: pygame.Vector2;
+
+    allowedPaddingInset: int = 15;
     
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
         self.screen = screen;
