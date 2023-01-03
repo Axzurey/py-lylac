@@ -8,7 +8,21 @@ from lylac.modules.defaultGuiProperties import LoadDefaultGuiProperties
 from lylac.modules.udim2 import Udim2
 import lylac.modules.mathf as mathf
 from lylac.services.RenderService import RenderService;
+from cachetools import cached;
+from cachetools.keys import hashkey;
 
+@cached(cache={}, key=lambda imagePath, _absolutePosition, _absoluteSize, _rotation: hashkey(imagePath, _absoluteSize, _rotation))
+def get_image(imagePath: str, _absolutePosition: tuple[int, int], _absoluteSize: tuple[int, int], rotation: int):
+    absoluteSize = pygame.Vector2(_absoluteSize);
+    absolutePosition = pygame.Vector2(_absolutePosition);
+
+    _img = pygame.image.load(imagePath).convert_alpha();
+
+    img = pygame.transform.scale(_img, absoluteSize)
+
+    (img, imgPos) = rotateAroundCenter(img, rotation, absolutePosition + absoluteSize / 2);
+
+    return img, (img, imgPos);
 
 class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
 
@@ -118,13 +132,16 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
         screen.blit(imageSurf, imageRect);
 
     def update_image(self):
-        self._img = pygame.image.load(self.imagePath).convert_alpha();
+        #self._img = pygame.image.load(self.imagePath).convert_alpha();
 
-        img = pygame.transform.scale(self._img, self.absoluteSize)
+        #img = pygame.transform.scale(self._img, self.absoluteSize)
 
-        (img, imgPos) = rotateAroundCenter(img, self.rotation, self.absolutePosition + self.absoluteSize / 2);
+        #(img, imgPos) = rotateAroundCenter(img, self.rotation, self.absolutePosition + self.absoluteSize / 2);
 
+        _img, (img, imgPos) = get_image(self.imagePath, (self.absolutePosition.x, self.absolutePosition.y), (self.absoluteSize.x, self.absoluteSize.y), self.rotation); #type: ignore
+        self._img = _img;
         self.surfaces['image'] = (img, imgPos);
+        self.recalculate_surface_positions_for_position_change();
 
     def recalculate_surface_positions_for_position_change(self):
         self.update();

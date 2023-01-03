@@ -54,16 +54,21 @@ class Enemy:
     def takeDamage(self, damage: float):
         self.health -= damage;
         if self.health <= 0 and self in EnemyManager.enemies:
-            EnemyManager.enemies.remove(self);
-            self.enemyObject.destroy();
+            self.destroy();
+
+    def destroy(self):
+        EnemyManager.enemies.remove(self);
+        self.enemyObject.destroy();
 
     def update(self):
         self.alphaAlongPath += self.speed / 1000 / 60;
         pathRes = EnemyManager.curve.getDeltaAlongLine(self.alphaAlongPath);
 
+        if self.alphaAlongPath >= 1:
+            self.destroy();
+
         if pathRes:
             self.update_position(pathRes);
         else: ...
         if self.health <= 0 and self in EnemyManager.enemies:
-            EnemyManager.enemies.remove(self);
-            self.enemyObject.destroy();
+            self.destroy();
