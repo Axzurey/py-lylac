@@ -75,10 +75,11 @@ class StarBlue(Tower):
 
         c0 = RenderService.postRender.connect(setPosOfProjectile);
 
-        asyncio.run(lylac.CleanupService.cleanUp(p, 3.5, lambda: c0.disconnect()))
+        lylac.CleanupService.cleanUp(p, 3.5, lambda: c0.disconnect())
 
 
-    def update(self):
+    def update(self, dt: float):
         if time.time() - self.lastFired > 1 / self.fireRate:
-
             self.targetEnemy();
+
+        super().update(dt);

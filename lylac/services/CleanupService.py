@@ -1,14 +1,27 @@
 from lylac.interface.Instance import Instance;
-import asyncio;
-from typing import Callable, Any;
+import threading;
+import time;
+from typing import Callable, Any, TypeVar;
+
+background_tasks = set();
+
+T = TypeVar("T")
 
 class CleanupService:
+
     @staticmethod
-    async def cleanUp(obj: Instance, after: float, beforeDestroy: Callable[[], Any]):
-        """
-        obj is the object to cleanup
-        after is the time in seconds to cleanup
-        """
-        await asyncio.sleep(after);
-        beforeDestroy();
+    def delay(after: float, callback: Callable[[T], Any], *args: T):
+        thread = threading.Thread(target=lambda args: (time.sleep(after), callback(args)), daemon=True, args=args);
+        thread.start();
+
+    @staticmethod
+    def _perform_static_cleanup(obj: Instance, after: float, beforeDestroy: Callable[[], Any] | None = None):
+        time.sleep(after);
+        if beforeDestroy:
+            beforeDestroy();
         obj.destroy();
+
+    @staticmethod
+    def cleanUp(obj: Instance, after: float, beforeDestroy: Callable[[], Any] | None = None):
+        thread = threading.Thread(target=CleanupService._perform_static_cleanup, daemon=True, args=(obj, after, beforeDestroy));
+        thread.start();

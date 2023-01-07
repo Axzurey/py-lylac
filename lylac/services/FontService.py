@@ -1,4 +1,3 @@
-from abc import ABC;
 import os;
 import pathlib
 from typing import Optional
@@ -14,7 +13,7 @@ class FreeFont:
         rotation: int = 0, size: int = 16
     ) -> tuple[pygame.Surface, pygame.Rect]: ...
 
-class FontService(ABC):
+class FontService:
 
     fonts: dict[str, FreeFont] = {}
 

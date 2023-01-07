@@ -3,6 +3,7 @@ import math
 import time
 from data.enemies.MidnightEye import MidnightEye
 from data.tower import TowerManager
+from data.towers.Marionette import Marionette
 from lylac.modules.util import createThread
 from pygame import Vector2
 from custom.towerWidget import TowerWidget
@@ -65,7 +66,7 @@ s.size = Udim2.fromOffset(20, 20);
 s.position = Udim2();
 
 def summon_enemies(_):
-    for i in range(50):
+    for _ in range(50):
         time.sleep(.25);
         enemy = MidnightEye(spr)
         EnemyManager.addEnemy(enemy);
@@ -82,18 +83,13 @@ towerWidget = TowerWidget(spr, [
         "targetSize": 125,
     },
     {
-        "name": "Eclipse Red",
-        "imagePath": "assets/towers/star-blue.png",
+        "name": "Marionette",
+        "imagePath": "assets/towers/marionette-pixel.png",
         "cost": 150,
-        "radius": 250,
-        "link": StarBlue,
-        "targetSize": 125,
+        "radius": 500,
+        "link": Marionette,
+        "targetSize": 100,
     }
 ], areaPolygons);
 
-RenderService.postRender.connect(EnemyManager.update)
-RenderService.postRender.connect(TowerManager.update)
-
-mainRenderer.start(); #always goes at the bottom!
-
-#TODO: clicking near the corner of a frame doesn't seem to be accurate anymore.
+mainRenderer.start(); #always goes at the bottom!   

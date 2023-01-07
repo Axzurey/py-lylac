@@ -1,5 +1,5 @@
 from pygame import Vector2
-from data.tower import TowerInformation, TowerManager
+from data.tower import Tower, TowerInformation, TowerManager
 import lylac
 from lylac.services.InputService import InputService
 from lylac.services.RenderService import RenderService
@@ -27,9 +27,11 @@ class TowerWidget:
 
     display: lylac.Instance;
     frame: lylac.Frame;
+    towerFrame: lylac.Frame;
     toggleButton: lylac.TextButton;
     openButton: lylac.TextButton;
     areaPolygons: list[lylac.PolygonObject];
+    currentWorldSelectedTower: Tower | None = None;
 
     def checkInArea(self, point: Vector2):
         for tower in TowerManager.towers:
@@ -113,26 +115,29 @@ class TowerWidget:
                 child.destroy();
         i = 0;
         for tower in self.towerInfos:
-            icon = lylac.ImageButton();
-            icon.imagePath = tower["imagePath"];
-            icon.relativeSize = "yy";
-            icon.anchorPoint = Vector2(.5, .5)
-            icon.size = lylac.Udim2.fromScale(.75, .75);
-            icon.parent = self.frame;
-            icon.name = "tower-icon";
+            def pythonPleaseScopeVariablesForLoops():
+                icon = lylac.ImageButton();
+                icon.imagePath = tower["imagePath"];
+                icon.relativeSize = "yy";
+                icon.anchorPoint = Vector2(.5, .5)
+                icon.size = lylac.Udim2.fromScale(.75, .75);
+                icon.parent = self.frame;
+                icon.name = "tower-icon";
 
-            lylac.useActionState(icon, 
-                defaultProperties={"size": lylac.Udim2.fromScale(.75, .75)}, 
-                hoverProperties={"size": lylac.Udim2.fromScale(.8, .8)}
-            )
+                lylac.useActionState(icon, 
+                    defaultProperties={"size": lylac.Udim2.fromScale(.75, .75)}, 
+                    hoverProperties={"size": lylac.Udim2.fromScale(.8, .8)}
+                )
 
-            z = i
+                z = i;
 
-            calcP = Vector2(0, self.frame.absoluteSize.y / 2) + Vector2(100, 0) * z + Vector2(50, 0);
+                calcP = Vector2(0, self.frame.absoluteSize.y / 2) + Vector2(100, 0) * z + Vector2(50, 0);
 
-            icon.onMouseButton1Up.connect(lambda _: self.startTowerPlacement(z))
+                icon.onMouseButton1Up.connect(lambda _: self.startTowerPlacement(z))
 
-            icon.position = lylac.Udim2.fromOffset(calcP.x, calcP.y)
+                icon.position = lylac.Udim2.fromOffset(calcP.x, calcP.y)
+
+            pythonPleaseScopeVariablesForLoops();
 
             i += 1;
 
@@ -172,8 +177,31 @@ class TowerWidget:
         toggle.borderColor = lylac.Color4(1, .2, .2);
         toggle.parent = frame;
 
+        towerFrame = lylac.Frame();
+        towerFrame.size = lylac.Udim2.fromOffset(100, 200);
+        towerFrame.zIndex = 100;
+        towerFrame.backgroundColor = lylac.Color4.fromRGB(25, 25, 25);
+        #towerFrame.anchorPoint = Vector2(-.1, -.1); test this after
+        towerFrame.borderWidth = 5;
+        towerFrame.cornerRadius = 15;
+        
+        destroyButton = lylac.TextButton();
+        destroyButton.text = "SELL";
+        destroyButton.anchorPoint = Vector2(.5, .5);
+        destroyButton.position = lylac.Udim2.fromScale(.5, .85);
+        destroyButton.size = lylac.Udim2.fromScale(.7, .15);
+        destroyButton.textAlignX = "center";
+        destroyButton.textAlignY = "center";
+        destroyButton.parent = towerFrame;
+
+        destroyButton.onMouseButton1Up.connect(lambda _: self.destroy_selected_tower());
+
         self.toggleButton = toggle;
 
         RenderService.renderBegin.connect(lambda _: self.updateTowerDisplay())
 
         toggle.onMouseButton1Up.connect(lambda _: self.close() if self.widgetOpen else self.open());
+
+    def destroy_selected_tower(self):
+        ...
+        #TODO: implement. This will give them back 50% of the coins they spent on the tower in total

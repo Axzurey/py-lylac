@@ -30,6 +30,6 @@ class MidnightEye(Enemy):
         
         self.enemyObject = enemyObject;
 
-    def update(self):
+    def update(self, dt: float):
         self.enemyObject.rotation = (self.enemyObject.rotation + 5) % 360;
-        return super().update();
+        return super().update(dt);

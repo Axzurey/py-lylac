@@ -1,5 +1,4 @@
 from __future__ import annotations
-from abc import ABC
 from enum import Enum
 from pygame import Vector2
 from typing import Callable, TypeVar, Generic
@@ -126,8 +125,7 @@ class Animation(Generic[T]):
         if self.timeValue >= self.animationLength:
             self.disconnect();
 
-class AnimationService(ABC):
-    ...
+class AnimationService:
 
     @staticmethod
     def createAnimation(

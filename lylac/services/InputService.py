@@ -1,6 +1,5 @@
 from __future__ import annotations;
 
-from abc import ABC
 from typing import TypedDict
 
 import pygame
@@ -15,7 +14,7 @@ class InputMouseBuffer(TypedDict):
 class InputKeyBuffer(TypedDict):
     key: KeyCode;
 
-class InputService(ABC):
+class InputService:
 
     lastKeyDownBuffer: list[InputKeyBuffer] = [];
 

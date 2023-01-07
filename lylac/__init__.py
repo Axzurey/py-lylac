@@ -4,7 +4,7 @@ from lylac.client.renderer import Renderer;
 #services
 from lylac.services.AnimationService import AnimationService, InterpolationMode, Animation;
 from lylac.services.FontService import FontService;
-from lylac.services.RenderService import RenderService;
+from lylac.services.RenderService import RenderService, PostRender, RemoveFromPostRenderQueue;
 from lylac.services.InputService import InputService, InputKeyBuffer, InputMouseBuffer;
 from lylac.services.DebugService import DebugService;
 from lylac.services.CleanupService import CleanupService;
