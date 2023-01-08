@@ -1,4 +1,5 @@
-from __future__ import annotations;
+from __future__ import annotations
+import time;
 from typing import Any, Generic, TypeVar, Callable
 
 from lylac.modules.util import createThread;
@@ -32,6 +33,22 @@ class LylacSignal(Generic[A]):
     def __init__(self):
         self.listeners = [];
 
+    def wait(self, pollingRate: int = 60):
+        conArgs = [];
+        conFired = False;
+
+        def setFired(*args: Any):
+            nonlocal conFired, conArgs;
+            conFired = True;
+            conArgs = [*args];
+
+        connection = LylacConnection(setFired, self, True);
+        self.listeners.append(connection);
+
+        while not conFired:
+            time.sleep(1 / pollingRate);
+        return conArgs
+
     def connect(self, callback: Callable[[A], Any]) -> LylacConnection:
         connection = LylacConnection(callback, self);
         self.listeners.append(connection);
@@ -43,7 +60,11 @@ class LylacSignal(Generic[A]):
         return connection;
     
     def dispatch(self, *args: A):
+        toremove: list[LylacConnection] = [];
         for listener in self.listeners:
             createThread(listener.callback, *args);
             if listener.once:
-                listener.disconnect();
+                toremove.append(listener);
+
+        for listener in toremove:
+            listener.disconnect();

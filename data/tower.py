@@ -18,6 +18,8 @@ class TowerManager:
 
     towers: list[Tower] = [];
 
+    playerEntropy = 0;
+
     @PostRender("towermanagerUpdate")
     @staticmethod
     def update(dt: float):

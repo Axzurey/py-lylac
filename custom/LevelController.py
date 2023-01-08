@@ -1,11 +1,20 @@
-import json
-from typing import TypedDict
+import json;
+import time;
+from typing import TypedDict;
 
-from pygame import Vector2
-from custom.LevelSelector import LevelData
-from data.Enemy import EnemyManager
-import lylac
-from lylac.modules.util import createThread
+from pygame import Vector2;
+from custom.towerWidget import TowerWidget;
+from data.Enemy import EnemyManager;
+from data.enemies.MidnightEye import MidnightEye;
+from data.towers.Marionette import Marionette;
+from data.towers.StarBlue import StarBlue;
+import lylac;
+from lylac.modules.util import createThread;
+from custom.LevelSelector import LevelData;
+
+ENEMY_NAMES = {
+    "Midnight Eye": MidnightEye
+}
 
 class WaveSpawnStatsDiff(TypedDict):
     speedBonus: int | None;
@@ -28,20 +37,72 @@ class LevelController:
 
     onLevelComplete = lylac.LylacSignal();
 
+    def broadcastMessage(self, msg: str):
+        f = lylac.Frame();
+        f.size = lylac.Udim2.fromScale(1.2, .15);
+        f.anchorPoint = Vector2(.5, .5);
+        f.cornerRadius = 0;
+        f.position = lylac.Udim2.fromScale(-1, .5);
+
+        t = lylac.TextObject();
+        t.anchorPoint = Vector2(.5, .5);
+        t.position = lylac.Udim2.fromScale(.5, .5);
+        t.size = lylac.Udim2.fromScale(1, 1);
+        t.text = msg;
+        t.textSize = 40;
+        t.textAlignX = "center";
+        t.textAlignY = "center";
+        t.parent = f;
+
+        f.parent = self.screen;
+
+        lylac.AnimationService.createAnimation(f, "position", lylac.Udim2.fromScale(.5, .5), 1, lylac.InterpolationMode.easeInOutCirc);
+
+        time.sleep(2 + 1);
+
+        lylac.AnimationService.createAnimation(f, "position", lylac.Udim2.fromScale(2, .5), 1, lylac.InterpolationMode.easeInOutCirc);
+
     def startLevel(self, wavePath: str):
         
         file = open(wavePath, 'r');
 
         waveData: list[Wave] = json.load(file);
 
+        waveNumber = 0;
         for wave in waveData:
             msg = wave['prewaveMessage'];
             if msg:
-                #TODO 
+                self.broadcastMessage(msg);
 
-        self.onLevelComplete.dispatch();
+            self.towerWidget.show();
+
+            for enemyWave in wave['enemies']:
+                
+                enemyName = enemyWave['enemyName'];
+                enemyStats = enemyWave['enemyStats'] if 'enemyStats' in enemyWave else None;
+                enemyCount = enemyWave['enemyCount'];
+
+                for _ in range(enemyCount):
+                    time.sleep(enemyWave['enemyDelay']);
+
+                    enemy = ENEMY_NAMES[enemyName](self.backdrop);
+                    EnemyManager.addEnemy(enemy);
+                    
+                    if enemyStats and 'healthBonus' in enemyStats:
+                        enemy.health += enemyStats['healthBonus']; #type: ignore it's definitely in there
+                    if enemyStats and 'speedBonus' in enemyStats:
+                        enemy.speed += enemyStats['speedBonus']; #type: ignore it's definitely in there
+
+            EnemyManager.enemiesEmpty.wait();
+
+            waveNumber += 1;
+            self.towerWidget.hide();
+
+        self.onLevelComplete.dispatch(None);
 
     screen: lylac.Renderer;
+    backdrop: lylac.Sprite;
+    towerWidget: TowerWidget;
 
     def __init__(self, screen: lylac.Renderer, levelData: LevelData) -> None:
         self.screen = screen;
@@ -51,6 +112,7 @@ class LevelController:
         spr.imagePath = levelData['backdrop'];
         spr.size = lylac.Udim2.fromOffset(1280, 720);
         spr.position = lylac.Udim2();
+        self.backdrop = spr;
 
         with open(levelData['path_of_enemies'], 'r') as f:
             path: list[list[float]] = json.loads(f.read());
@@ -80,5 +142,24 @@ class LevelController:
                     a.points.append(p);
                 areaPolygons.append(a);
             f.close();
+
+        self.towerWidget = TowerWidget(spr, [
+            {
+                "name": "Star Blue",
+                "imagePath": "assets/towers/star-blue.png",
+                "cost": 100,
+                "radius": 200,
+                "link": StarBlue,
+                "targetSize": 125,
+            },
+            {
+                "name": "Marionette",
+                "imagePath": "assets/towers/marionette-pixel.png",
+                "cost": 150,
+                "radius": 500,
+                "link": Marionette,
+                "targetSize": 100,
+            }
+        ], areaPolygons);
 
         createThread(lambda _: self.startLevel(levelData['wavePath']), None);

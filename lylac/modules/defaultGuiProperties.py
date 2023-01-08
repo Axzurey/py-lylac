@@ -35,7 +35,7 @@ GUI_DEFAULT_PROPERTIES = {
     "zIndex": lambda: 1,
     "boundingRect": lambda: pygame.Rect(0, 0, 0, 0),
     "rotation": lambda: 0,
-    "points": lambda: [Vector2(150, 75), Vector2(300, 150), Vector2(150, 200), Vector2(400, 400)],
+    "points": lambda: [],
     "color": lambda: Color4(0, 1, 1),
     "width": lambda: 15,
     "showControlPoints": lambda: True,

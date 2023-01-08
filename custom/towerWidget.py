@@ -124,6 +124,30 @@ class TowerWidget:
                 icon.parent = self.frame;
                 icon.name = "tower-icon";
 
+                costIcon = lylac.Sprite();
+                costIcon.anchorPoint = Vector2(.5, .5);
+                costIcon.position = lylac.Udim2.fromScale(.8, 0);
+                costIcon.size = lylac.Udim2.fromOffset(40, 40);
+                costIcon.imagePath = "assets/ui/entropy_coin-01.png"
+                costIcon.parent = icon;
+
+                costIcon.zIndex = 10 + i;
+
+                costText = lylac.TextObject();
+                costText.textAlignX = "left";
+                costText.textAlignY = "center";
+                costText.anchorPoint = Vector2(.5, .5);
+                costText.size = lylac.Udim2.fromOffset(10, 10);
+                costText.text = "x" + str(tower["cost"]);
+                costText.textSize = 17;
+                costText.position = lylac.Udim2(10, .85, 0, 0);
+                costText.backgroundColor = lylac.Color4.invisible();
+                costText.borderColor = lylac.Color4.invisible();
+                costText.dropShadowColor = lylac.Color4.invisible();
+                costText.textColor = lylac.Color4.white();
+                costText.parent = icon;
+                costText.zIndex = 10 + i;
+
                 lylac.useActionState(icon, 
                     defaultProperties={"size": lylac.Udim2.fromScale(.75, .75)}, 
                     hoverProperties={"size": lylac.Udim2.fromScale(.8, .8)}
@@ -131,15 +155,22 @@ class TowerWidget:
 
                 z = i;
 
-                calcP = Vector2(0, self.frame.absoluteSize.y / 2) + Vector2(100, 0) * z + Vector2(50, 0);
+                calcP = Vector2(0, self.frame.absoluteSize.y / 2) + Vector2(120, 0) * z + Vector2(50, 0);
 
-                icon.onMouseButton1Up.connect(lambda _: self.startTowerPlacement(z))
+                icon.onMouseButton1Up.connect(lambda _: self.startTowerPlacement(z));
+                costIcon.onMouseButton1Up.connect(lambda _: self.startTowerPlacement(z));
 
-                icon.position = lylac.Udim2.fromOffset(calcP.x, calcP.y)
+                icon.position = lylac.Udim2(calcP.x, 0, 0, .5);
 
             pythonPleaseScopeVariablesForLoops();
 
             i += 1;
+
+    def hide(self):
+        self.frame.parent = None;
+    
+    def show(self):
+        self.frame.parent = self.display;
 
     def __init__(self, display: lylac.Instance, towerInfo: list[TowerInformation], areaPolygons: list[lylac.PolygonObject]) -> None:
         self.towerInfos = towerInfo;
@@ -154,7 +185,6 @@ class TowerWidget:
         frame.borderWidth = 5;
         frame.backgroundColor = lylac.Color4.fromRGB(40, 40, 40)
         frame.borderColor = lylac.Color4.fromRGB(0, 255, 0);
-        frame.parent = display;
 
         frame.onHoverEnter.connect(lambda _: self.open() if not self.widgetOpen else 1);
         frame.onHoverExit.connect(lambda _: self.close() if self.widgetOpen and not frame.isPointInBounding(InputService.getMousePosition()) else 1);
@@ -198,7 +228,7 @@ class TowerWidget:
 
         self.toggleButton = toggle;
 
-        RenderService.renderBegin.connect(lambda _: self.updateTowerDisplay())
+        self.updateTowerDisplay();
 
         toggle.onMouseButton1Up.connect(lambda _: self.close() if self.widgetOpen else self.open());
 

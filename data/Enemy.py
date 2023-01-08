@@ -9,14 +9,24 @@ class EnemyManager:
     enemies: list[Enemy] = [];
     curve: lylac.SegmentedLineObject;
 
+    enemiesEmpty = lylac.LylacSignal();
+
+    totalEnemyCount = 0;
+    emptyDispatch = 0;
+
     @PostRender("enemymangerUpdate")
     @staticmethod
     def update(dt: float):
+        if len(EnemyManager.enemies) == 0 and EnemyManager.totalEnemyCount != EnemyManager.emptyDispatch:
+            EnemyManager.enemiesEmpty.dispatch(None);
+            EnemyManager.emptyDispatch = EnemyManager.totalEnemyCount;
+
         for enemy in EnemyManager.enemies:
             enemy.update(dt);
 
     @staticmethod
     def addEnemy(e: Enemy):
+        EnemyManager.totalEnemyCount += 1;
         EnemyManager.enemies.append(e);
 
     @staticmethod

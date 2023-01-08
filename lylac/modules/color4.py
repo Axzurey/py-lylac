@@ -26,6 +26,14 @@ class Color4:
         return Color4(0, 0, 0, alpha);
 
     @staticmethod
+    def invisible():
+        return Color4(0, 0, 0, 0);
+
+    @staticmethod
+    def white():
+        return Color4(1, 1, 1);
+
+    @staticmethod
     def fromRGBA(r: int = 0, g: int = 0, b: int = 0, a: int = 255):
         (r, g, b, a) = clampAll(0, 255, r, g, b, a);
         return Color4(r / 255, g / 255, b / 255, a / 255);

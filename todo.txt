@@ -1,0 +1,2 @@
+sometimes loading the level takes way longer than it should(> 1s) Fix this.
+let the user know their lives left & their entropy
