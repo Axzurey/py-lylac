@@ -1,0 +1,38 @@
+[
+    {
+        "prewaveMessage": "Here they come!",
+        "enemies": [
+            {
+                "enemyName": "Midnight Eye",
+                "enemyDelay": 1.5,
+                "enemyCount": 15
+            }
+        ]
+    },
+    {
+        "prewaveMessage": "Let's try that again but faster!",
+        "enemies": [
+            {
+                "enemyName": "Midnight Eye",
+                "enemyDelay": 1,
+                "enemyStats": {
+                    "speedBonus": 15
+                },
+                "enemyCount": 15
+            }
+        ]
+    },
+    {
+        "prewaveMessage": "You're getting the hang of it ;) \n Let's go even faster!",
+        "enemies": [
+            {
+                "enemyName": "Midnight Eye",
+                "enemyDelay": 0.75,
+                "enemyStats": {
+                    "speedBonus": 30
+                },
+                "enemyCount": 25
+            }
+        ]
+    }
+]

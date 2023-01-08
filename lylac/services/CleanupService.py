@@ -11,7 +11,7 @@ class CleanupService:
 
     @staticmethod
     def delay(after: float, callback: Callable[[T], Any], *args: T):
-        thread = threading.Thread(target=lambda args: (time.sleep(after), callback(args)), daemon=True, args=args);
+        thread = threading.Thread(target=lambda *args: (time.sleep(after), callback(*args)), daemon=True, args=args);
         thread.start();
 
     @staticmethod

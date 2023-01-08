@@ -94,6 +94,9 @@ class Instance():
             for listener in sig.listeners:
                 listener.disconnect();
 
+        for child in self.children:
+            child.destroy();
+
     def update(self):
         pass
     def render(self, dt: float):

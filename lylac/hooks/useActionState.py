@@ -1,7 +1,11 @@
-from typing import Any
+from typing import Any, Callable, TypedDict
 from lylac.interface.Instance import Instance
 from lylac.interface.NominalObjects import Clickable, Hoverable
 from lylac.modules.lylacSignal import LylacConnection
+
+class ActionStateReturnValue(TypedDict):
+    disconnect: Callable;
+    isAlive: Callable[[], bool];
 
 
 def useActionState(
@@ -9,9 +13,12 @@ def useActionState(
     defaultProperties: dict[str, Any],
     hoverProperties: dict[str, Any] = {},
     leftClickProperties: dict[str, Any] = {},
-    rightClickProperties: dict[str, Any] = {}
-):
-
+    rightClickProperties: dict[str, Any] = {},
+    forInstance: Instance | None = None
+) -> ActionStateReturnValue:
+    """
+    if forInstance is present, the property changes will take place on that instance, in which case, obj will still be the owner of the signals
+    """
     isHover = False;
     isMouse1 = False;
     isMouse2 = False;
@@ -19,18 +26,19 @@ def useActionState(
     connections: list[LylacConnection] = [];
 
     def modify():
+        target = forInstance if forInstance else obj;
         if isMouse1:
             for property in leftClickProperties:
-                obj[property] = leftClickProperties[property];
+                target[property] = leftClickProperties[property];
         elif isMouse2:
             for property in rightClickProperties:
-                obj[property] = rightClickProperties[property];
+                target[property] = rightClickProperties[property];
         elif isHover:
             for property in hoverProperties:
-                obj[property] = hoverProperties[property];
+                target[property] = hoverProperties[property];
         else:
             for property in defaultProperties:
-                obj[property] = defaultProperties[property];
+                target[property] = defaultProperties[property];
 
     def setHover(t: bool):
         nonlocal isHover;

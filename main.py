@@ -1,6 +1,7 @@
 import json
 import math
 import time
+from custom.LevelSelector import LevelSelector
 from data.enemies.MidnightEye import MidnightEye
 from data.tower import TowerManager
 from data.towers.Marionette import Marionette
@@ -14,6 +15,9 @@ from lylac.services.DebugService import DebugService
 
 mainRenderer = Renderer((1280, 720), 60);
 
+levelSelector = LevelSelector(mainRenderer);
+
+"""
 frame = GuiObject()
 frame.parent = mainRenderer;
 frame.borderWidth = 2;
@@ -91,5 +95,5 @@ towerWidget = TowerWidget(spr, [
         "targetSize": 100,
     }
 ], areaPolygons);
-
+"""
 mainRenderer.start(); #always goes at the bottom!   

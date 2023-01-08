@@ -4,7 +4,7 @@ import lylac
 
 
 class MidnightEye(Enemy):
-    speed: float = 150;
+    speed: float = 50;
     health: float = 200;
 
     def __init__(self, screen: lylac.Instance) -> None:
