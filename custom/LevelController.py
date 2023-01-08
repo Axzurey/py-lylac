@@ -5,6 +5,7 @@ from pygame import Vector2
 from custom.LevelSelector import LevelData
 from data.Enemy import EnemyManager
 import lylac
+from lylac.modules.util import createThread
 
 class WaveSpawnStatsDiff(TypedDict):
     speedBonus: int | None;
@@ -27,7 +28,24 @@ class LevelController:
 
     onLevelComplete = lylac.LylacSignal();
 
+    def startLevel(self, wavePath: str):
+        
+        file = open(wavePath, 'r');
+
+        waveData: list[Wave] = json.load(file);
+
+        for wave in waveData:
+            msg = wave['prewaveMessage'];
+            if msg:
+                #TODO 
+
+        self.onLevelComplete.dispatch();
+
+    screen: lylac.Renderer;
+
     def __init__(self, screen: lylac.Renderer, levelData: LevelData) -> None:
+        self.screen = screen;
+
         spr = lylac.Sprite();
         spr.parent = screen;
         spr.imagePath = levelData['backdrop'];
@@ -62,3 +80,5 @@ class LevelController:
                     a.points.append(p);
                 areaPolygons.append(a);
             f.close();
+
+        createThread(lambda _: self.startLevel(levelData['wavePath']), None);

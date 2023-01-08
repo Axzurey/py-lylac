@@ -9,12 +9,14 @@ class LevelData(TypedDict):
     path_of_enemies: str;
     backdrop: str;
     permittedTowers: list[str];
+    wavePath: str;
 
 GAME_LEVELS: dict[str, LevelData] = {
     "grass patch": {
         "area_for_towers": "levels/grass_patch/towerAreas.json",
         "path_of_enemies": "levels/grass_patch/enemyPath.json",
         "backdrop": "assets/environment/grass patch-01.png",
+        "wavePath": "levels/grass_patch/waveData.json",
         "permittedTowers": [
             "Star Blue", "Marionette"
         ]
@@ -23,6 +25,7 @@ GAME_LEVELS: dict[str, LevelData] = {
         "area_for_towers": "levels/grass_patch_2/towerAreas.json",
         "path_of_enemies": "levels/grass_patch_2/enemyPath.json",
         "backdrop": "assets/environment/grass patch 2-01.png",
+        "wavePath": "levels/grass_patch_2/waveData.json",
         "permittedTowers": [
             "Star Blue", "Marionette"
         ]
