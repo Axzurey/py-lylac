@@ -38,7 +38,7 @@ class FontService:
         try:
             if os.path.isfile(fontPath) and fontPath.split('.')[len(fontPath.split('.')) - 1] == 'ttf':
                 font: freeFont = pygame.freetype.Font(fontPath, defaultFontSize) #type: ignore
-                FontService._fontPaths[fontAlias] = fontPath;
+                FontService._fontPaths[fontAlias.lower()] = fontPath;
                 FontService.fonts[fontAlias.lower()] = font
             else:
                 print(f'[nyle]: Unable to load font "{fontAlias.lower()}" from path {fontPath} as it is not .ttf file')

@@ -32,7 +32,8 @@ class Instance():
     parent: cliRen.Renderer | Instance | None = None;
     children: list[Instance];
     name: str;
-    _ongoingAnimations: list[Animation]
+    _ongoingAnimations: list[Animation];
+    internalStore: dict[Any, Any];
 
     def __setitem__(self, key: str, value: Any):
         self.__setattr__(key, value);
@@ -84,6 +85,7 @@ class Instance():
     def __init__(self) -> None:
         LoadDefaultGuiProperties('Instance', self);
         self._ongoingAnimations = [];
+        self.internalStore = {};
 
     def destroy(self):
         self.parent = None;

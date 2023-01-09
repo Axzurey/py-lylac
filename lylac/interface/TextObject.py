@@ -18,15 +18,19 @@ def getFontWrap(text: str, font: str, fontSize: int, maxWidth: int) -> tuple[lis
     currentLineWidth = 0;
     splitLineObject = [];
     for word in words:
-        fw, _fh = FontService.get_width_and_height_for_string(font, text, fontSize);
-        if currentLineWidth + fw + 1 > maxWidth: #this should account for the spaces that will be added later.
+        fw, _fh = FontService.get_width_and_height_for_string(font, word + " ", fontSize);
+        if currentLineWidth + fw > maxWidth: #this should account for the spaces that will be added later.
             currentLineWidth = 0;
             splitLines.append(splitLineObject);
             splitLineObject = [];
             splitLineObject.append(word);
+            currentLineWidth += fw;
         else:
             splitLineObject.append(word);
             currentLineWidth += fw;
+
+    if not splitLineObject in splitLines:
+        splitLines.append(splitLineObject);
 
     for splitLine in splitLines:
         newLine = ' '.join(splitLine);
@@ -35,7 +39,6 @@ def getFontWrap(text: str, font: str, fontSize: int, maxWidth: int) -> tuple[lis
         lineSpacings.append(fh);
 
     return sentences, lineSpacings;
-    TODO: TEST THIS OUT!
 
 class TextObject(GuiObject):
     text: str;
@@ -60,8 +63,6 @@ class TextObject(GuiObject):
 
         renderer = RenderService.renderer;
 
-        (textSurf, _) = FontService.fonts[self.textFont].render(self.text, self.textColor.toRGBATuple(), size=self.textSize)
-
         textOffsetX = 0
         textOffsetY = 0
 
@@ -79,12 +80,20 @@ class TextObject(GuiObject):
         else:
             textOffsetY = 0
 
-        textSize = textSurf.get_size()
+        lines, spacing = getFontWrap(self.text, self.textFont, self.textSize, int(self.absoluteSize.x) if self.wrapText else 999999);
 
-        absSize = self.absoluteSize
-        absPos = self.absolutePosition
-        
-        offsetXAbs = absPos.x + (absSize.x - textSize[0]) * textOffsetX
-        offsetYAbs = absPos.y + (absSize.y - textSize[1]) * textOffsetY
+        lineIndex = 0;
+        for line in lines:
 
-        renderer.screen.blit(textSurf, (offsetXAbs, offsetYAbs))
+            (textSurf, _) = FontService.fonts[self.textFont].render(line, self.textColor.toRGBATuple(), size=self.textSize)
+
+            textSize = textSurf.get_size()
+
+            absSize = self.absoluteSize
+            absPos = self.absolutePosition
+            
+            offsetXAbs = absPos.x + (absSize.x - textSize[0]) * textOffsetX
+            offsetYAbs = absPos.y + (absSize.y - textSize[1]) * textOffsetY + spacing[lineIndex] * lineIndex
+            lineIndex += 1;
+
+            renderer.screen.blit(textSurf, (offsetXAbs, offsetYAbs))

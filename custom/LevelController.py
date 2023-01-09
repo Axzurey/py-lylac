@@ -5,7 +5,8 @@ from typing import TypedDict;
 from pygame import Vector2;
 from custom.towerWidget import TowerWidget;
 from data.Enemy import EnemyManager;
-from data.enemies.MidnightEye import MidnightEye;
+from data.enemies.MidnightEye import MidnightEye
+from data.tower import TowerManager;
 from data.towers.Marionette import Marionette;
 from data.towers.StarBlue import StarBlue;
 import lylac;
@@ -98,6 +99,7 @@ class LevelController:
             waveNumber += 1;
             self.towerWidget.hide();
 
+        lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy);
         self.onLevelComplete.dispatch(None);
 
     screen: lylac.Renderer;
@@ -112,7 +114,33 @@ class LevelController:
         spr.imagePath = levelData['backdrop'];
         spr.size = lylac.Udim2.fromOffset(1280, 720);
         spr.position = lylac.Udim2();
+
         self.backdrop = spr;
+
+        entropyIcon = lylac.Sprite();
+        entropyIcon.parent = spr;
+        entropyIcon.imagePath = "assets/ui/entropy_coin-01.png";
+        entropyIcon.size = lylac.Udim2.fromOffset(75, 75);
+        entropyIcon.anchorPoint = Vector2(.5, .5);
+        entropyIcon.position = lylac.Udim2.fromScale(.9, .05);
+
+        entropyText = lylac.TextObject();
+        entropyText.text = "x" + str(TowerManager.playerEntropy);
+        entropyText.size = lylac.Udim2.fromScale(.1, .05);
+        entropyText.textColor = lylac.Color4.white();
+        entropyText.anchorPoint = Vector2(.5, .5);
+        entropyText.textAlignX = "center";
+        entropyText.textAlignY = "center";
+        entropyText.position = lylac.Udim2(75 / 2, .9, 0, .05);
+        entropyText.backgroundColor = lylac.Color4.invisible();
+        entropyText.borderColor = lylac.Color4.invisible();
+        entropyText.dropShadowColor = lylac.Color4.invisible();
+        entropyText.parent = spr;
+
+        def setEntropyText(e):
+            entropyText.text = "x" + str(e);
+
+        TowerManager.entropyChanged.connect(setEntropyText);
 
         with open(levelData['path_of_enemies'], 'r') as f:
             path: list[list[float]] = json.loads(f.read());
@@ -161,5 +189,8 @@ class LevelController:
                 "targetSize": 100,
             }
         ], areaPolygons);
+
+        TowerManager.addEntropy(-1);
+        TowerManager.addEntropy(levelData["startingEntropy"]);
 
         createThread(lambda _: self.startLevel(levelData['wavePath']), None);

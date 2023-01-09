@@ -47,6 +47,8 @@ class TowerWidget:
 
         towerInfo = self.towerInfos[towerIndex];
 
+        if TowerManager.playerEntropy < towerInfo["cost"]: return; #not enough money c:
+
         f = lylac.TextObject();
         f.zIndex = 10000;
         f.parent = self.frame;
@@ -89,6 +91,7 @@ class TowerWidget:
             tower = towerInfo["link"](self.display, InputService.getMousePosition());
             cancel();
             TowerManager.addTower(tower);
+            TowerManager.addEntropy(-towerInfo["cost"]);
 
         def updateSprPosition(_):
             mPos = InputService.getMousePosition();
@@ -123,6 +126,16 @@ class TowerWidget:
                 icon.size = lylac.Udim2.fromScale(.75, .75);
                 icon.parent = self.frame;
                 icon.name = "tower-icon";
+                icon.internalStore['cost'] = tower["cost"];
+
+                iconRed = lylac.Frame();
+                iconRed.size = lylac.Udim2.fromScale(1, 1);
+                iconRed.position = lylac.Udim2();
+                iconRed.borderColor = lylac.Color4.invisible();
+                iconRed.dropShadowColor = lylac.Color4.invisible();
+                iconRed.backgroundColor = lylac.Color4(1, 0, 0, .25) if tower["cost"] < TowerManager.playerEntropy else lylac.Color4.invisible();
+                iconRed.name = "redscreen";
+                iconRed.parent = icon;
 
                 costIcon = lylac.Sprite();
                 costIcon.anchorPoint = Vector2(.5, .5);
@@ -130,17 +143,16 @@ class TowerWidget:
                 costIcon.size = lylac.Udim2.fromOffset(40, 40);
                 costIcon.imagePath = "assets/ui/entropy_coin-01.png"
                 costIcon.parent = icon;
-
                 costIcon.zIndex = 10 + i;
 
                 costText = lylac.TextObject();
                 costText.textAlignX = "left";
                 costText.textAlignY = "center";
                 costText.anchorPoint = Vector2(.5, .5);
-                costText.size = lylac.Udim2.fromOffset(10, 10);
+                costText.size = lylac.Udim2.fromOffset(80, 10);
                 costText.text = "x" + str(tower["cost"]);
                 costText.textSize = 17;
-                costText.position = lylac.Udim2(10, .85, 0, 0);
+                costText.position = lylac.Udim2(40, .85, 0, 0);
                 costText.backgroundColor = lylac.Color4.invisible();
                 costText.borderColor = lylac.Color4.invisible();
                 costText.dropShadowColor = lylac.Color4.invisible();
@@ -148,9 +160,10 @@ class TowerWidget:
                 costText.parent = icon;
                 costText.zIndex = 10 + i;
 
-                lylac.useActionState(icon, 
+                lylac.useActionState(iconRed, 
                     defaultProperties={"size": lylac.Udim2.fromScale(.75, .75)}, 
-                    hoverProperties={"size": lylac.Udim2.fromScale(.8, .8)}
+                    hoverProperties={"size": lylac.Udim2.fromScale(.8, .8)},
+                    forInstance=icon
                 )
 
                 z = i;
@@ -159,6 +172,7 @@ class TowerWidget:
 
                 icon.onMouseButton1Up.connect(lambda _: self.startTowerPlacement(z));
                 costIcon.onMouseButton1Up.connect(lambda _: self.startTowerPlacement(z));
+                iconRed.onMouseButton1Up.connect(lambda _: self.startTowerPlacement(z));
 
                 icon.position = lylac.Udim2(calcP.x, 0, 0, .5);
 
@@ -171,6 +185,18 @@ class TowerWidget:
     
     def show(self):
         self.frame.parent = self.display;
+
+    def update_icon_color_for_entropy_change(self, entropy: int):
+        for child in self.frame.children:
+            if child.name == "tower-icon":
+                if 'cost' in child.internalStore and child.internalStore['cost'] > entropy:
+                    for sub in child.children:
+                        if sub.name != "redscreen": continue;
+                        sub.backgroundColor = lylac.Color4(1, 0, 0, .25);
+                else:
+                    for sub in child.children:
+                        if sub.name != "redscreen": continue;
+                        sub.backgroundColor = lylac.Color4.invisible();
 
     def __init__(self, display: lylac.Instance, towerInfo: list[TowerInformation], areaPolygons: list[lylac.PolygonObject]) -> None:
         self.towerInfos = towerInfo;
@@ -185,6 +211,8 @@ class TowerWidget:
         frame.borderWidth = 5;
         frame.backgroundColor = lylac.Color4.fromRGB(40, 40, 40)
         frame.borderColor = lylac.Color4.fromRGB(0, 255, 0);
+
+        TowerManager.entropyChanged.connect(self.update_icon_color_for_entropy_change);
 
         frame.onHoverEnter.connect(lambda _: self.open() if not self.widgetOpen else 1);
         frame.onHoverExit.connect(lambda _: self.close() if self.widgetOpen and not frame.isPointInBounding(InputService.getMousePosition()) else 1);

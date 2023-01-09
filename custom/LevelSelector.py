@@ -9,6 +9,7 @@ class LevelData(TypedDict):
     backdrop: str;
     permittedTowers: list[str];
     wavePath: str;
+    startingEntropy: int;
 
 GAME_LEVELS: dict[str, LevelData] = {
     "grass patch": {
@@ -18,7 +19,8 @@ GAME_LEVELS: dict[str, LevelData] = {
         "wavePath": "levels/grass_patch/waveData.json",
         "permittedTowers": [
             "Star Blue", "Marionette"
-        ]
+        ],
+        "startingEntropy": 150
     },
     "grass patch II": {
         "area_for_towers": "levels/grass_patch_2/towerAreas.json",
@@ -27,7 +29,8 @@ GAME_LEVELS: dict[str, LevelData] = {
         "wavePath": "levels/grass_patch_2/waveData.json",
         "permittedTowers": [
             "Star Blue", "Marionette"
-        ]
+        ],
+        "startingEntropy": 200
     },
 }
 

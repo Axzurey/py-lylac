@@ -46,7 +46,8 @@ GUI_DEFAULT_PROPERTIES = {
     "controlPointRadius": lambda: 10,
     "relativeSize": lambda: 'xy',
     "relativePosition": lambda: 'xy',
-    "name": lambda: f"instance-{uuid.uuid4().hex}"
+    "name": lambda: f"instance-{uuid.uuid4().hex}",
+    "wrapText": lambda: True
 }
 
 GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], list[str]]] = {
@@ -97,7 +98,7 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
         "inherits": ["Instance"]
     },
     "TextObject": {
-        "properties": ["text", "textColor", "textSize", "textFont", "textAlignX", "textAlignY"],
+        "properties": ["text", "textColor", "textSize", "textFont", "textAlignX", "textAlignY", "wrapText"],
         "inherits": ["GuiObject"]
     },
     "TextLabel": {

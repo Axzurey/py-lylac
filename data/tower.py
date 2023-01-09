@@ -20,6 +20,16 @@ class TowerManager:
 
     playerEntropy = 0;
 
+    entropyChanged: lylac.LylacSignal[int] = lylac.LylacSignal();
+
+    @staticmethod
+    def addEntropy(entropy: int):
+        if entropy == -1:
+            TowerManager.playerEntropy = 0;
+        else:
+            TowerManager.playerEntropy += entropy;
+        TowerManager.entropyChanged.dispatch(TowerManager.playerEntropy);
+
     @PostRender("towermanagerUpdate")
     @staticmethod
     def update(dt: float):
