@@ -5,7 +5,10 @@
             {
                 "enemyName": "Midnight Eye",
                 "enemyDelay": 1.5,
-                "enemyCount": 15
+                "enemyCount": 15,
+                "enemyStats": {
+                    "speedBonus": 30
+                }
             }
         ]
     },
@@ -16,7 +19,7 @@
                 "enemyName": "Midnight Eye",
                 "enemyDelay": 1,
                 "enemyStats": {
-                    "speedBonus": 15
+                    "speedBonus": 50
                 },
                 "enemyCount": 15
             }
@@ -29,7 +32,7 @@
                 "enemyName": "Midnight Eye",
                 "enemyDelay": 0.75,
                 "enemyStats": {
-                    "speedBonus": 30
+                    "speedBonus": 100
                 },
                 "enemyCount": 25
             }
