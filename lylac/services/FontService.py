@@ -16,6 +16,18 @@ class FreeFont:
 class FontService:
 
     fonts: dict[str, FreeFont] = {}
+    _subFontsForTextEffects: dict[str, dict[int, pygame.font.Font]] = {}; #{name, {fontsize, Font Object}}
+    _fontPaths: dict[str, str] = {};
+
+    @staticmethod
+    def get_width_and_height_for_string(font: str, string: str, fontSize: int):
+
+        if not font in FontService._subFontsForTextEffects:
+            FontService._subFontsForTextEffects[font] = {fontSize: pygame.font.Font(FontService._fontPaths[font], fontSize)};
+        if not fontSize in FontService._subFontsForTextEffects[font]:
+            FontService._subFontsForTextEffects[font][fontSize] = pygame.font.Font(FontService._fontPaths[font], fontSize);
+
+        return FontService._subFontsForTextEffects[font][fontSize].size(string);
 
     @staticmethod
     def loadFont(fontAlias: str, fontPath: str, defaultFontSize: int = 20):
@@ -26,7 +38,7 @@ class FontService:
         try:
             if os.path.isfile(fontPath) and fontPath.split('.')[len(fontPath.split('.')) - 1] == 'ttf':
                 font: freeFont = pygame.freetype.Font(fontPath, defaultFontSize) #type: ignore
-
+                FontService._fontPaths[fontAlias] = fontPath;
                 FontService.fonts[fontAlias.lower()] = font
             else:
                 print(f'[nyle]: Unable to load font "{fontAlias.lower()}" from path {fontPath} as it is not .ttf file')
