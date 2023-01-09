@@ -18,7 +18,7 @@ class StarBlue(Tower):
 
         towerObject = lylac.Sprite();
         towerObject.name = "star-blue-tower";
-        towerObject.size = lylac.Udim2.fromOffset(125, 125);
+        towerObject.size = lylac.Udim2.fromOffset(75, 75);
         towerObject.anchorPoint = pygame.Vector2(.5, .5);
         towerObject.position = lylac.Udim2.fromOffset(position.x, position.y);
         towerObject.imagePath = "assets/towers/star-blue.png";

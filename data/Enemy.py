@@ -1,6 +1,7 @@
 from __future__ import annotations
 import time
 import pygame
+from data.tower import TowerManager
 import lylac
 from lylac.services.RenderService import PostRender;
 from data.Effect import Effect, Vulnerable
@@ -32,6 +33,8 @@ class EnemyManager:
     @staticmethod
     def removeEnemy(e: Enemy):
         if e in EnemyManager.enemies:
+            print('awrd')
+            TowerManager.addEntropy(e.entropyGainedOnKill);
             EnemyManager.enemies.remove(e);
 
     @staticmethod
@@ -66,6 +69,8 @@ class Enemy:
     speed: float;
     health: float;
 
+    entropyGainedOnKill: int;
+
     alphaAlongPath: float = 0;
 
     effects: list[Effect];
@@ -74,6 +79,7 @@ class Enemy:
         self.screen = screen;
         self.position = EnemyManager.curve.getDeltaAlongLine(0); #type: ignore this should exist
         self.effects = [];
+        self.entropyGainedOnKill = 10;
 
     def update_position(self, position: pygame.Vector2):
         self.position = position;
@@ -88,7 +94,7 @@ class Enemy:
             self.destroy();
 
     def destroy(self):
-        EnemyManager.enemies.remove(self);
+        EnemyManager.removeEnemy(self);
         self.enemyObject.destroy();
 
     def afflictStatus(self, effect: Effect):

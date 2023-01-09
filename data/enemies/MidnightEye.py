@@ -6,11 +6,12 @@ import lylac
 class MidnightEye(Enemy):
     speed: float = 50;
     health: float = 200;
+    entropyGainedOnKill = 10;
 
     def __init__(self, screen: lylac.Instance) -> None:
         enemyObject = lylac.Sprite();
         enemyObject.name = "midnight-eye-enemy";
-        enemyObject.size = lylac.Udim2.fromOffset(120, 120);
+        enemyObject.size = lylac.Udim2.fromOffset(90, 90);
         enemyObject.anchorPoint = pygame.Vector2(.5, .5);
         enemyObject.imagePath = "assets/hazes/eye-of-midnightbody.png";
 
