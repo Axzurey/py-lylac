@@ -1,4 +1,5 @@
-import json;
+import json
+import math;
 import time;
 from typing import TypedDict;
 
@@ -7,7 +8,8 @@ from custom.towerWidget import TowerWidget;
 from data.Enemy import EnemyManager;
 from data.enemies.MidnightEye import MidnightEye
 from data.tower import TowerManager;
-from data.towers.Marionette import Marionette;
+from data.towers.Marionette import Marionette
+from data.towers.ParticleCollider import ParticleCollider;
 from data.towers.StarBlue import StarBlue;
 import lylac;
 from lylac.modules.util import createThread;
@@ -99,8 +101,47 @@ class LevelController:
             waveNumber += 1;
             self.towerWidget.hide();
 
-        lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy);
+        lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy, None);
         self.onLevelComplete.dispatch(None);
+
+    def displayLevelPath(self):
+        t = 0;
+
+        inst = lylac.Sprite();
+        inst.imagePath = "assets/ui/direction-arrow.png";
+        inst.name = "level-path-guide";
+        inst.size = lylac.Udim2.fromOffset(150, 150);
+        inst.anchorPoint = Vector2(.5, .5);
+        inst.parent = self.backdrop;
+
+        def displayDelta(dt: float):
+            nonlocal t, inst, c0;
+            t = lylac.clamp(0, 1, t + dt / 20);
+
+            if t >= 1:
+                c0.disconnect();
+                inst.destroy();
+            else:
+                nextT = lylac.clamp(0, 1, t + dt / 20);
+
+                p0 = EnemyManager.curve.getDeltaAlongLine(t);
+                p1 = EnemyManager.curve.getDeltaAlongLine(nextT);
+
+                if not p0 or not p1: return;
+
+                dir = (p1 - p0).normalize();
+
+                rotation = int(math.degrees(math.atan2(dir.y, dir.x))) + 90;
+
+                inst.position = lylac.Udim2.fromOffset(p0.x, p0.y);
+                inst.rotation = rotation;
+
+                TEST THIS C:
+
+        c0 = lylac.RenderService.postRender.connect(displayDelta);
+
+        while t < 1:
+            pass;
 
     screen: lylac.Renderer;
     backdrop: lylac.Sprite;
@@ -187,8 +228,18 @@ class LevelController:
                 "radius": 500,
                 "link": Marionette,
                 "targetSize": 100,
+            },
+            {
+                "name": "Particle Collider",
+                "imagePath": "assets/towers/particle collider-01.png",
+                "cost": 50,
+                "radius": 100,
+                "link": ParticleCollider,
+                "targetSize": 100,
             }
         ], areaPolygons);
+
+        self.displayLevelPath();
 
         TowerManager.addEntropy(-1);
         TowerManager.addEntropy(levelData["startingEntropy"]);

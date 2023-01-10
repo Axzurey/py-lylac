@@ -18,7 +18,7 @@ GAME_LEVELS: dict[str, LevelData] = {
         "backdrop": "assets/environment/grass patch-01.png",
         "wavePath": "levels/grass_patch/waveData.json",
         "permittedTowers": [
-            "Star Blue", "Marionette"
+            "Star Blue", "Marionette", "Particle Collider"
         ],
         "startingEntropy": 150
     },
@@ -28,7 +28,7 @@ GAME_LEVELS: dict[str, LevelData] = {
         "backdrop": "assets/environment/grass patch 2-01.png",
         "wavePath": "levels/grass_patch_2/waveData.json",
         "permittedTowers": [
-            "Star Blue", "Marionette"
+            "Star Blue", "Marionette", "Particle Collider"
         ],
         "startingEntropy": 200
     },
