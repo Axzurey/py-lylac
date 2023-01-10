@@ -7,7 +7,8 @@ from custom.towerWidget import TowerWidget;
 from data.Enemy import EnemyManager;
 from data.enemies.MidnightEye import MidnightEye
 from data.tower import TowerManager;
-from data.towers.Marionette import Marionette;
+from data.towers.Marionette import Marionette
+from data.towers.ParticleCollider import ParticleCollider;
 from data.towers.StarBlue import StarBlue;
 import lylac;
 from lylac.modules.util import createThread;
@@ -99,7 +100,7 @@ class LevelController:
             waveNumber += 1;
             self.towerWidget.hide();
 
-        lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy);
+        lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy, None);
         self.onLevelComplete.dispatch(None);
 
     screen: lylac.Renderer;
@@ -186,6 +187,14 @@ class LevelController:
                 "cost": 150,
                 "radius": 500,
                 "link": Marionette,
+                "targetSize": 100,
+            },
+            {
+                "name": "Particle Collider",
+                "imagePath": "assets/towers/particle collider-01.png",
+                "cost": 50,
+                "radius": 100,
+                "link": ParticleCollider,
                 "targetSize": 100,
             }
         ], areaPolygons);

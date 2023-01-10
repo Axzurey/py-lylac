@@ -33,9 +33,8 @@ class EnemyManager:
     @staticmethod
     def removeEnemy(e: Enemy):
         if e in EnemyManager.enemies:
-            print('awrd')
-            TowerManager.addEntropy(e.entropyGainedOnKill);
             EnemyManager.enemies.remove(e);
+            TowerManager.addEntropy(e.entropyGainedOnKill);
 
     @staticmethod
     def getEnemyClosestToGoalAndInRadius(point: pygame.Vector2, radius: int) -> Enemy | None:
