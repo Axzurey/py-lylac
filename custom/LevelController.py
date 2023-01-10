@@ -1,4 +1,5 @@
-import json;
+import json
+import math;
 import time;
 from typing import TypedDict;
 
@@ -103,6 +104,45 @@ class LevelController:
         lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy, None);
         self.onLevelComplete.dispatch(None);
 
+    def displayLevelPath(self):
+        t = 0;
+
+        inst = lylac.Sprite();
+        inst.imagePath = "assets/ui/direction-arrow.png";
+        inst.name = "level-path-guide";
+        inst.size = lylac.Udim2.fromOffset(150, 150);
+        inst.anchorPoint = Vector2(.5, .5);
+        inst.parent = self.backdrop;
+
+        def displayDelta(dt: float):
+            nonlocal t, inst, c0;
+            t = lylac.clamp(0, 1, t + dt / 20);
+
+            if t >= 1:
+                c0.disconnect();
+                inst.destroy();
+            else:
+                nextT = lylac.clamp(0, 1, t + dt / 20);
+
+                p0 = EnemyManager.curve.getDeltaAlongLine(t);
+                p1 = EnemyManager.curve.getDeltaAlongLine(nextT);
+
+                if not p0 or not p1: return;
+
+                dir = (p1 - p0).normalize();
+
+                rotation = int(math.degrees(math.atan2(dir.y, dir.x))) + 90;
+
+                inst.position = lylac.Udim2.fromOffset(p0.x, p0.y);
+                inst.rotation = rotation;
+
+                TEST THIS C:
+
+        c0 = lylac.RenderService.postRender.connect(displayDelta);
+
+        while t < 1:
+            pass;
+
     screen: lylac.Renderer;
     backdrop: lylac.Sprite;
     towerWidget: TowerWidget;
@@ -198,6 +238,8 @@ class LevelController:
                 "targetSize": 100,
             }
         ], areaPolygons);
+
+        self.displayLevelPath();
 
         TowerManager.addEntropy(-1);
         TowerManager.addEntropy(levelData["startingEntropy"]);

@@ -87,7 +87,7 @@ class Enemy:
     def takeDamage(self, damage: float):
         for effect in self.effects:
             if isinstance(effect, Vulnerable):
-                damage += 3 ** effect.level + 15;
+                damage += 3 ** effect.level + 5;
         self.health -= damage;
         if self.health <= 0 and self in EnemyManager.enemies:
             self.destroy();
