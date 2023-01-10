@@ -1,7 +1,7 @@
 import json
 import math;
 import time;
-from typing import TypedDict;
+from typing import Any, TypedDict;
 
 from pygame import Vector2;
 from custom.towerWidget import TowerWidget;
@@ -71,8 +71,11 @@ class LevelController:
 
         waveData: list[Wave] = json.load(file);
 
+        TowerManager.healthChanged.connect(lambda n: (self.backdrop.destroy(), self.onLevelComplete.dispatch(None)) if n <= 0 else...);
+
         waveNumber = 0;
         for wave in waveData:
+            if not self.backdrop.parent: return;
             msg = wave['prewaveMessage'];
             if msg:
                 self.broadcastMessage(msg);
@@ -80,12 +83,15 @@ class LevelController:
             self.towerWidget.show();
 
             for enemyWave in wave['enemies']:
+
+                if not self.backdrop.parent: return;
                 
                 enemyName = enemyWave['enemyName'];
                 enemyStats = enemyWave['enemyStats'] if 'enemyStats' in enemyWave else None;
                 enemyCount = enemyWave['enemyCount'];
 
                 for _ in range(enemyCount):
+                    if not self.backdrop.parent: return;
                     time.sleep(enemyWave['enemyDelay']);
 
                     enemy = ENEMY_NAMES[enemyName](self.backdrop);
@@ -105,43 +111,54 @@ class LevelController:
         self.onLevelComplete.dispatch(None);
 
     def displayLevelPath(self):
-        t = 0;
-
-        inst = lylac.Sprite();
-        inst.imagePath = "assets/ui/direction-arrow.png";
-        inst.name = "level-path-guide";
-        inst.size = lylac.Udim2.fromOffset(150, 150);
-        inst.anchorPoint = Vector2(.5, .5);
-        inst.parent = self.backdrop;
+        poverty = False;
+        
+        insts: list[dict[str, Any]] = [];
+        for i in range(3):
+            inst = lylac.Sprite();
+            inst.imagePath = "assets/ui/direction-arrow.png";
+            inst.name = "level-path-guide";
+            inst.size = lylac.Udim2.fromOffset(50, 50);
+            inst.anchorPoint = Vector2(.5, .5);
+            inst.parent = self.backdrop;
+            insts.append({"t": i * .02, "inst": inst});
 
         def displayDelta(dt: float):
-            nonlocal t, inst, c0;
-            t = lylac.clamp(0, 1, t + dt / 20);
+            nonlocal c0;
+            
+            for n, bin in enumerate(insts):
+                t = bin["t"];
+                t = lylac.clamp(0, 1, t + dt / 2);
+                bin["t"] = t;
 
-            if t >= 1:
-                c0.disconnect();
-                inst.destroy();
-            else:
-                nextT = lylac.clamp(0, 1, t + dt / 20);
+                inst = bin["inst"];
 
-                p0 = EnemyManager.curve.getDeltaAlongLine(t);
-                p1 = EnemyManager.curve.getDeltaAlongLine(nextT);
+                if t >= 1:
+                    inst.destroy();
+                    if n == 0:
+                        nonlocal poverty;
+                        poverty = True;
+                else:
+                    nextT = lylac.clamp(0, 1, t + dt / 2);
 
-                if not p0 or not p1: return;
+                    p0 = EnemyManager.curve.getDeltaAlongLine(t);
+                    p1 = EnemyManager.curve.getDeltaAlongLine(nextT);
 
-                dir = (p1 - p0).normalize();
+                    if not p0 or not p1: continue;
 
-                rotation = int(math.degrees(math.atan2(dir.y, dir.x))) + 90;
+                    dir = (p1 - p0).normalize();
 
-                inst.position = lylac.Udim2.fromOffset(p0.x, p0.y);
-                inst.rotation = rotation;
+                    rotation = int(math.degrees(math.atan2(dir.y, dir.x))) + 90;
 
-                TEST THIS C:
+                    inst.position = lylac.Udim2.fromOffset(p0.x, p0.y);
+                    inst.rotation = rotation;
 
         c0 = lylac.RenderService.postRender.connect(displayDelta);
 
-        while t < 1:
+        while not poverty:
             pass;
+        c0.disconnect();
+        time.sleep(.25);
 
     screen: lylac.Renderer;
     backdrop: lylac.Sprite;
@@ -170,9 +187,9 @@ class LevelController:
         entropyText.size = lylac.Udim2.fromScale(.1, .05);
         entropyText.textColor = lylac.Color4.white();
         entropyText.anchorPoint = Vector2(.5, .5);
-        entropyText.textAlignX = "center";
+        entropyText.textAlignX = "left";
         entropyText.textAlignY = "center";
-        entropyText.position = lylac.Udim2(75 / 2, .9, 0, .05);
+        entropyText.position = lylac.Udim2(100, .9, 0, .05);
         entropyText.backgroundColor = lylac.Color4.invisible();
         entropyText.borderColor = lylac.Color4.invisible();
         entropyText.dropShadowColor = lylac.Color4.invisible();
@@ -182,6 +199,30 @@ class LevelController:
             entropyText.text = "x" + str(e);
 
         TowerManager.entropyChanged.connect(setEntropyText);
+
+        healthIcon = lylac.Sprite();
+        healthIcon.imagePath = "assets/ui/heart-icon.png";
+        healthIcon.size = lylac.Udim2.fromOffset(65, 65);
+        healthIcon.anchorPoint = Vector2(.5, .5);
+        healthIcon.position = lylac.Udim2.fromScale(.82, .05);
+        healthIcon.parent = spr;
+
+        healthText = lylac.TextObject();
+        healthText.textAlignX = "left";
+        healthText.textAlignY = "center";
+        healthText.anchorPoint = Vector2(.5, .5);
+        healthText.textColor = lylac.Color4.white();
+        healthText.backgroundColor = lylac.Color4.invisible();
+        healthText.borderColor = lylac.Color4.invisible();
+        healthText.dropShadowColor = lylac.Color4.invisible();
+        healthText.text = "x" + str(TowerManager.playerHealth);
+        healthText.position = lylac.Udim2(110, .82, 0, .05);
+        healthText.parent = spr;
+
+        def setHealthText(e):
+            healthText.text = "x" + str(e);
+
+        TowerManager.healthChanged.connect(setHealthText);
 
         with open(levelData['path_of_enemies'], 'r') as f:
             path: list[list[float]] = json.loads(f.read());
@@ -243,5 +284,6 @@ class LevelController:
 
         TowerManager.addEntropy(-1);
         TowerManager.addEntropy(levelData["startingEntropy"]);
+        TowerManager.damageBase(-levelData["startingHealth"]);
 
         createThread(lambda _: self.startLevel(levelData['wavePath']), None);

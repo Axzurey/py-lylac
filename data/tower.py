@@ -19,8 +19,15 @@ class TowerManager:
     towers: list[Tower] = [];
 
     playerEntropy = 0;
+    playerHealth = 0;
 
     entropyChanged: lylac.LylacSignal[int] = lylac.LylacSignal();
+    healthChanged: lylac.LylacSignal[int] = lylac.LylacSignal();
+
+    @staticmethod
+    def damageBase(damage: int):
+        TowerManager.playerHealth -= damage;
+        TowerManager.healthChanged.dispatch(TowerManager.playerHealth);
 
     @staticmethod
     def addEntropy(entropy: int):

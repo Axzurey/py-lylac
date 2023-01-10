@@ -34,7 +34,8 @@ class EnemyManager:
     def removeEnemy(e: Enemy):
         if e in EnemyManager.enemies:
             EnemyManager.enemies.remove(e);
-            TowerManager.addEntropy(e.entropyGainedOnKill);
+            if e.health <= 0:
+                TowerManager.addEntropy(e.entropyGainedOnKill);
 
     @staticmethod
     def getEnemyClosestToGoalAndInRadius(point: pygame.Vector2, radius: int) -> Enemy | None:
@@ -67,6 +68,7 @@ class Enemy:
     position: pygame.Vector2;
     speed: float;
     health: float;
+    baseDamage: int = 1;
 
     entropyGainedOnKill: int;
 
@@ -120,7 +122,7 @@ class Enemy:
 
         if self.alphaAlongPath >= 1:
             self.destroy();
-            #TODO: this should affect the player's health counter or something
+            TowerManager.damageBase(self.baseDamage);
 
         if pathRes:
             self.update_position(pathRes);
