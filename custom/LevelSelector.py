@@ -10,6 +10,7 @@ class LevelData(TypedDict):
     permittedTowers: list[str];
     wavePath: str;
     startingEntropy: int;
+    startingHealth: int;
 
 GAME_LEVELS: dict[str, LevelData] = {
     "grass patch": {
@@ -20,7 +21,8 @@ GAME_LEVELS: dict[str, LevelData] = {
         "permittedTowers": [
             "Star Blue", "Marionette", "Particle Collider"
         ],
-        "startingEntropy": 150
+        "startingEntropy": 150,
+        "startingHealth": 45,
     },
     "grass patch II": {
         "area_for_towers": "levels/grass_patch_2/towerAreas.json",
@@ -30,7 +32,8 @@ GAME_LEVELS: dict[str, LevelData] = {
         "permittedTowers": [
             "Star Blue", "Marionette", "Particle Collider"
         ],
-        "startingEntropy": 200
+        "startingEntropy": 200,
+        "startingHealth": 15
     },
 }
 
@@ -86,7 +89,6 @@ class LevelSelector:
                 levelDisplayBackdrop.position = lylac.Udim2(calculatedPosition.x, .2, calculatedPosition.y, .2);
                 levelDisplayBackdrop.size = lylac.Udim2.fromOffset(300, 150);
                 levelDisplayBackdrop.anchorPoint = pygame.Vector2(.5, .5);
-                levelDisplayBackdrop.parent = display;
                 levelDisplayBackdrop.borderColor = lylac.Color4(0, 1, 0)
                 levelDisplayBackdrop.backgroundColor = lylac.Color4(0, 1, 0);
                 levelDisplayBackdrop.name = "display-backdrop";
@@ -110,7 +112,9 @@ class LevelSelector:
                 levelText.textAlignX = "center";
                 levelText.textAlignY = "center";
                 levelText.textSize = 24;
-                levelText.textColor = lylac.Color4()
+                levelText.textColor = lylac.Color4();
+
+                levelDisplayBackdrop.parent = display;
 
                 styleConnection = lylac.useActionState(
                     levelText,
