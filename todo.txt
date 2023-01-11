@@ -1,1 +1,0 @@
-starting threads seems to be a huge bottleneck, search for alternatives.

@@ -21,7 +21,6 @@ def get_image(imagePath: str, _absolutePosition: tuple[int, int], _absoluteSize:
     absolutePosition = pygame.Vector2(_absolutePosition);
 
     _img = pygame.image.load(imagePath).convert_alpha() if imagePath not in preloaded_images else preloaded_images[imagePath];
-
     preloaded_images[imagePath] = _img;
 
     img = pygame.transform.scale(_img, absoluteSize);

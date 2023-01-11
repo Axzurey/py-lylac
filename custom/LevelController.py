@@ -13,7 +13,8 @@ from data.towers.ParticleCollider import ParticleCollider;
 from data.towers.StarBlue import StarBlue;
 import lylac;
 from lylac.modules.util import createThread;
-from custom.LevelSelector import LevelData;
+from custom.LevelSelector import LevelData
+from lylac.services.RenderService import RenderService;
 
 ENEMY_NAMES = {
     "Midnight Eye": MidnightEye
@@ -148,15 +149,16 @@ class LevelController:
 
                     dir = (p1 - p0).normalize();
 
-                    rotation = int(math.degrees(math.atan2(dir.y, dir.x))) + 90;
+                    rotation = (int(math.degrees(math.atan2(dir.y, dir.x))) + 90) % 360;
 
                     inst.position = lylac.Udim2.fromOffset(p0.x, p0.y);
                     inst.rotation = rotation;
 
+
         c0 = lylac.RenderService.postRender.connect(displayDelta);
 
         while not poverty:
-            pass;
+            time.sleep(1 / RenderService.renderer.framerate);
         c0.disconnect();
         time.sleep(.25);
 
@@ -280,10 +282,8 @@ class LevelController:
             }
         ], areaPolygons);
 
-        self.displayLevelPath(); #bottleneck when drawing path that enemies follow it waits for them to finish before ctn
-
         TowerManager.addEntropy(-1);
         TowerManager.addEntropy(levelData["startingEntropy"]);
         TowerManager.damageBase(-levelData["startingHealth"]);
 
-        createThread(lambda _: self.startLevel(levelData['wavePath']), None);
+        createThread(lambda _: (self.displayLevelPath(), self.startLevel(levelData['wavePath'])), None);

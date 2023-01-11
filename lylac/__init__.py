@@ -8,6 +8,8 @@ from lylac.services.RenderService import RenderService, PostRender, RemoveFromPo
 from lylac.services.InputService import InputService, InputKeyBuffer, InputMouseBuffer;
 from lylac.services.DebugService import DebugService;
 from lylac.services.CleanupService import CleanupService;
+from lylac.services.SoundService import SoundService;
+from lylac.services.PreloadService import PreloadService;
 
 #modules
 from lylac.modules.keymap import KeyCode;
