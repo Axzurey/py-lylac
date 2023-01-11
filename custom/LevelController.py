@@ -280,7 +280,7 @@ class LevelController:
             }
         ], areaPolygons);
 
-        self.displayLevelPath();
+        self.displayLevelPath(); #bottleneck when drawing path that enemies follow it waits for them to finish before ctn
 
         TowerManager.addEntropy(-1);
         TowerManager.addEntropy(levelData["startingEntropy"]);
