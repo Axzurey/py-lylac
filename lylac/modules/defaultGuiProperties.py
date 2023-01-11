@@ -71,7 +71,7 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
         "properties": ["points", "color", "width"]
     },
     "SegmentedLineObject": {
-        "properties": ["points", "color", "width", "showControlPoints", "controlPointColor", "controlPointRadius"]
+        "properties": ["points", "color", "width", "showControlPoints", "controlPointColor", "controlPointRadius", "visible"]
     },
     "DraggableSegmentedLineObject": {
         "properties": ["points", "color", "width"]

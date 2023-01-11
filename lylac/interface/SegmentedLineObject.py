@@ -32,6 +32,8 @@ class SegmentedLineObject(Instance):
 
     _surf: pygame.Surface | None = None;
 
+    visible: bool = False;
+
     def __init__(self, parent: Instance | Renderer | None = None) -> None:
         super().__init__();
 
@@ -40,6 +42,8 @@ class SegmentedLineObject(Instance):
         self.partitions = [];
 
         self.parent = parent;
+
+        self.visible = False;
 
     def getDeltaAlongLine(self, delta: float) -> None | Vector2:
         if delta == 0: return self.points[0];
@@ -87,6 +91,8 @@ class SegmentedLineObject(Instance):
 
         if self.parent and isinstance(self.parent, GuiObject):
             size = self.parent.absoluteSize.xy;
+
+        if not self.visible: return;
         
         surf = pygame.Surface(size, pygame.SRCALPHA, 32);
         surf = surf.convert_alpha()
@@ -105,7 +111,7 @@ class SegmentedLineObject(Instance):
 
     def render(self, dt: float):
 
-        if not self._surf: return;
+        if not self._surf or not self.visible: return;
 
         screen = RenderService.renderer.screen;
 

@@ -70,14 +70,14 @@ class Renderer():
     def recurseUpdate(self, inst: Instance, dt: float, update: UpdateBuffer) -> UpdateBuffer:
         inst.render(dt)
 
-        childrenPriority: list[Instance] = []
-        childrenLast: list[Instance] = []
+        childrenPriority: list[Instance] = [];
+        childrenLast: list[Instance] = [];
 
         for child in inst.children:
             if isinstance(child, SupportsOrdering) and type(child["zIndex"]) is int:
-                childrenPriority.append(child)
+                childrenPriority.append(child);
             else:
-                childrenLast.append(child)
+                childrenLast.append(child);
 
         childrenPriority.sort(key=lambda x: x["zIndex"]);
 
@@ -323,7 +323,7 @@ class Renderer():
             RenderService.postRender.dispatch(dt);
 
             pygame.display.flip();
-            pygame.display.set_caption(f"Blind Nue [@{str(round(clock.get_fps()))}fps]")
+            pygame.display.set_caption(f"Blind Nue [@{str(round(clock.get_fps()))}fps]");
             clock.tick(self.framerate);
 
 from lylac.services.InputService import InputMouseBuffer, InputService

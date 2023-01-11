@@ -1,7 +1,7 @@
 from custom.LevelSelector import LevelSelector
 import lylac;
 
-mainRenderer = lylac.Renderer((1280, 720), 60);
+mainRenderer = lylac.Renderer((1280, 720), 200);
 
 levelSelector = LevelSelector(mainRenderer);
 
