@@ -1,0 +1,5 @@
+pip install snakeviz
+snakeviz results.prof
+
+python -m cProfile -o results.prof main.py
+^^ change it to work with ur python version

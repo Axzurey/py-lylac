@@ -1,5 +1,6 @@
 import math
 from math import cos, dist, sin, sqrt
+import time
 from typing import Iterator
 from pygame import Vector2
 import pygame
@@ -27,6 +28,7 @@ class PolygonObject(Instance, IsPolygonal):
     showControlPoints: bool;
     controlPointColor: Color4;
     controlPointRadius: int;
+    visible: bool = False;
 
     _surf: pygame.Surface | None = None;
 
@@ -35,6 +37,8 @@ class PolygonObject(Instance, IsPolygonal):
         IsPolygonal.__init__(self);
 
         LoadDefaultGuiProperties("PolygonObject", self);
+
+        self.visible = False;
 
         self.partitions = [];
 
@@ -69,7 +73,7 @@ class PolygonObject(Instance, IsPolygonal):
 
     def render(self, dt: float):
 
-        if not self._surf: return;
+        if not self._surf or not self.visible: return;
 
         screen = RenderService.renderer.screen;
 

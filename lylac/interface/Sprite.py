@@ -18,7 +18,7 @@ def get_image(imagePath: str, _absolutePosition: tuple[int, int], _absoluteSize:
 
     _img = pygame.image.load(imagePath).convert_alpha();
 
-    img = pygame.transform.scale(_img, absoluteSize)
+    img = pygame.transform.scale(_img, absoluteSize);
 
     (img, imgPos) = rotateAroundCenter(img, rotation, absolutePosition + absoluteSize / 2);
 

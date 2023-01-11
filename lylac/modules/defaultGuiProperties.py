@@ -47,7 +47,8 @@ GUI_DEFAULT_PROPERTIES = {
     "relativeSize": lambda: 'xy',
     "relativePosition": lambda: 'xy',
     "name": lambda: f"instance-{uuid.uuid4().hex}",
-    "wrapText": lambda: True
+    "wrapText": lambda: True,
+    "visible": lambda: True
 }
 
 GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], list[str]]] = {
@@ -64,7 +65,7 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
         "properties": ["points", "color", "width", "curvePoints"]
     },
     "PolygonObject": {
-        "properties": ["points", "color", "width", "showControlPoints", "controlPointColor", "controlPointRadius"]
+        "properties": ["points", "color", "width", "showControlPoints", "controlPointColor", "controlPointRadius", "visible"]
     },
     "DraggablePolygonObject": {
         "properties": ["points", "color", "width"]
