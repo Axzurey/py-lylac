@@ -7,7 +7,8 @@ from pygame import Vector2;
 from custom.towerWidget import TowerWidget;
 from data.Enemy import EnemyManager;
 from data.enemies.MidnightEye import MidnightEye
-from data.tower import TowerManager;
+from data.tower import TowerManager
+from data.towers.HylocRaygun import HylocRaygun;
 from data.towers.Marionette import Marionette
 from data.towers.ParticleCollider import ParticleCollider;
 from data.towers.StarBlue import StarBlue;
@@ -279,6 +280,14 @@ class LevelController:
                 "radius": 100,
                 "link": ParticleCollider,
                 "targetSize": 100,
+            },
+            {
+                "name": "Hyloc Raygun",
+                "imagePath": "assets/towers/hyloc raygun-01.png",
+                "cost": 0,
+                "radius": 200,
+                "link": HylocRaygun,
+                "targetSize": 125
             }
         ], areaPolygons);
 

@@ -50,7 +50,6 @@ class StarBlue(Tower):
 
         directionToEnemy = target.position - self.position;
         unitToEnemy = directionToEnemy.normalize();
-        distanceToEnemy = directionToEnemy.magnitude();
 
         self.towerObject.rotation = int(math.degrees(math.atan2(unitToEnemy.y, unitToEnemy.x))) + 90;
 

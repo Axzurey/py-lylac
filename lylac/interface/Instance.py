@@ -11,7 +11,7 @@ PROPERTIES_THAT_FORCE_RERENDER = [
     "cornerRadius", "borderWidth", "dropShadowColor", "dropShadowRadius", "dropShadowOffset",
     "text", "textColor", "textSize", "textFont", "textAlignX", "textAlignY", "enabled",
     "zIndex", "rotation", "points", "width", "color", "showControlPoints",
-    "imagePath", "visible"
+    "imagePath", "visible", "centerOfRotation"
 ];
 
 PROPERTY_UPDATE_MAP = {
@@ -26,7 +26,8 @@ PROPERTY_UPDATE_MAP = {
     "backgroundColor": ["update", "update_image", "update_surfaces"],
     "dropShadowRadius": ["update", "update_image", "update_surfaces"],
     "dropShadowOffset": ["update", "update_image", "update_surfaces"],
-    "visible": ["update", "update_image", "update_surfaces"]
+    "visible": ["update", "update_image", "update_surfaces"],
+    "centerOfRotation": ["update", "update_image", "update_surfaces"]
 }
 
 class Instance():

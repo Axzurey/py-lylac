@@ -9,4 +9,4 @@ levelSelector = LevelSelector(mainRenderer);
 
 mainRenderer.start(); #always goes at the bottom!
 
-#TODO: add entropy gain on kill
+#TODO: fix laser

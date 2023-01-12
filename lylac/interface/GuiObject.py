@@ -35,6 +35,7 @@ class GuiObject(Instance, SupportsOrdering):
     anchorPoint: pygame.Vector2;
     relativeSize: Literal['xx'] | Literal['xy'] | Literal['yy'];
     relativePosition: Literal['xx'] | Literal['xy'] | Literal['yy'];
+    centerOfRotation: pygame.Vector2;
 
     surfaces: dict[Literal["dropShadowSurf"] | Literal["backgroundSurf"] | Literal["borderSurf"], tuple[pygame.Surface, pygame.Rect]];
 
@@ -147,11 +148,21 @@ class GuiObject(Instance, SupportsOrdering):
 
         pygame.draw.rect(dropShadowSurf, self.dropShadowColor.toRGBATuple(), ((0, 0), dropNeonRect.size), border_radius=self.cornerRadius)
         
-        (borderSurf, bdPos) = rotateAroundCenter(borderSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2);
+        center = pygame.Vector2(
+            mathf.lerp(self.absolutePosition.x, self.absolutePosition.x + self.absoluteSize.x, self.centerOfRotation.x),
+            mathf.lerp(self.absolutePosition.y, self.absolutePosition.y + self.absoluteSize.y, self.centerOfRotation.y)
+        )
 
-        (backgroundSurf, bgPos) = rotateAroundCenter(backgroundSurf, self.rotation, self.absolutePosition + self.absoluteSize / 2);
+        dropCenter = pygame.Vector2(
+            mathf.lerp(dropPos.x, dropPos.x + dropSize.x, self.centerOfRotation.x),
+            mathf.lerp(dropPos.y, dropPos.y + dropSize.y, self.centerOfRotation.y)
+        )
 
-        (dropShadowSurf, dsPos) = rotateAroundCenter(dropShadowSurf, self.rotation, dropPos + dropSize / 2);
+        (borderSurf, bdPos) = rotateAroundCenter(borderSurf, self.rotation, center);
+
+        (backgroundSurf, bgPos) = rotateAroundCenter(backgroundSurf, self.rotation, center);
+
+        (dropShadowSurf, dsPos) = rotateAroundCenter(dropShadowSurf, self.rotation, dropCenter);
 
         self.boundingRect = backgroundRect;
 
@@ -173,19 +184,28 @@ class GuiObject(Instance, SupportsOrdering):
         dropSize = pygame.Vector2(size.x + self.dropShadowRadius,
             size.y + self.dropShadowRadius)
 
+        center = pygame.Vector2(
+            mathf.lerp(self.absolutePosition.x, self.absolutePosition.x + self.absoluteSize.x, self.centerOfRotation.x),
+            mathf.lerp(self.absolutePosition.y, self.absolutePosition.y + self.absoluteSize.y, self.centerOfRotation.y)
+        )
+
+        dropCenter = pygame.Vector2(
+            mathf.lerp(dropPos.x, dropPos.x + dropSize.x, self.centerOfRotation.x),
+            mathf.lerp(dropPos.y, dropPos.y + dropSize.y, self.centerOfRotation.y)
+        )
 
         self.surfaces['borderSurf'] = (
             self.surfaces['borderSurf'][0], 
-            calculate_rect_for_image(self.surfaces['borderSurf'][0], position + size / 2)
+            calculate_rect_for_image(self.surfaces['borderSurf'][0], center)
         );
         self.surfaces['backgroundSurf'] = (
             self.surfaces['backgroundSurf'][0],
-            calculate_rect_for_image(self.surfaces['backgroundSurf'][0], position + size / 2)
+            calculate_rect_for_image(self.surfaces['backgroundSurf'][0], center)
         );
         
         self.surfaces['dropShadowSurf'] = (
             self.surfaces['dropShadowSurf'][0], 
-            calculate_rect_for_image(self.surfaces['dropShadowSurf'][0], dropPos + dropSize / 2)
+            calculate_rect_for_image(self.surfaces['dropShadowSurf'][0], dropCenter)
         );
         
     def update(self):
