@@ -36,9 +36,9 @@ class HylocRaygun(Tower):
         p.borderWidth = 0;
         p.dropShadowColor = lylac.Color4.fromAlpha(0);
         p.position = lylac.Udim2.fromOffset(self.position.x, self.position.y);
-        p.anchorPoint = pygame.Vector2(.5, .5);
+        p.anchorPoint = pygame.Vector2(0, 0);
         p.zIndex = 50;
-        p.centerOfRotation = pygame.Vector2()
+        p.centerOfRotation = pygame.Vector2(0, 0);
         p.parent = self.screen;
 
         self.ray = p;
@@ -52,7 +52,8 @@ class HylocRaygun(Tower):
     def targetEnemy(self):
         target = EnemyManager.getEnemyClosestToGoalAndInRadius(self.position, self.radius);
 
-        if not target: return;
+        if not target:
+            return self.destroyRayObject();
 
         self.lastFired = time.time();
 
