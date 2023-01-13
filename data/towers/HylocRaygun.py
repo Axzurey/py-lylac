@@ -10,7 +10,7 @@ class HylocRaygun(Tower):
     damage: float = 20;
     fireRate: float = 1000;
     radius: int = 200;
-    ray: lylac.Frame | None = None;
+    ray: lylac.Sprite | None = None;
     lastFired: float = 0;
 
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
@@ -29,19 +29,22 @@ class HylocRaygun(Tower):
         
         self.towerObject = towerObject;
 
+    frame = 0;
+
     def createRayObject(self):
-        p = lylac.Frame();
-        p.size = lylac.Udim2.fromOffset(500, 10);
+        p = lylac.Sprite();
+
+        self.ray = p;
+
+        p.size = lylac.Udim2.fromOffset(800, 100);
+        p.imagePath = "assets/ui/lazer.png"
         p.backgroundColor = lylac.Color4.fromRGB(0, 255, 255);
         p.borderWidth = 0;
         p.dropShadowColor = lylac.Color4.fromAlpha(0);
         p.position = lylac.Udim2.fromOffset(self.position.x, self.position.y);
-        p.anchorPoint = pygame.Vector2(0, 0);
+        p.anchorPoint = pygame.Vector2(.5, .5);
         p.zIndex = 50;
-        p.centerOfRotation = pygame.Vector2(0, 0);
         p.parent = self.screen;
-
-        self.ray = p;
 
         return p;
     
@@ -67,6 +70,9 @@ class HylocRaygun(Tower):
         ray = self.ray if self.ray else self.createRayObject();
 
         ray.rotation = rotationToEnemy - 90;
+
+        self.frame += .25;
+        ray.imagePath = "assets/ui/lazer2.png" if round(self.frame) % 2 == 0 else "assets/ui/lazer2.png";
 
     def update(self, dt: float):
         if time.time() - self.lastFired > 1 / self.fireRate:
