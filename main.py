@@ -9,6 +9,5 @@ levelSelector = LevelSelector(mainRenderer);
 
 mainRenderer.start(); #always goes at the bottom!
 
-#TODO: fix laser jkw fuck it, just make the lazer a top half sprite and rotate that c:
 #TODO: make upgrade ui
 #TODO: make welcome screen c:

@@ -42,3 +42,13 @@ class Vulnerable(Effect):
         statusIcon.position = lylac.Udim2.fromScale(.5, .5);
         statusIcon.anchorPoint = Vector2(.5, .5);
         statusIcon.zIndex = 98;
+
+class Burning(Effect):
+
+    adornee: Enemy
+
+    def __init__(self, adornee: Enemy, level: int, length: float) -> None:
+        super().__init__(adornee, level, length);
+
+    def trigger(self, dt: float):
+        self.adornee.takeDamage(self.level * 15 * dt);

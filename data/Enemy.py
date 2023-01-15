@@ -1,6 +1,7 @@
 from __future__ import annotations
 import time
 import pygame
+from custom.WorldClock import WorldClock
 from data.tower import TowerManager
 import lylac
 from lylac.services.RenderService import PostRender;
@@ -116,7 +117,8 @@ class Enemy:
                     effect.statusIcon.destroy();
 
     def update(self, dt: float):
-        self.alphaAlongPath += self.speed / 1000 * dt;
+        self.enemyObject.zIndex += 1;
+        self.alphaAlongPath += self.speed / 1000 * dt * WorldClock.timeStep;
 
         pathRes = EnemyManager.curve.getDeltaAlongLine(self.alphaAlongPath);
 

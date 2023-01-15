@@ -4,12 +4,19 @@ from lylac.modules.color4 import Color4
 from lylac.services.FontService import FontService, FreeFont;
 from lylac.services.RenderService import RenderService
 from lylac.modules.defaultGuiProperties import LoadDefaultGuiProperties;
+import re;
+
+def isOnlyWhitespace(s: str):
+    for c in s:
+        if c != " ":
+            return False;
+    return True;
 
 def getFontWrap(text: str, font: str, fontSize: int, maxWidth: int) -> tuple[list[str], list[int]]:
     """
     Returns an array consisting of the lines and an array consisting of required Vertical spacing between the lines
     """
-    words = text.split(' ');
+    words = list(filter(None, [x.replace(' ', '') if not isOnlyWhitespace(x) else None for x in list(filter(None, re.split(r"(\\n+|\s+)", text)))]));
 
     splitLines: list[list[str]] = [];
     lineSpacings: list[int] = [];
@@ -18,6 +25,13 @@ def getFontWrap(text: str, font: str, fontSize: int, maxWidth: int) -> tuple[lis
     currentLineWidth = 0;
     splitLineObject = [];
     for word in words:
+
+        if word == "\n":
+            currentLineWidth = 0;
+            splitLines.append(splitLineObject);
+            splitLineObject = [];
+            continue;
+
         fw, _fh = FontService.get_width_and_height_for_string(font, word + " ", fontSize);
         if currentLineWidth + fw > maxWidth: #this should account for the spaces that will be added later.
             currentLineWidth = 0;

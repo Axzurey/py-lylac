@@ -2,6 +2,7 @@ import asyncio
 import math
 import time
 import pygame
+from custom.WorldClock import WorldClock
 from data.Effect import Vulnerable
 from data.Enemy import EnemyManager
 from data.tower import Tower
@@ -10,9 +11,26 @@ from lylac.services.RenderService import RenderService
 
 class Marionette(Tower):
     
-    radius: int = 500;
+    name = "Marionette";
+    description = "A certain song inspired me to make this. \nThis tower inflicts 1 stack of vulnerability on any enemies in the radius periodically."
+
+    radius: int = 400;
     lastTriggered: float = 0;
     fireRate: float = .5; #1 / fireRate is the time it takes between triggers
+
+    maxUpgradeLevel = 4;
+    upgradePerks = [
+        "Increased control radius",
+        "Increased control radius",
+        "Longer control time",
+        "Increased [vulnerable] damage bonus"
+    ];
+    upgradeCosts = [
+        125,
+        200,
+        300,
+        375
+    ];
 
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
 
@@ -53,10 +71,13 @@ class Marionette(Tower):
 
         lylac.AnimationService.createAnimation(p, "size", lylac.Udim2.fromOffset(self.radius, self.radius), .3, lylac.InterpolationMode.easeInQuint);
         
-        lylac.CleanupService.delay(.3, lambda targets: [target.afflictStatus(Vulnerable(target, 5, 2)) for target in targets], targets)
+        lylac.CleanupService.delay(.3, lambda targets: [target.afflictStatus(Vulnerable(target, 5 if self.upgradeLevel == 4 else 2, 4 if self.upgradeLevel >= 3 else 2)) for target in targets], targets)
 
     def update(self, dt: float):
-        if time.time() - self.lastTriggered > 1 / self.fireRate:
+
+        self.radius = 400 + lylac.clamp(0, 100, self.upgradeLevel * 50);
+
+        if time.time() - self.lastTriggered > 1 / (self.fireRate * WorldClock.timeStep):
             self.targetEnemy();
 
         super().update(dt);

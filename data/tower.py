@@ -24,6 +24,8 @@ class TowerManager:
     entropyChanged: lylac.LylacSignal[int] = lylac.LylacSignal();
     healthChanged: lylac.LylacSignal[int] = lylac.LylacSignal();
 
+    editorOpen: bool = False;
+
     @staticmethod
     def damageBase(damage: int):
         TowerManager.playerHealth -= damage;
@@ -50,10 +52,11 @@ class TowerManager:
     @staticmethod
     def removeTower(t: Tower):
         if t in TowerManager.towers:
+            t.destroy();
             TowerManager.towers.remove(t);
 
 class Tower:
-
+    name = "NO NAME BRAND TOWER";
     towerObject: lylac.Sprite;
     screen: lylac.Instance;
     position: pygame.Vector2;
@@ -61,6 +64,13 @@ class Tower:
     effects: list[Effect]
 
     allowedPaddingInset: int = 15;
+
+    upgradeLevel: int = 0;
+    upgradePerks: list[str];
+    maxUpgradeLevel: int;
+    upgradeCosts: list[int];
+
+    description: str;
     
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
         self.screen = screen;
@@ -80,3 +90,6 @@ class Tower:
             effect.trigger(dt);
             if time.time() - effect.timeStarted >= effect.length:
                 toRemove.append(effect);
+
+    def destroy(self):
+        self.towerObject.destroy();

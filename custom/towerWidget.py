@@ -42,8 +42,10 @@ class TowerWidget:
                 return True;
         return False;
 
+    placingTower = False;
     def startTowerPlacement(self, towerIndex: int):
         self.close();
+        self.placingTower = True;
 
         towerInfo = self.towerInfos[towerIndex];
 
@@ -86,12 +88,14 @@ class TowerWidget:
             back.destroy();
             spr.destroy();
             f.destroy();
+            self.placingTower = False;
 
         def place():
             tower = towerInfo["link"](self.display, InputService.getMousePosition());
             cancel();
             TowerManager.addTower(tower);
             TowerManager.addEntropy(-towerInfo["cost"]);
+            self.placingTower = False;
 
         def updateSprPosition(_):
             mPos = InputService.getMousePosition();
@@ -118,7 +122,7 @@ class TowerWidget:
                 child.destroy();
         i = 0;
         for tower in self.towerInfos:
-            def pythonPleaseScopeVariablesForLoops():
+            def pythonPleaseScopeVariablesForLoops(): #typical python behavior
                 icon = lylac.ImageButton();
                 icon.imagePath = tower["imagePath"];
                 icon.relativeSize = "yy";

@@ -1,7 +1,6 @@
-import asyncio
-import math
 import time
 import pygame
+from custom.WorldClock import WorldClock
 from data.Enemy import EnemyManager
 from data.tower import Tower, TowerManager
 import lylac
@@ -12,6 +11,23 @@ class ParticleCollider(Tower):
     lastActivated: float = 0;
     activationCooldown: float = 5;
     baseEntropyGained = 20;
+
+    name = "Particle Collider";
+    description = "Wait... Doesn't CERN have one of these?\nGenerates you a nice bit of entropy periodically.";
+
+    maxUpgradeLevel = 4;
+    upgradePerks = [
+        "Increased entropy gain",
+        "Increased entropy gain",
+        "Faster entropy creation & Increased entropy gain",
+        "Faster entropy creation & Increased entropy gain"
+    ];
+    upgradeCosts = [
+        75,
+        150,
+        300,
+        400
+    ];
 
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
 
@@ -38,8 +54,8 @@ class ParticleCollider(Tower):
         self.towerObject = towerObject;
 
     def update(self, dt: float):
-        if time.time() - self.lastActivated >= self.activationCooldown:
-            TowerManager.addEntropy(self.baseEntropyGained);
+        if WorldClock.timeStep > 0 and time.time() - self.lastActivated >= (self.activationCooldown * (1 / WorldClock.timeStep) - ((2 * (self.upgradeLevel - 2)) if self.upgradeLevel > 3 else 0)):
+            TowerManager.addEntropy(self.baseEntropyGained * self.upgradeLevel);
             self.lastActivated = time.time();
         
         for child in self.towerObject.children:

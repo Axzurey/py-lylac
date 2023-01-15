@@ -2,6 +2,7 @@ import asyncio
 import math
 import time
 import pygame
+from custom.WorldClock import WorldClock
 from data.Enemy import EnemyManager
 from data.tower import Tower
 import lylac
@@ -11,6 +12,25 @@ class StarBlue(Tower):
     damage: float = 20;
     fireRate: float = 15;
     radius: int = 200;
+
+    name = "Star Blue";
+    description = "Something something something about blue dwarf stars.\nIt's like the peashooter in plants vs zombies.";
+
+    maxUpgradeLevel = 5;
+    upgradePerks = [
+        "Faster Firerate",
+        "Increased attack radius",
+        "Added damage",
+        "Faster Firerate",
+        "Added damage"
+    ];
+    upgradeCosts = [
+        100,
+        200,
+        300,
+        400,
+        500
+    ];
 
     lastFired: float = 0;
 
@@ -62,7 +82,7 @@ class StarBlue(Tower):
             distanceToEnemy = directionToEnemy.magnitude();
 
             nonlocal t;
-            t = lylac.clamp(0, distanceToEnemy, t + 1500 * dt);
+            t = lylac.clamp(0, distanceToEnemy, t + 1500 * dt * WorldClock.timeStep);
             tPos = self.position + unitToEnemy * t;
             p.position = lylac.Udim2.fromOffset(tPos.x, tPos.y)
             if t >= distanceToEnemy or target.health <= 0:
@@ -78,7 +98,11 @@ class StarBlue(Tower):
 
 
     def update(self, dt: float):
-        if time.time() - self.lastFired > 1 / self.fireRate:
+        self.radius = (200 + 75) if self.upgradeLevel >= 2 else 200;
+        self.damage = (20 + 25) if self.upgradeLevel == 3 else (20 + 50) if self.upgradeLevel == 5 else 20;
+        self.fireRate = 15 * 1.5 if self.upgradeLevel == 1 else (15 * 2) if self.upgradeLevel == 4 else 15;
+
+        if time.time() - self.lastFired > 1 / (self.fireRate * WorldClock.timeStep):
             self.targetEnemy();
 
         super().update(dt);

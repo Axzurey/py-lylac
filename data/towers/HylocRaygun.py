@@ -1,17 +1,37 @@
 import math
 import time
 import pygame
+from custom.WorldClock import WorldClock
+from data.Effect import Burning
 from data.Enemy import EnemyManager
 from data.tower import Tower
 import lylac
 from lylac.services.RenderService import RenderService
 
 class HylocRaygun(Tower):
-    damage: float = 20;
+    tickDamage: float = 50 / 60; #damage / 60
     fireRate: float = 1000;
     radius: int = 200;
     ray: lylac.Sprite | None = None;
     lastFired: float = 0;
+
+    name = "Hyloc™ Raygun";
+    description = "A raygun made by a certain company.\nFires a ray. Ray damages enemies. Need i say more?";
+
+    maxUpgradeLevel = 4;
+    upgradePerks = [
+        "Increased Tick damage",
+        "Increased target radius",
+        "Enemies hit by the raygun will be inflicted with 1 stack of [burning] that lasts for 2 seconds",
+        "Enemies hit by the raygun will be inflicted with 2 stacks of [burning] that last for 1.5 seconds each"
+    ];
+    upgradeCosts = [
+        150,
+        200,
+        300,
+        400
+    ];
+
 
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
 
@@ -36,11 +56,8 @@ class HylocRaygun(Tower):
 
         self.ray = p;
 
-        p.size = lylac.Udim2.fromOffset(800, 100);
+        p.size = lylac.Udim2.fromOffset(800, 40);
         p.imagePath = "assets/ui/lazer.png"
-        p.backgroundColor = lylac.Color4.fromRGB(0, 255, 255);
-        p.borderWidth = 0;
-        p.dropShadowColor = lylac.Color4.fromAlpha(0);
         p.position = lylac.Udim2.fromOffset(self.position.x, self.position.y);
         p.anchorPoint = pygame.Vector2(.5, .5);
         p.zIndex = 50;
@@ -51,6 +68,7 @@ class HylocRaygun(Tower):
     def destroyRayObject(self):
         if self.ray:
             self.ray.destroy();
+            self.ray = None;
 
     def targetEnemy(self):
         target = EnemyManager.getEnemyClosestToGoalAndInRadius(self.position, self.radius);
@@ -74,8 +92,35 @@ class HylocRaygun(Tower):
         self.frame += .25;
         ray.imagePath = "assets/ui/lazer2.png" if round(self.frame) % 2 == 0 else "assets/ui/lazer2.png";
 
+        for enemy in EnemyManager.enemies:
+            enemyP = enemy.enemyObject.absolutePosition;
+            enemyS = enemy.enemyObject.absoluteSize;
+
+            corners = [
+                enemyP, #top left
+                enemyP + pygame.Vector2(enemyS.x, 0), #top right
+                enemyP + enemyS, #bottom right
+                enemyP + pygame.Vector2(0, enemyS.y), #bottom, left
+                enemyP + enemyS / 2 #center
+            ]
+
+            for corner in corners:
+                if ray.isPointInBounding(corner):
+                    enemy.takeDamage(self.tickDamage);
+                    if self.upgradeLevel == 3:
+                        enemy.afflictStatus(Burning(enemy, 3, 2));
+                    elif self.upgradeLevel == 4:
+                        enemy.afflictStatus(Burning(enemy, 3, 1.5));
+                        enemy.afflictStatus(Burning(enemy, 3, 1.5));
+
     def update(self, dt: float):
-        if time.time() - self.lastFired > 1 / self.fireRate:
+        self.tickDamage = (100 / 60) if self.upgradeLevel > 1 else 50 / 60;
+        self.radius = 250 if self.upgradeLevel >= 2 else 200;
+        if time.time() - self.lastFired > 1 / (self.fireRate * WorldClock.timeStep):
             self.targetEnemy();
 
         super().update(dt);
+
+    def destroy(self):
+        self.destroyRayObject();
+        super().destroy();

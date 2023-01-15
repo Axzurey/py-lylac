@@ -3,7 +3,9 @@ import math;
 import time;
 from typing import Any, TypedDict;
 
-from pygame import Vector2;
+from pygame import Vector2
+from custom.WorldClock import WorldClock
+from custom.towerUpgrader import TowerUpgrader;
 from custom.towerWidget import TowerWidget;
 from data.Enemy import EnemyManager;
 from data.enemies.MidnightEye import MidnightEye
@@ -15,6 +17,7 @@ from data.towers.StarBlue import StarBlue;
 import lylac;
 from lylac.modules.util import createThread;
 from custom.LevelSelector import LevelData
+from lylac.services.InputService import InputMouseBuffer
 from lylac.services.RenderService import RenderService;
 
 ENEMY_NAMES = {
@@ -41,6 +44,18 @@ class LevelController:
     """
 
     onLevelComplete = lylac.LylacSignal();
+    connections: list[lylac.LylacConnection];
+
+    def interceptClick(self, mouseBuffer: InputMouseBuffer):
+        print('c0')
+        if TowerManager.editorOpen or self.towerWidget.placingTower: return;
+        print('c1')
+        for tower in TowerManager.towers:
+            print('actually searching')
+            if tower.towerObject.isPointInBounding(mouseBuffer["position"]):
+                print('found one!')
+                TowerManager.editorOpen = True;
+                towerUpgrader = TowerUpgrader(self.backdrop, tower);
 
     def broadcastMessage(self, msg: str):
         f = lylac.Frame();
@@ -94,7 +109,14 @@ class LevelController:
 
                 for _ in range(enemyCount):
                     if not self.backdrop.parent: return;
-                    time.sleep(enemyWave['enemyDelay']);
+                    timeOrigin = time.time();
+                    while True:
+                        time.sleep(1 / RenderService.renderer.framerate)
+                        timeNow = time.time();
+                        if WorldClock.timeStep == 0: continue;
+
+                        if timeNow - timeOrigin > enemyWave["enemyDelay"] / WorldClock.timeStep:
+                            break;
 
                     enemy = ENEMY_NAMES[enemyName](self.backdrop);
                     EnemyManager.addEnemy(enemy);
@@ -109,7 +131,11 @@ class LevelController:
             waveNumber += 1;
             self.towerWidget.hide();
 
-        lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy, None);
+        self.broadcastMessage("Level Complete!");
+
+        time.sleep(2);
+
+        lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy(), None);
         self.onLevelComplete.dispatch(None);
 
     def displayLevelPath(self):
@@ -169,6 +195,9 @@ class LevelController:
 
     def __init__(self, screen: lylac.Renderer, levelData: LevelData) -> None:
         self.screen = screen;
+
+        c0Intercept = lylac.InputService.onMouseButton1Down.connect(lambda _: self.interceptClick(_));
+        self.connections = [c0Intercept];
 
         spr = lylac.Sprite();
         spr.parent = screen;
@@ -269,7 +298,7 @@ class LevelController:
                 "name": "Marionette",
                 "imagePath": "assets/towers/marionette-pixel.png",
                 "cost": 150,
-                "radius": 500,
+                "radius": 400,
                 "link": Marionette,
                 "targetSize": 100,
             },
