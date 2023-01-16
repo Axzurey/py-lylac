@@ -128,7 +128,6 @@ class TowerWidget:
                 icon.relativeSize = "yy";
                 icon.anchorPoint = Vector2(.5, .5)
                 icon.size = lylac.Udim2.fromScale(.75, .75);
-                icon.parent = self.frame;
                 icon.name = "tower-icon";
                 icon.internalStore['cost'] = tower["cost"];
 
@@ -139,6 +138,7 @@ class TowerWidget:
                 iconRed.dropShadowColor = lylac.Color4.invisible();
                 iconRed.backgroundColor = lylac.Color4(1, 0, 0, .25) if tower["cost"] < TowerManager.playerEntropy else lylac.Color4.invisible();
                 iconRed.name = "redscreen";
+                iconRed.canHover = True;
                 iconRed.parent = icon;
 
                 costIcon = lylac.Sprite();
@@ -163,6 +163,8 @@ class TowerWidget:
                 costText.textColor = lylac.Color4.white();
                 costText.parent = icon;
                 costText.zIndex = 10 + i;
+
+                icon.parent = self.frame;
 
                 lylac.useActionState(iconRed, 
                     defaultProperties={"size": lylac.Udim2.fromScale(.75, .75)}, 
@@ -243,7 +245,6 @@ class TowerWidget:
         towerFrame.size = lylac.Udim2.fromOffset(100, 200);
         towerFrame.zIndex = 100;
         towerFrame.backgroundColor = lylac.Color4.fromRGB(25, 25, 25);
-        #towerFrame.anchorPoint = Vector2(-.1, -.1); test this after
         towerFrame.borderWidth = 5;
         towerFrame.cornerRadius = 15;
         

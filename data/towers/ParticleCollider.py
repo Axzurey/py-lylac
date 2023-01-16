@@ -29,6 +29,8 @@ class ParticleCollider(Tower):
         400
     ];
 
+    baseCost = 50;
+
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
 
         towerObject = lylac.Sprite();
@@ -38,6 +40,7 @@ class ParticleCollider(Tower):
         towerObject.position = lylac.Udim2.fromOffset(position.x, position.y);
         towerObject.imagePath = "assets/towers/particle collider-01.png";
         towerObject.zIndex = 90;
+        towerObject.canHover = True;
 
         above = lylac.Sprite();
         above.name = "particle-collider-tip";
@@ -46,6 +49,7 @@ class ParticleCollider(Tower):
         above.position = lylac.Udim2.fromScale(.5, .5);
         above.imagePath = "assets/towers/particle collider-tip-01.png"
         above.parent = towerObject;
+        above.canHover = True;
 
         super().__init__(screen, position);
 

@@ -312,7 +312,7 @@ class LevelController:
             {
                 "name": "Hyloc Raygun",
                 "imagePath": "assets/towers/hyloc raygun-01.png",
-                "cost": 0,
+                "cost": 200,
                 "radius": 200,
                 "link": HylocRaygun,
                 "targetSize": 125

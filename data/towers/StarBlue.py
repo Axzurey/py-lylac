@@ -32,6 +32,8 @@ class StarBlue(Tower):
         500
     ];
 
+    baseCost = 100;
+
     lastFired: float = 0;
 
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
@@ -42,7 +44,6 @@ class StarBlue(Tower):
         towerObject.anchorPoint = pygame.Vector2(.5, .5);
         towerObject.position = lylac.Udim2.fromOffset(position.x, position.y);
         towerObject.imagePath = "assets/towers/star-blue.png";
-        towerObject.enabled = True;
         towerObject.canHover = True;
         towerObject.zIndex = 90;
 

@@ -61,14 +61,14 @@ class TowerUpgrader:
         descriptionBox.backgroundColor = lylac.Color4.invisible();
         descriptionBox.dropShadowColor = lylac.Color4.invisible();
         descriptionBox.borderColor = lylac.Color4.invisible();
-        descriptionBox.textSize = 14;
+        descriptionBox.textSize = 20;
         descriptionBox.size = lylac.Udim2.fromScale(1, .1);
         descriptionBox.position = lylac.Udim2(0, .5, 85, 0);
         descriptionBox.anchorPoint = pygame.Vector2(.5, .5);
         descriptionBox.parent = f;
 
         upgradeButton = lylac.TextButton();
-        upgradeButton.text = f"Upgrade Tower ${tower.upgradeCosts[tower.upgradeLevel + 1]}" if tower.upgradeLevel < tower.maxUpgradeLevel else "MAX LEVEL";
+        upgradeButton.text = f"Upgrade Tower {tower.upgradeLevel}/{tower.maxUpgradeLevel}\n${tower.upgradeCosts[tower.upgradeLevel + 1]}" if tower.upgradeLevel < tower.maxUpgradeLevel else "MAX LEVEL";
         upgradeButton.textSize = 16;
         upgradeButton.textAlignX = "center";
         upgradeButton.textAlignY = "center";
@@ -81,7 +81,7 @@ class TowerUpgrader:
         upgradeButton.parent = f;
 
         destroyButton = lylac.TextButton();
-        destroyButton.text = "Remove Tower";
+        destroyButton.text = f"Sell Tower ${tower.baseCost // 2}";
         destroyButton.textColor = lylac.Color4();
         destroyButton.backgroundColor = lylac.Color4(.8, .1, .1);
         destroyButton.borderColor = lylac.Color4(.4, 0, 0);
@@ -113,18 +113,35 @@ class TowerUpgrader:
 
         def update():
             if tower.upgradeLevel < tower.maxUpgradeLevel:
-                if TowerManager.playerEntropy <= tower.upgradeCosts[tower.upgradeLevel + 1]:
+                if TowerManager.playerEntropy < tower.upgradeCosts[tower.upgradeLevel + 1] and upgradeButton.backgroundColor != lylac.Color4(.3, .3, .3):
                     upgradeButton.backgroundColor = lylac.Color4(.3, .3, .3);
-                else:
+                elif TowerManager.playerEntropy >= tower.upgradeCosts[tower.upgradeLevel + 1] and upgradeButton.backgroundColor != lylac.Color4():
                     upgradeButton.backgroundColor = lylac.Color4();
-                upgradeButton.text = f"Upgrade Tower ${tower.upgradeCosts[tower.upgradeLevel + 1]}";
-            else:
+
+                upgText = f"Upgrade Tower {tower.upgradeLevel}/{tower.maxUpgradeLevel}\n${tower.upgradeCosts[tower.upgradeLevel + 1]}";
+                if upgradeButton.text != upgText:
+                    upgradeButton.text = upgText;
+            elif upgradeButton.text != "MAX LEVEL":
                 upgradeButton.text = "MAX LEVEL";
+
+            sellPrice = tower.baseCost;
+
+            for i in range(tower.upgradeLevel) :
+                sellPrice += tower.upgradeCosts[i];
+
+            sellPrice //= 2;
+
+            targetText = f"Sell Tower ${sellPrice}";
+
+            if destroyButton.text != targetText:
+                destroyButton.text = targetText;
 
         def upgrade():
             if tower.upgradeLevel == tower.maxUpgradeLevel: return;
             if TowerManager.playerEntropy < tower.upgradeCosts[tower.upgradeLevel + 1]: return;
+
             TowerManager.addEntropy(-tower.upgradeCosts[tower.upgradeLevel + 1]);
+
             tower.upgradeLevel += 1;
 
         upgradeButton.onMouseButton1Down.connect(lambda _: upgrade());
@@ -137,6 +154,16 @@ class TowerUpgrader:
     def destroyTower(self, tower: Tower):
         from data.tower import TowerManager
         TowerManager.removeTower(tower);
+
+        sellPrice = tower.baseCost;
+
+        for i in range(tower.upgradeLevel) :
+            sellPrice += tower.upgradeCosts[i];
+
+        sellPrice //= 2;
+
+        TowerManager.addEntropy(sellPrice);
+
         self.drop();
 
     def drop(self):

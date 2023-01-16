@@ -15,6 +15,8 @@ class HylocRaygun(Tower):
     ray: lylac.Sprite | None = None;
     lastFired: float = 0;
 
+    baseCost = 200;
+
     name = "Hyloc™ Raygun";
     description = "A raygun made by a certain company.\nFires a ray. Ray damages enemies. Need i say more?";
 
@@ -41,6 +43,7 @@ class HylocRaygun(Tower):
         towerObject.anchorPoint = pygame.Vector2(.5, .5);
         towerObject.position = lylac.Udim2.fromOffset(position.x, position.y);
         towerObject.imagePath = "assets/towers/hyloc raygun-01.png";
+        towerObject.canHover = True;
         towerObject.zIndex = 90;
 
         super().__init__(screen, position);

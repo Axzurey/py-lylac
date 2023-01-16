@@ -36,6 +36,7 @@ class GuiObject(Instance, SupportsOrdering):
     relativeSize: Literal['xx'] | Literal['xy'] | Literal['yy'];
     relativePosition: Literal['xx'] | Literal['xy'] | Literal['yy'];
     centerOfRotation: pygame.Vector2;
+    canHover: bool;
 
     surfaces: dict[Literal["dropShadowSurf"] | Literal["backgroundSurf"] | Literal["borderSurf"], tuple[pygame.Surface, pygame.Rect]];
 

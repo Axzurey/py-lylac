@@ -9,6 +9,6 @@ levelSelector = LevelSelector(mainRenderer);
 
 mainRenderer.start(); #always goes at the bottom!
 
-#TODO: make upgrade ui
 #TODO: make welcome screen c:
-#TODO: make enemies unclickable lmfao
+#TODO: chess board map
+#TODO: make the towerupgrader display the tower radius

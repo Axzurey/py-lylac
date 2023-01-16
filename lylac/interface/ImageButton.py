@@ -26,6 +26,8 @@ class ImageButton(GuiObject, Clickable, Hoverable):
 
         LoadDefaultGuiProperties('ImageButton', self);
 
+        self.canHover = True;
+
     def update_image(self):
         self._img = pygame.image.load(self.imagePath).convert_alpha();
 

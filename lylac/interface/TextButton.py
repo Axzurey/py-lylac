@@ -11,6 +11,8 @@ class TextButton(TextObject, Clickable, Hoverable, SupportsOrdering):
 
         LoadDefaultGuiProperties('TextButton', self);
 
+        self.canHover = True;
+
     def update(self):
         super().update();
 

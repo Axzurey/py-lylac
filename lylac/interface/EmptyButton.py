@@ -15,6 +15,8 @@ class EmptyButton(GuiObject, Clickable, Hoverable):
 
         LoadDefaultGuiProperties('EmptyButton', self);
 
+        self.canHover = True;
+
     def update(self):
         super().update();
 

@@ -77,6 +77,8 @@ class Tower:
     upgradeCosts: list[int];
 
     description: str;
+
+    baseCost: int
     
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
         self.screen = screen;

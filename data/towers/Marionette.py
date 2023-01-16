@@ -32,6 +32,8 @@ class Marionette(Tower):
         375
     ];
 
+    baseCost = 150;
+
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
 
         towerObject = lylac.Sprite();
@@ -41,6 +43,7 @@ class Marionette(Tower):
         towerObject.position = lylac.Udim2.fromOffset(position.x, position.y);
         towerObject.imagePath = "assets/towers/marionette-pixel.png";
         towerObject.zIndex = 90;
+        towerObject.canHover = True;
 
         super().__init__(screen, position);
 
