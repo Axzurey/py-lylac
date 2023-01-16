@@ -127,6 +127,7 @@ class LevelController:
                         enemy.speed += enemyStats['speedBonus']; #type: ignore it's definitely in there
 
             EnemyManager.enemiesEmpty.wait();
+            TowerManager.purgeTowers();
 
             waveNumber += 1;
             self.towerWidget.hide();

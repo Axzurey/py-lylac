@@ -27,6 +27,12 @@ class TowerManager:
     editorOpen: bool = False;
 
     @staticmethod
+    def purgeTowers():
+        for tower in TowerManager.towers:
+            tower.destroy();
+        TowerManager.towers = [];
+
+    @staticmethod
     def damageBase(damage: int):
         TowerManager.playerHealth -= damage;
         TowerManager.healthChanged.dispatch(TowerManager.playerHealth);

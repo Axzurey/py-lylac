@@ -130,6 +130,7 @@ class Enemy:
             self.update_position(pathRes);
         
         if self.health <= 0 and self in EnemyManager.enemies:
+            print('no health, it dead!')
             self.destroy();
 
         self.updateEffects(dt);
