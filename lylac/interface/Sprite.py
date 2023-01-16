@@ -41,6 +41,7 @@ class Sprite(Instance, SupportsOrdering, Clickable, Hoverable):
     anchorPoint: Vector2;
     relativeSize: Literal['xx'] | Literal['xy'] | Literal['yy'];
     relativePosition: Literal['xx'] | Literal['xy'] | Literal['yy'];
+    canHover: bool;
 
     surfaces: dict[Literal['image'], tuple[pygame.Surface, pygame.Rect]];
 

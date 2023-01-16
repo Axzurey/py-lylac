@@ -1,9 +1,9 @@
-from lylac.interface.NominalObjects import Clickable, Hoverable
+from lylac.interface.NominalObjects import Clickable, Hoverable, SupportsOrdering
 from lylac.interface.TextObject import TextObject;
 from lylac.modules.defaultGuiProperties import LoadDefaultGuiProperties
 
-class TextButton(TextObject, Clickable, Hoverable):
-
+class TextButton(TextObject, Clickable, Hoverable, SupportsOrdering):
+    
     def __init__(self) -> None:
         TextObject.__init__(self);
         Clickable.__init__(self);

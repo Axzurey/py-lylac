@@ -19,7 +19,9 @@ from lylac.modules.color4 import Color4;
 from lylac.modules.lylacSignal import LylacSignal, LylacConnection;
 
 #hooks
-from lylac.hooks.useActionState import useActionState;
+from lylac.hooks.useActionState import useActionState, ActionStateReturnValue;
+from lylac.hooks.useValue import useValue, Pointer;
+from lylac.hooks.useSignalBin import useSignalBin, signalBin;
 
 #interface
 from lylac.interface.DraggableNurbsObject import DraggableNurbsObject;

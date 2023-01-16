@@ -49,7 +49,8 @@ GUI_DEFAULT_PROPERTIES = {
     "name": lambda: f"instance-{uuid.uuid4().hex}",
     "wrapText": lambda: True,
     "visible": lambda: True,
-    "centerOfRotation": lambda: Vector2(.5, .5)
+    "centerOfRotation": lambda: Vector2(.5, .5),
+    "canHover": lambda: False
 }
 
 GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], list[str]]] = {
@@ -82,7 +83,7 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
             "size", "position", "absoluteSize", 
             "absolutePosition", "rotation", "boundingRect",
             "imagePath", "anchorPoint", "relativeSize",
-            "relativePosition"
+            "relativePosition", "canHover"
         ]
     },
     "SupportsOrdering": {
@@ -95,7 +96,7 @@ GUI_PROPERTY_MAP: dict[str, Dict[Literal['properties'] | Literal["inherits"], li
             "dropShadowRadius", "dropShadowOffset", "absolutePosition",
             "absoluteSize", "cornerRadius", "boundingRect",
             "rotation", "anchorPoint", "relativeSize",
-            "relativePosition", "centerOfRotation"
+            "relativePosition", "centerOfRotation", "canHover"
         ],
         "inherits": ["Instance"]
     },

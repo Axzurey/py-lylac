@@ -1,6 +1,6 @@
 import pygame
 from custom.WorldClock import WorldClock
-from data.tower import Tower
+from data.tower import Tower, TowerManager
 import lylac
 
 
@@ -8,6 +8,7 @@ class TowerUpgrader:
 
     isOpen: bool = False;
     frame: lylac.Frame;
+    conBin = lylac.useSignalBin();
 
     def __init__(self, backdrop: lylac.Sprite, tower: Tower) -> None:
         WorldClock.SET_TIMESTEP(.1);
@@ -60,22 +61,35 @@ class TowerUpgrader:
         descriptionBox.backgroundColor = lylac.Color4.invisible();
         descriptionBox.dropShadowColor = lylac.Color4.invisible();
         descriptionBox.borderColor = lylac.Color4.invisible();
-        descriptionBox.textSize = 24;
+        descriptionBox.textSize = 14;
         descriptionBox.size = lylac.Udim2.fromScale(1, .1);
         descriptionBox.position = lylac.Udim2(0, .5, 85, 0);
         descriptionBox.anchorPoint = pygame.Vector2(.5, .5);
         descriptionBox.parent = f;
+
+        upgradeButton = lylac.TextButton();
+        upgradeButton.text = f"Upgrade Tower ${tower.upgradeCosts[tower.upgradeLevel + 1]}" if tower.upgradeLevel < tower.maxUpgradeLevel else "MAX LEVEL";
+        upgradeButton.textSize = 16;
+        upgradeButton.textAlignX = "center";
+        upgradeButton.textAlignY = "center";
+        upgradeButton.textColor = lylac.Color4.fromGreen(1);
+        upgradeButton.backgroundColor = lylac.Color4(.3, .3, .3);
+        upgradeButton.borderColor = lylac.Color4.fromGreen(.7);
+        upgradeButton.anchorPoint = pygame.Vector2(.5, .5);
+        upgradeButton.position = lylac.Udim2.fromScale(.8, .85);
+        upgradeButton.size = lylac.Udim2.fromOffset(200, 55);
+        upgradeButton.parent = f;
 
         destroyButton = lylac.TextButton();
         destroyButton.text = "Remove Tower";
         destroyButton.textColor = lylac.Color4();
         destroyButton.backgroundColor = lylac.Color4(.8, .1, .1);
         destroyButton.borderColor = lylac.Color4(.4, 0, 0);
-        destroyButton.textSize = 24;
+        destroyButton.textSize = 16;
         destroyButton.textAlignX = "center";
         destroyButton.textAlignY = "center";
-        destroyButton.position = lylac.Udim2.fromScale(.5, .85);
-        destroyButton.size = lylac.Udim2.fromOffset(250, 75);
+        destroyButton.position = lylac.Udim2.fromScale(.2, .85);
+        destroyButton.size = lylac.Udim2.fromOffset(200, 55);
         destroyButton.anchorPoint = pygame.Vector2(.5, .5);
         destroyButton.parent = f;
 
@@ -97,6 +111,26 @@ class TowerUpgrader:
 
         clickBlock.parent = backdrop;
 
+        def update():
+            if tower.upgradeLevel < tower.maxUpgradeLevel:
+                if TowerManager.playerEntropy <= tower.upgradeCosts[tower.upgradeLevel + 1]:
+                    upgradeButton.backgroundColor = lylac.Color4(.3, .3, .3);
+                else:
+                    upgradeButton.backgroundColor = lylac.Color4();
+                upgradeButton.text = f"Upgrade Tower ${tower.upgradeCosts[tower.upgradeLevel + 1]}";
+            else:
+                upgradeButton.text = "MAX LEVEL";
+
+        def upgrade():
+            if tower.upgradeLevel == tower.maxUpgradeLevel: return;
+            if TowerManager.playerEntropy < tower.upgradeCosts[tower.upgradeLevel + 1]: return;
+            TowerManager.addEntropy(-tower.upgradeCosts[tower.upgradeLevel + 1]);
+            tower.upgradeLevel += 1;
+
+        upgradeButton.onMouseButton1Down.connect(lambda _: upgrade());
+
+        self.conBin.add(lylac.RenderService.postRender.connect(lambda _: update()));
+
         clickBlock.onMouseButton1Down.connect(lambda _: self.drop());
         cancelButton.onMouseButton1Down.connect(lambda _: self.drop());
 
@@ -109,5 +143,6 @@ class TowerUpgrader:
         from data.tower import TowerManager
         TowerManager.editorOpen = False;
         self.frame.destroy();
+        self.conBin.drop();
 
         WorldClock.SET_TIMESTEP(1);

@@ -34,6 +34,18 @@ class Color4:
         return Color4(1, 1, 1);
 
     @staticmethod
+    def fromGreen(g: float):
+        return Color4(0, g, 0);
+
+    @staticmethod
+    def fromRed(r: float):
+        return Color4(r, 0, 0);
+
+    @staticmethod
+    def fromBlue(b: float):
+        return Color4(0, 0, b);
+
+    @staticmethod
     def fromRGBA(r: int = 0, g: int = 0, b: int = 0, a: int = 255):
         (r, g, b, a) = clampAll(0, 255, r, g, b, a);
         return Color4(r / 255, g / 255, b / 255, a / 255);

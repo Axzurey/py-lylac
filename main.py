@@ -11,3 +11,4 @@ mainRenderer.start(); #always goes at the bottom!
 
 #TODO: make upgrade ui
 #TODO: make welcome screen c:
+#TODO: make enemies unclickable lmfao

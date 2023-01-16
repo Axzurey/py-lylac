@@ -54,8 +54,8 @@ class ParticleCollider(Tower):
         self.towerObject = towerObject;
 
     def update(self, dt: float):
-        if WorldClock.timeStep > 0 and time.time() - self.lastActivated >= (self.activationCooldown * (1 / WorldClock.timeStep) - ((2 * (self.upgradeLevel - 2)) if self.upgradeLevel > 3 else 0)):
-            TowerManager.addEntropy(self.baseEntropyGained * self.upgradeLevel);
+        if WorldClock.timeStep > 0 and time.time() - self.lastActivated >= self.activationCooldown * (1 / WorldClock.timeStep) - ((2 * (self.upgradeLevel - 2)) if self.upgradeLevel > 3 else 0):
+            TowerManager.addEntropy(self.baseEntropyGained * (self.upgradeLevel + 1));
             self.lastActivated = time.time();
         
         for child in self.towerObject.children:

@@ -47,13 +47,9 @@ class LevelController:
     connections: list[lylac.LylacConnection];
 
     def interceptClick(self, mouseBuffer: InputMouseBuffer):
-        print('c0')
         if TowerManager.editorOpen or self.towerWidget.placingTower: return;
-        print('c1')
         for tower in TowerManager.towers:
-            print('actually searching')
             if tower.towerObject.isPointInBounding(mouseBuffer["position"]):
-                print('found one!')
                 TowerManager.editorOpen = True;
                 towerUpgrader = TowerUpgrader(self.backdrop, tower);
 
@@ -82,13 +78,15 @@ class LevelController:
 
         lylac.AnimationService.createAnimation(f, "position", lylac.Udim2.fromScale(2, .5), 1, lylac.InterpolationMode.easeInOutCirc);
 
+        lylac.CleanupService.cleanUp(f, 1);
+
     def startLevel(self, wavePath: str):
         
         file = open(wavePath, 'r');
 
         waveData: list[Wave] = json.load(file);
 
-        TowerManager.healthChanged.connect(lambda n: (self.backdrop.destroy(), self.onLevelComplete.dispatch(None)) if n <= 0 else...);
+        TowerManager.healthChanged.connect(lambda n: (self.backdrop.destroy(), self.onLevelComplete.dispatch(None), TowerManager.purgeTowers()) if n <= 0 else...);
 
         waveNumber = 0;
         for wave in waveData:
@@ -127,7 +125,6 @@ class LevelController:
                         enemy.speed += enemyStats['speedBonus']; #type: ignore it's definitely in there
 
             EnemyManager.enemiesEmpty.wait();
-            TowerManager.purgeTowers();
 
             waveNumber += 1;
             self.towerWidget.hide();
@@ -137,6 +134,7 @@ class LevelController:
         time.sleep(2);
 
         lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy(), None);
+        TowerManager.purgeTowers();
         self.onLevelComplete.dispatch(None);
 
     def displayLevelPath(self):

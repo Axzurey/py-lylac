@@ -304,9 +304,17 @@ class Renderer():
                         updBfr['lastButton']['obj'].onMouseButton2Down.dispatch(None);
                         updBfr['lastButton']['obj']._isMouse2Down = True;
                 if updBfr['lastHover']:
+                    if hasattr(updBfr['lastHover']['obj'], "enabled") and updBfr['lastHover']['obj'].enabled:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND);
+                    elif hasattr(updBfr['lastHover']['obj'], "canHover") and updBfr['lastHover']['obj'].canHover:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND);
+                    else:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW);
                     if not updBfr['lastHover']['obj']._isHover:
                         updBfr['lastHover']['obj'].onHoverEnter.dispatch(None);
                         updBfr['lastHover']['obj']._isHover = True;
+                else:
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW);
 
             
             if len(DebugService.points) > 0:

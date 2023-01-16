@@ -22,7 +22,7 @@ class StarBlue(Tower):
         "Increased attack radius",
         "Added damage",
         "Faster Firerate",
-        "Added damage"
+        "Added damage; Projectiles are now red."
     ];
     upgradeCosts = [
         100,
@@ -42,6 +42,8 @@ class StarBlue(Tower):
         towerObject.anchorPoint = pygame.Vector2(.5, .5);
         towerObject.position = lylac.Udim2.fromOffset(position.x, position.y);
         towerObject.imagePath = "assets/towers/star-blue.png";
+        towerObject.enabled = True;
+        towerObject.canHover = True;
         towerObject.zIndex = 90;
 
         super().__init__(screen, position);
@@ -59,7 +61,7 @@ class StarBlue(Tower):
 
         p = lylac.Frame();
         p.size = lylac.Udim2.fromOffset(10, 10);
-        p.backgroundColor = lylac.Color4.fromRGB(0, 255, 255);
+        p.backgroundColor = lylac.Color4.fromRGB(0, 255, 255) if self.upgradeLevel < 5 else lylac.Color4.fromRGB(255, 0, 0);
         p.borderWidth = 0;
         p.dropShadowColor = lylac.Color4.fromAlpha(0);
         p.position = lylac.Udim2.fromOffset(self.position.x, self.position.y);
