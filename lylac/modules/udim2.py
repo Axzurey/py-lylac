@@ -23,6 +23,14 @@ class Udim2:
         self.yScale = yScale
 
     @staticmethod
+    def fromVector2(vec2: Vector2):
+        return Udim2(vec2.x, 0, vec2.y, 0);
+
+    @staticmethod
+    def fromVector2Scale(vec2: Vector2):
+        return Udim2(0, vec2.x, 0, vec2.y);
+
+    @staticmethod
     def fromScale(xScale: float = 0, yScale: float = 0):
         return Udim2(0, xScale, 0, yScale)
 

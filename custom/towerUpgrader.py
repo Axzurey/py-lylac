@@ -8,6 +8,7 @@ class TowerUpgrader:
 
     isOpen: bool = False;
     frame: lylac.Frame;
+    radiusFrame: lylac.Frame | None = None;
     conBin = lylac.useSignalBin();
 
     def __init__(self, backdrop: lylac.Sprite, tower: Tower) -> None:
@@ -26,6 +27,20 @@ class TowerUpgrader:
 
         recalculatedX = backdrop.absoluteSize.x - 550 - 50;
         recalculatedY = backdrop.absoluteSize.y - 330 - 50;
+
+        if hasattr(tower, 'radius'):
+            radiusFrame = lylac.Frame();
+            radiusFrame.size = lylac.Udim2.fromOffset(tower.radius, tower.radius); #type: ignore [hasattr proves it exists]
+            radiusFrame.cornerRadius = 180;
+            radiusFrame.position = lylac.Udim2.fromVector2(tower.position);
+            radiusFrame.backgroundColor = lylac.Color4(0, 1, 1, .4);
+            radiusFrame.borderColor = lylac.Color4.invisible();
+            radiusFrame.dropShadowColor = lylac.Color4.invisible();
+            radiusFrame.enabled = False;
+            radiusFrame.canHover = False;
+            radiusFrame.anchorPoint = pygame.Vector2(.5, .5);
+            radiusFrame.parent = backdrop;
+            self.radiusFrame = radiusFrame;
 
         f = lylac.Frame();
         f.size = lylac.Udim2.fromOffset(550, 330);
@@ -171,5 +186,8 @@ class TowerUpgrader:
         TowerManager.editorOpen = False;
         self.frame.destroy();
         self.conBin.drop();
+
+        if self.radiusFrame:
+            self.radiusFrame.destroy();
 
         WorldClock.SET_TIMESTEP(1);

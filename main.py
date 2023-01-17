@@ -11,4 +11,3 @@ mainRenderer.start(); #always goes at the bottom!
 
 #TODO: make welcome screen c:
 #TODO: chess board map
-#TODO: make the towerupgrader display the tower radius
