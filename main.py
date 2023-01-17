@@ -11,3 +11,4 @@ mainRenderer.start(); #always goes at the bottom!
 
 #TODO: make welcome screen c:
 #TODO: chess board map
+#TODO: make the levels balanced lmfao

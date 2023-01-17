@@ -1,35 +1,110 @@
 [
     {
-        "prewaveMessage": "Here they come!",
+        "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
                 "enemyName": "Midnight Eye",
-                "enemyDelay": 1.5,
-                "enemyCount": 15
+                "enemyDelay": 1,
+                "enemyCount": 30,
+                "enemyStats": {
+                    "healthBonus": 120
+                }
             }
         ]
     },
     {
-        "prewaveMessage": "Let's try that again but faster!",
+        "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
                 "enemyName": "Midnight Eye",
                 "enemyDelay": 1,
                 "enemyStats": {
-                    "speedBonus": 15
+                    "speedBonus": 30,
+                    "healthBonus": 150
+                },
+                "enemyCount": 25
+            }
+        ]
+    },
+    {
+        "prewaveMessage": "Wave %wavenumber",
+        "enemies": [
+            {
+                "enemyName": "Midnight Eye",
+                "enemyDelay": 0.75,
+                "enemyStats": {
+                    "speedBonus": 30,
+                    "healthBonus": 200
+                },
+                "enemyCount": 25
+            }
+        ]
+    },
+    {
+        "prewaveMessage": "Wave %wavenumber",
+        "enemies": [
+            {
+                "enemyName": "Midnight Eye",
+                "enemyDelay": 0.75,
+                "enemyStats": {
+                    "speedBonus": 40,
+                    "healthBonus": 250
+                },
+                "enemyCount": 25
+            }
+        ]
+    },
+    {
+        "prewaveMessage": "Wave %wavenumber",
+        "enemies": [
+            {
+                "enemyName": "Midnight Eye",
+                "enemyDelay": 0.75,
+                "enemyStats": {
+                    "speedBonus": 50,
+                    "healthBonus": 300
+                },
+                "enemyCount": 30
+            }
+        ]
+    },
+    {
+        "prewaveMessage": "Wave %wavenumber",
+        "enemies": [
+            {
+                "enemyName": "Midnight Eye",
+                "enemyDelay": 0.75,
+                "enemyStats": {
+                    "speedBonus": 75,
+                    "healthBonus": 400
                 },
                 "enemyCount": 15
             }
         ]
     },
     {
-        "prewaveMessage": "You're getting the hang of it ;) \n Let's go even faster!",
+        "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
                 "enemyName": "Midnight Eye",
                 "enemyDelay": 0.75,
                 "enemyStats": {
-                    "speedBonus": 30
+                    "speedBonus": 100,
+                    "healthBonus": 500
+                },
+                "enemyCount": 15
+            }
+        ]
+    },
+    {
+        "prewaveMessage": "Wave %wavenumber",
+        "enemies": [
+            {
+                "enemyName": "Midnight Eye",
+                "enemyDelay": 0.5,
+                "enemyStats": {
+                    "speedBonus": 150,
+                    "healthBonus": 700
                 },
                 "enemyCount": 25
             }

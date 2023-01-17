@@ -93,7 +93,7 @@ class LevelController:
             if not self.backdrop.parent: return;
             msg = wave['prewaveMessage'];
             if msg:
-                self.broadcastMessage(msg);
+                self.broadcastMessage(msg.replace("%wavenumber", str(waveNumber + 1)));
 
             self.towerWidget.show();
 

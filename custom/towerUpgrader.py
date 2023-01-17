@@ -31,7 +31,7 @@ class TowerUpgrader:
         if hasattr(tower, 'radius'):
             radiusFrame = lylac.Frame();
             radiusFrame.size = lylac.Udim2.fromOffset(tower.radius, tower.radius); #type: ignore [hasattr proves it exists]
-            radiusFrame.cornerRadius = 180;
+            radiusFrame.cornerRadius = tower.radius; #type: ignore
             radiusFrame.position = lylac.Udim2.fromVector2(tower.position);
             radiusFrame.backgroundColor = lylac.Color4(0, 1, 1, .4);
             radiusFrame.borderColor = lylac.Color4.invisible();
@@ -72,7 +72,7 @@ class TowerUpgrader:
         descriptionBox.text = tower.description;
         descriptionBox.textAlignX = "left";
         descriptionBox.textAlignY = "top";
-        descriptionBox.textColor = lylac.Color4();
+        descriptionBox.textColor = lylac.Color4.white();
         descriptionBox.backgroundColor = lylac.Color4.invisible();
         descriptionBox.dropShadowColor = lylac.Color4.invisible();
         descriptionBox.borderColor = lylac.Color4.invisible();
@@ -82,8 +82,22 @@ class TowerUpgrader:
         descriptionBox.anchorPoint = pygame.Vector2(.5, .5);
         descriptionBox.parent = f;
 
+        nextUpgrade = lylac.TextObject();
+        nextUpgrade.text = f"Next Upgrade: {tower.upgradePerks[tower.upgradeLevel]}" if tower.upgradeLevel < tower.maxUpgradeLevel else "MAX LEVEL";
+        nextUpgrade.textSize = 14;
+        nextUpgrade.textAlignX = "left";
+        nextUpgrade.textAlignY = "center";
+        nextUpgrade.anchorPoint = pygame.Vector2(.5, .5);
+        nextUpgrade.size = lylac.Udim2.fromOffset(200, 25);
+        nextUpgrade.position = lylac.Udim2.fromScale(.8, .6);
+        nextUpgrade.dropShadowColor = lylac.Color4.invisible();
+        nextUpgrade.backgroundColor = lylac.Color4.invisible();
+        nextUpgrade.borderColor = lylac.Color4.invisible();
+        nextUpgrade.textColor = lylac.Color4.white();
+        nextUpgrade.parent = f;
+
         upgradeButton = lylac.TextButton();
-        upgradeButton.text = f"Upgrade Tower {tower.upgradeLevel}/{tower.maxUpgradeLevel}\n${tower.upgradeCosts[tower.upgradeLevel + 1]}" if tower.upgradeLevel < tower.maxUpgradeLevel else "MAX LEVEL";
+        upgradeButton.text = f"Upgrade Tower {tower.upgradeLevel}/{tower.maxUpgradeLevel}\n${tower.upgradeCosts[tower.upgradeLevel]}" if tower.upgradeLevel < tower.maxUpgradeLevel else "MAX LEVEL";
         upgradeButton.textSize = 16;
         upgradeButton.textAlignX = "center";
         upgradeButton.textAlignY = "center";
@@ -95,8 +109,15 @@ class TowerUpgrader:
         upgradeButton.size = lylac.Udim2.fromOffset(200, 55);
         upgradeButton.parent = f;
 
+        sellPrice = tower.baseCost;
+
+        for i in range(tower.upgradeLevel) :
+            sellPrice += tower.upgradeCosts[i];
+
+        sellPrice //= 2;
+
         destroyButton = lylac.TextButton();
-        destroyButton.text = f"Sell Tower ${tower.baseCost // 2}";
+        destroyButton.text = f"Sell Tower ${sellPrice}";
         destroyButton.textColor = lylac.Color4();
         destroyButton.backgroundColor = lylac.Color4(.8, .1, .1);
         destroyButton.borderColor = lylac.Color4(.4, 0, 0);
@@ -128,16 +149,23 @@ class TowerUpgrader:
 
         def update():
             if tower.upgradeLevel < tower.maxUpgradeLevel:
-                if TowerManager.playerEntropy < tower.upgradeCosts[tower.upgradeLevel + 1] and upgradeButton.backgroundColor != lylac.Color4(.3, .3, .3):
+                if TowerManager.playerEntropy < tower.upgradeCosts[tower.upgradeLevel] and upgradeButton.backgroundColor != lylac.Color4(.3, .3, .3):
                     upgradeButton.backgroundColor = lylac.Color4(.3, .3, .3);
-                elif TowerManager.playerEntropy >= tower.upgradeCosts[tower.upgradeLevel + 1] and upgradeButton.backgroundColor != lylac.Color4():
+                elif TowerManager.playerEntropy >= tower.upgradeCosts[tower.upgradeLevel] and upgradeButton.backgroundColor != lylac.Color4():
                     upgradeButton.backgroundColor = lylac.Color4();
 
-                upgText = f"Upgrade Tower {tower.upgradeLevel}/{tower.maxUpgradeLevel}\n${tower.upgradeCosts[tower.upgradeLevel + 1]}";
+                upgText = f"Upgrade Tower {tower.upgradeLevel}/{tower.maxUpgradeLevel}\n${tower.upgradeCosts[tower.upgradeLevel]}";
                 if upgradeButton.text != upgText:
                     upgradeButton.text = upgText;
-            elif upgradeButton.text != "MAX LEVEL":
+                
+                nxtText = f"Next Upgrade: {tower.upgradePerks[tower.upgradeLevel]}";
+                if nextUpgrade.text != nxtText:
+                    nextUpgrade.text = nxtText;
+
+            elif upgradeButton.text != "MAX LEVEL" or nextUpgrade.text != "MAX LEVEL":
                 upgradeButton.text = "MAX LEVEL";
+                nextUpgrade.text = "MAX LEVEL";
+
 
             sellPrice = tower.baseCost;
 
@@ -153,9 +181,9 @@ class TowerUpgrader:
 
         def upgrade():
             if tower.upgradeLevel == tower.maxUpgradeLevel: return;
-            if TowerManager.playerEntropy < tower.upgradeCosts[tower.upgradeLevel + 1]: return;
+            if TowerManager.playerEntropy < tower.upgradeCosts[tower.upgradeLevel]: return;
 
-            TowerManager.addEntropy(-tower.upgradeCosts[tower.upgradeLevel + 1]);
+            TowerManager.addEntropy(-tower.upgradeCosts[tower.upgradeLevel]);
 
             tower.upgradeLevel += 1;
 
