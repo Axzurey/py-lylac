@@ -321,6 +321,7 @@ class LevelController:
 
         TowerManager.addEntropy(-1);
         TowerManager.addEntropy(levelData["startingEntropy"]);
+        TowerManager.damageBase(-1);
         TowerManager.damageBase(-levelData["startingHealth"]);
 
         createThread(lambda _: (self.displayLevelPath(), self.startLevel(levelData['wavePath'])), None);

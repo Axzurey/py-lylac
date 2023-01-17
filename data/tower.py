@@ -34,6 +34,8 @@ class TowerManager:
 
     @staticmethod
     def damageBase(damage: int):
+        if damage == -1:
+            TowerManager.playerHealth = 0;
         TowerManager.playerHealth -= damage;
         TowerManager.healthChanged.dispatch(TowerManager.playerHealth);
 
