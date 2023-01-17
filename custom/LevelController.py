@@ -133,7 +133,9 @@ class LevelController:
 
         time.sleep(2);
 
-        lylac.CleanupService.delay(1, lambda _: self.backdrop.destroy(), None);
+        lylac.CleanupService.delay(.1, lambda _: self.backdrop.destroy(), None);
+        for connection in self.connections:
+            connection.disconnect();
         TowerManager.purgeTowers();
         self.onLevelComplete.dispatch(None);
 

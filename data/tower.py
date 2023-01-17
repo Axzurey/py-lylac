@@ -36,6 +36,7 @@ class TowerManager:
     def damageBase(damage: int):
         if damage == -1:
             TowerManager.playerHealth = 0;
+            return;
         TowerManager.playerHealth -= damage;
         TowerManager.healthChanged.dispatch(TowerManager.playerHealth);
 

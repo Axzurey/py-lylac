@@ -12,6 +12,7 @@ class TowerUpgrader:
     conBin = lylac.useSignalBin();
 
     def __init__(self, backdrop: lylac.Sprite, tower: Tower) -> None:
+        if not backdrop: raise Exception("Backdrop doesn't exist!")
         WorldClock.SET_TIMESTEP(.1);
 
         clickBlock = lylac.Frame();
@@ -148,6 +149,7 @@ class TowerUpgrader:
         clickBlock.parent = backdrop;
 
         def update():
+            if not backdrop.parent: self.drop(); return;
             if tower.upgradeLevel < tower.maxUpgradeLevel:
                 if TowerManager.playerEntropy < tower.upgradeCosts[tower.upgradeLevel] and upgradeButton.backgroundColor != lylac.Color4(.3, .3, .3):
                     upgradeButton.backgroundColor = lylac.Color4(.3, .3, .3);
