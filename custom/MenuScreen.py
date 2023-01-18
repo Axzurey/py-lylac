@@ -2,6 +2,18 @@ import time
 from pygame import Vector2
 import lylac
 
+CREDITS_TEXT = """
+Welcome to Blue Cradle!
+
+Credits:
+
+> Sanity Sparer: google™
+> Code: Me
+> Assets: Me
+> Suffering: Me
+
+The credits end here.
+"""
 
 class MenuScreen:
 
@@ -84,6 +96,20 @@ class MenuScreen:
         creditsBackButton.textSize = 30;
         creditsBackButton.dropShadowColor = lylac.Color4.invisible();
         creditsBackButton.parent = creditsFrame;
+
+        creditsText = lylac.TextObject();
+        creditsText.backgroundColor = lylac.Color4.invisible();
+        creditsText.borderColor = lylac.Color4.invisible();
+        creditsText.dropShadowColor = lylac.Color4.invisible();
+        creditsText.textColor = lylac.Color4();
+        creditsText.anchorPoint = Vector2(.5, .5);
+        creditsText.textSize = 25;
+        creditsText.textAlignX = "center";
+        creditsText.textAlignY = "center";
+        creditsText.size = lylac.Udim2.fromScale(.8, .3);
+        creditsText.position = lylac.Udim2.fromScale(.5, .5);
+        creditsText.text = CREDITS_TEXT;
+        creditsText.parent = creditsFrame;
 
         def toggleFrames():
             if f.parent:

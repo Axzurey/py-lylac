@@ -6,7 +6,7 @@ mainRenderer = lylac.Renderer((1280, 720), 200);
 
 lylac.PreloadService.preloadSprite("assets/ui/direction-arrow.png", (50, 50));
 
-lylac.FontService.loadFont("rubik", "fonts/RubikVinyl.tff");
+lylac.FontService.loadFont("rubik", "./fonts/RubikVinyl.ttf");
 
 def MAIN_GAME():
     levelSelector = LevelSelector(mainRenderer);
@@ -20,4 +20,3 @@ mainRenderer.start(); #always goes at the bottom!
 #TODO: make welcome screen c:
 #TODO: chess board map
 #TODO: make the levels balanced lmfao
-#TODO[URGENT]: FIX FONT LOADING
