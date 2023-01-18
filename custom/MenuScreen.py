@@ -11,9 +11,7 @@ Credits:
 > Code: Me
 > Assets: Me
 > Suffering: Me
-
-The credits end here.
-"""
+The credits end here."""
 
 class MenuScreen:
 

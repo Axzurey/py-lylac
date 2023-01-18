@@ -1,9 +1,11 @@
 l = """
+
 Hello
+
+
 World
 """
 
-for char in l:
-    print(ord(char), char)
+#TODO: FIGURE OUT A WAY TO REPLACE THE LINEFEEDS WITH A \n LITERAL and figure what the gap between letters is
 
-#TODO: FIGURE OUT A WAY TO REPLACE THE LINEFEEDS WITH A \n LITERAL
+print(l.count("\n"), l.split('\n')) #hmmmm
