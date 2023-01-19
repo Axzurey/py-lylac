@@ -69,7 +69,7 @@ class Marionette(Tower):
         projectileSprite.name = str(self.lastTriggered);
 
         proj = Projectile(projectileSprite, self.position);
-        proj.applyImpulse((target.position - self.position).normalize() * 30);
+        proj.applyImpulse((target.position - self.position).normalize() * 1000);
 
         self.trackers.append(proj);
 
@@ -82,11 +82,9 @@ class Marionette(Tower):
 
         target = EnemyManager.getEnemyClosestToGoalAndInRadius(self.position, self.radius);
 
-        i = 0;
         for proj in self.trackers:
-            i += 1;
             proj.update(dt);
-        for proj in self.trackers:
-            print(proj.tether.position, proj.tether.name)
+            if target:
+                proj.applyImpulse((target.position - self.position).normalize() * dt / 100)
 
         super().update(dt);

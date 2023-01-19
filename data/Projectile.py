@@ -13,7 +13,7 @@ class Projectile(Generic[T]):
 
     def __init__(self, tether: T, originPosition: Vector2) -> None:
         self.tether = tether;
-        self.position = originPosition;
+        self.position = originPosition.copy();
         self.velocity = Vector2();
         self.acceleration = Vector2();
 
