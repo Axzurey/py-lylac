@@ -63,13 +63,13 @@ class Marionette(Tower):
         projectileSprite.imagePath = "assets/towers/tracker.png";
         projectileSprite.size = lylac.Udim2.fromOffset(75, 75);
         projectileSprite.position = lylac.Udim2.fromVector2(self.position);
-        projectileSprite.zIndex = 999;
+        projectileSprite.zIndex = 99;
         projectileSprite.anchorPoint = pygame.Vector2(.5, .5);
-        projectileSprite.parent = self.towerObject.parent;
+        projectileSprite.parent = self.screen;
         projectileSprite.name = str(self.lastTriggered);
 
         proj = Projectile(projectileSprite, self.position);
-        proj.applyImpulse((target.position - self.position).normalize() * 10);
+        proj.applyImpulse((target.position - self.position).normalize() * 30);
 
         self.trackers.append(proj);
 

@@ -1,5 +1,4 @@
 from typing import TypeVar, Generic
-
 from pygame import Vector2
 import lylac;
 
