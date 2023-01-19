@@ -18,7 +18,7 @@ def getFontWrap(text: str, font: str, fontSize: int, maxWidth: int) -> tuple[lis
     """
     Returns an array consisting of the lines and an array consisting of required Vertical spacing between the lines
     """
-    words = list(filter(None, [x.replace(' ', '') if not isOnlyWhitespace(x) else None for x in list(filter(None, re.split(r"(\\n+|\s+)", text)))]));
+    words = list(filter(None, [x.replace(' ', '') if not isOnlyWhitespace(x) else None for x in list(filter(None, re.split(r"(\n|\s)", text)))]));
 
     splitLines: list[list[str]] = [];
     lineSpacings: list[int] = [];

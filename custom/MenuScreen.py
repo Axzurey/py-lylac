@@ -88,7 +88,7 @@ class MenuScreen:
         creditsBackButton.borderColor = lylac.Color4.fromRGB(50, 15, 15);
         creditsBackButton.position = lylac.Udim2.fromOffset(45, 45);
         creditsBackButton.size = lylac.Udim2.fromOffset(50, 50);
-        creditsBackButton.cornerRadius = 90;
+        creditsBackButton.cornerRadius = 35;
         creditsBackButton.textAlignX = "center";
         creditsBackButton.textAlignY = "center";
         creditsBackButton.textSize = 30;
@@ -105,7 +105,7 @@ class MenuScreen:
         creditsText.textAlignX = "center";
         creditsText.textAlignY = "center";
         creditsText.size = lylac.Udim2.fromScale(.8, .3);
-        creditsText.position = lylac.Udim2.fromScale(.5, .5);
+        creditsText.position = lylac.Udim2.fromScale(.5, .3);
         creditsText.text = CREDITS_TEXT;
         creditsText.parent = creditsFrame;
 

@@ -1,10 +1,9 @@
-import asyncio
-import math
 import time
 import pygame
 from custom.WorldClock import WorldClock
 from data.Effect import Vulnerable
 from data.Enemy import EnemyManager
+from data.Projectile import Projectile
 from data.tower import Tower
 import lylac
 from lylac.services.RenderService import RenderService
@@ -32,6 +31,8 @@ class Marionette(Tower):
         375
     ];
 
+    trackers: list[Projectile[lylac.Sprite]] = [];
+
     baseCost = 150;
 
     def __init__(self, screen: lylac.Instance, position: pygame.Vector2) -> None:
@@ -52,29 +53,25 @@ class Marionette(Tower):
         self.towerObject = towerObject;
 
     def targetEnemy(self):
-        targets = EnemyManager.getAllEnemiesInRadius(self.position, self.radius);
+        target = EnemyManager.getEnemyClosestToGoalAndInRadius(self.position, self.radius);
 
-        if not targets: return;
+        if not target: return;
 
         self.lastTriggered = time.time();
 
-        p = lylac.Frame();
-        p.cornerRadius = self.radius;
-        p.size = lylac.Udim2.fromOffset(10, 10);
-        p.position = lylac.Udim2.fromOffset(self.position.x, self.position.y);
-        p.backgroundColor = lylac.Color4(1, 0, 0, .5);
-        p.dropShadowRadius = 0;
-        p.dropShadowOffset = lylac.Udim2();
-        p.anchorPoint = pygame.Vector2(.5, .5);
-        p.borderColor = lylac.Color4.fromAlpha(0);
-        p.dropShadowColor = lylac.Color4.fromAlpha(0);
-        p.borderWidth = 0;
-        p.parent = self.towerObject.parent;
-        lylac.CleanupService.cleanUp(p, .4);
+        projectileSprite = lylac.Sprite();
+        projectileSprite.imagePath = "assets/towers/tracker.png";
+        projectileSprite.size = lylac.Udim2.fromOffset(75, 75);
+        projectileSprite.position = lylac.Udim2.fromVector2(self.position);
+        projectileSprite.zIndex = 999;
+        projectileSprite.anchorPoint = pygame.Vector2(.5, .5);
+        projectileSprite.parent = self.towerObject.parent;
+        projectileSprite.name = str(self.lastTriggered);
 
-        lylac.AnimationService.createAnimation(p, "size", lylac.Udim2.fromOffset(self.radius, self.radius), .3, lylac.InterpolationMode.easeInQuint);
-        
-        lylac.CleanupService.delay(.3, lambda targets: [target.afflictStatus(Vulnerable(target, 5 if self.upgradeLevel == 4 else 2, 4 if self.upgradeLevel >= 3 else 2)) for target in targets], targets)
+        proj = Projectile(projectileSprite, self.position);
+        proj.applyImpulse((target.position - self.position).normalize() * 10);
+
+        self.trackers.append(proj);
 
     def update(self, dt: float):
 
@@ -82,5 +79,14 @@ class Marionette(Tower):
 
         if time.time() - self.lastTriggered > 1 / (self.fireRate * WorldClock.timeStep):
             self.targetEnemy();
+
+        target = EnemyManager.getEnemyClosestToGoalAndInRadius(self.position, self.radius);
+
+        i = 0;
+        for proj in self.trackers:
+            i += 1;
+            proj.update(dt);
+        for proj in self.trackers:
+            print(proj.tether.position, proj.tether.name)
 
         super().update(dt);

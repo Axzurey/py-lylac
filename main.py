@@ -13,9 +13,10 @@ def MAIN_GAME():
 
 welcomeScreen = MenuScreen(mainRenderer);
 
-welcomeScreen.onMenuExit.connect(lambda _: MAIN_GAME())
+welcomeScreen.onMenuExit.connect(lambda _: MAIN_GAME());
 
 mainRenderer.start(); #always goes at the bottom!
 
 #TODO: chess board map
 #TODO: make the levels balanced lmfao
+#TODO: projectiles buggin, fix em
