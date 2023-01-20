@@ -1,3 +1,4 @@
+import math
 import time
 import pygame
 from custom.WorldClock import WorldClock
@@ -15,7 +16,7 @@ class Marionette(Tower):
 
     radius: int = 400;
     lastTriggered: float = 0;
-    fireRate: float = .5; #1 / fireRate is the time it takes between triggers
+    fireRate: float = .0000000000001; #1 / fireRate is the time it takes between triggers
 
     maxUpgradeLevel = 4;
     upgradePerks = [
@@ -51,11 +52,11 @@ class Marionette(Tower):
         towerObject.parent = self.screen;
         
         self.towerObject = towerObject;
+        
+        for _ in range(2):
+            self.createMissile();
 
-    def targetEnemy(self):
-        target = EnemyManager.getEnemyClosestToGoalAndInRadius(self.position, self.radius);
-
-        if not target: return;
+    def createMissile(self):
 
         self.lastTriggered = time.time();
 
@@ -69,22 +70,51 @@ class Marionette(Tower):
         projectileSprite.name = str(self.lastTriggered);
 
         proj = Projectile(projectileSprite, self.position);
-        proj.applyImpulse((target.position - self.position).normalize() * 1000);
+
+        proj.internal['lastDamage'] = 0;
 
         self.trackers.append(proj);
+
+    def destroy(self):
+        for proj in self.trackers:
+            proj.tether.destroy();
+        self.trackers = [];
+        return super().destroy()
 
     def update(self, dt: float):
 
         self.radius = 400 + lylac.clamp(0, 100, self.upgradeLevel * 50);
 
         if time.time() - self.lastTriggered > 1 / (self.fireRate * WorldClock.timeStep):
-            self.targetEnemy();
+            self.createMissile();
 
-        target = EnemyManager.getEnemyClosestToGoalAndInRadius(self.position, self.radius);
+        target = EnemyManager.getEnemyClosestToGoalAndInRadius(self.position, self.radius ** 2);
+
+        removingProjectiles = [];
 
         for proj in self.trackers:
+            if target and time.time() - proj.internal['lastDamage'] > 1:
+                directionToEnemy = (target.position - proj.position).normalize();
+                distanceFromEnemy = (target.position - proj.position).magnitude();
+
+                proj.tether.rotation = int(lylac.lerp(proj.tether.rotation, math.degrees(math.atan2(directionToEnemy.y, directionToEnemy.x)) + 90, .1));
+
+                for enemy in EnemyManager.enemies:
+                    dfE = (enemy.position - proj.position).magnitude();
+                    if dfE <= 10:
+                    #create some cool explosion!
+                        enemy.takeDamage(75);
+                        proj.internal['lastDamage'] = time.time();
+                if distanceFromEnemy <= 40:
+                    proj.applyImpulse(directionToEnemy * 5000);
+                else:
+                    proj.setVelocity(proj.velocity.lerp(directionToEnemy * 250, .1));
+
             proj.update(dt);
-            if target:
-                proj.applyImpulse((target.position - self.position).normalize() * dt / 100)
+
+        self.trackers = list(filter(lambda p: p not in removingProjectiles, self.trackers));
+
+        for proj in removingProjectiles:
+            proj.tether.destroy();
 
         super().update(dt);

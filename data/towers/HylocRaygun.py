@@ -10,7 +10,7 @@ from lylac.services.RenderService import RenderService
 
 class HylocRaygun(Tower):
     tickDamage: float = 50 / 60; #damage / 60
-    fireRate: float = 1000;
+    fireRate: float = 10000;
     radius: int = 200;
     ray: lylac.Sprite | None = None;
     lastFired: float = 0;
@@ -117,7 +117,7 @@ class HylocRaygun(Tower):
                         enemy.afflictStatus(Burning(enemy, 3, 1.5));
 
     def update(self, dt: float):
-        self.tickDamage = (100 / 60) if self.upgradeLevel > 1 else 50 / 60;
+        self.tickDamage = (150 / lylac.RenderService.renderer.framerate) if self.upgradeLevel > 1 else 100 / lylac.RenderService.renderer.framerate;
         self.radius = 250 if self.upgradeLevel >= 2 else 200;
         if time.time() - self.lastFired > 1 / (self.fireRate * WorldClock.timeStep):
             self.targetEnemy();
