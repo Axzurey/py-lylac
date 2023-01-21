@@ -60,6 +60,8 @@ class LylacSignal(Generic[A]):
         return connection;
     
     def dispatch(self, *args: A):
+        if not args:
+            args = [None] #type: ignore
         toremove: list[LylacConnection] = [];
         for listener in self.listeners:
             createThread(listener.callback, *args);

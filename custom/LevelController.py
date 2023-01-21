@@ -298,7 +298,8 @@ class LevelController:
             {
                 "name": "Marionette",
                 "imagePath": "assets/towers/marionette-pixel.png",
-                "cost": 150,
+                "cost": 
+                50,
                 "radius": 400,
                 "link": Marionette,
                 "targetSize": 100,

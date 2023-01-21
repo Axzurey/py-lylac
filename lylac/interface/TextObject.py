@@ -1,5 +1,7 @@
 from typing import Literal
-from lylac.interface.GuiObject import GuiObject;
+
+from pygame import Vector2
+from lylac.interface.GuiObject import GuiObject, rotateAroundCenter;
 from lylac.modules.color4 import Color4
 from lylac.services.FontService import FontService, FreeFont;
 from lylac.services.RenderService import RenderService
@@ -16,7 +18,7 @@ def getFontWrap(text: str, font: str, fontSize: int, maxWidth: int) -> tuple[lis
     """
     Returns an array consisting of the lines and an array consisting of required Vertical spacing between the lines
     """
-    words = list(filter(None, [x.replace(' ', '') if not isOnlyWhitespace(x) else None for x in list(filter(None, re.split(r"(\\n+|\s+)", text)))]));
+    words = list(filter(None, [x.replace(' ', '') if not isOnlyWhitespace(x) else None for x in list(filter(None, re.split(r"(\n|\s)", text)))]));
 
     splitLines: list[list[str]] = [];
     lineSpacings: list[int] = [];
@@ -109,5 +111,7 @@ class TextObject(GuiObject):
             offsetXAbs = absPos.x + (absSize.x - textSize[0]) * textOffsetX
             offsetYAbs = absPos.y + (absSize.y - textSize[1]) * textOffsetY + spacing[lineIndex] * lineIndex
             lineIndex += 1;
+
+            [textSurf, textRect] = rotateAroundCenter(textSurf, self.rotation, Vector2(offsetXAbs, offsetYAbs))
 
             renderer.screen.blit(textSurf, (offsetXAbs, offsetYAbs))
