@@ -29,4 +29,4 @@ mainRenderer.start(); #always goes at the bottom!
 
 #TODO: chess board map
 #TODO: make the levels balanced lmfao
-#TODO: projectiles buggin, fix em
+#TODO: water level background is done. create path and placements and put buoys in there c:
