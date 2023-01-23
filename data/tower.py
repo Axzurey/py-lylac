@@ -38,6 +38,8 @@ class TowerManager:
             TowerManager.playerHealth = 0;
             return;
         TowerManager.playerHealth -= damage;
+        if TowerManager.playerHealth < 0:
+            TowerManager.playerHealth = 0;
         TowerManager.healthChanged.dispatch(TowerManager.playerHealth);
 
     @staticmethod

@@ -5,7 +5,7 @@ import time
 from pygame import Vector2
 from lylac import *
 
-mainRenderer = Renderer((1280, 720), 60);
+mainRenderer = Renderer("Blue Storm Test place c:", (1280, 720), 60);
 
 frame = GuiObject()
 frame.parent = mainRenderer;
@@ -17,7 +17,7 @@ frame.borderColor = Color4(1, 1, 1)
 frame.dropShadowOffset = Udim2.fromOffset(5, 5);
 
 spr = Sprite();
-spr.imagePath = "assets/environment/grass patch-01.png";
+spr.imagePath = "assets/environment/aqua stage-01.png";
 spr.parent = frame;
 spr.size = Udim2.fromOffset(1280, 720);
 spr.position = Udim2(0, 0);
