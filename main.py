@@ -7,12 +7,11 @@ c:
 Culminating assignment for ICS year 2022-2023
 """
 
-
 from custom.LevelSelector import LevelSelector
 from custom.MenuScreen import MenuScreen
 import lylac;
 
-mainRenderer = lylac.Renderer((1280, 720), 200);
+mainRenderer = lylac.Renderer("Blue Storm [@lylac.fpsfps]", (1280, 720), 200, "assets/ui/entropy_coin-01.png");
 
 lylac.PreloadService.preloadSprite("assets/ui/direction-arrow.png", (50, 50));
 
