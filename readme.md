@@ -78,7 +78,7 @@ py -3.11 main.py
 
 
 
-File structure & Additional Information:
+### File structure & Additional Information:
 
 1. The "lylac" folder is the framework used to make this game, created by me.
 2. The "levels" folder is data for each of the levels in the event you want to modify them.
