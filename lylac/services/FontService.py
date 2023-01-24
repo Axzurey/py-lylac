@@ -21,7 +21,6 @@ class FontService:
 
     @staticmethod
     def get_width_and_height_for_string(font: str, string: str, fontSize: int):
-        font = font.lower();
         if font not in FontService._subFontsForTextEffects:
             FontService._subFontsForTextEffects[font] = {fontSize: pygame.font.Font(FontService._fontPaths[font], fontSize)};
         if fontSize not in FontService._subFontsForTextEffects[font]:
@@ -38,12 +37,12 @@ class FontService:
         try:
             if os.path.isfile(fontPath) and fontPath.split('.')[len(fontPath.split('.')) - 1] == 'ttf':
                 font: freeFont = pygame.freetype.Font(fontPath, defaultFontSize); #type: ignore
-                FontService._fontPaths[fontAlias.lower()] = fontPath;
-                FontService.fonts[fontAlias.lower()] = font;
+                FontService._fontPaths[fontAlias] = fontPath;
+                FontService.fonts[fontAlias] = font;
             else:
-                raise Exception(f'[nyle]: Unable to load font "{fontAlias.lower()}" from path {fontPath} as it is not .ttf file')
+                raise Exception(f'[nyle]: Unable to load font "{fontAlias}" from path {fontPath} as it is not .ttf file')
         except Exception as e:
-            raise Exception(f'[nyle]: (Unexpected) Unable to load font "{fontAlias.lower()}" from path {fontPath} because {e}')
+            raise Exception(f'[nyle]: (Unexpected) Unable to load font "{fontAlias}" from path {fontPath} because {e}')
     
     @staticmethod
     def loadDefaultFonts():

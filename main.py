@@ -11,11 +11,12 @@ from custom.LevelSelector import LevelSelector
 from custom.MenuScreen import MenuScreen
 import lylac;
 
-mainRenderer = lylac.Renderer("Blue Storm [@lylac.fpsfps]", (1280, 720), 200, "assets/ui/entropy_coin-01.png");
+mainRenderer = lylac.Renderer("Bloom TD [@lylac.fpsfps]", (1280, 720), 200, "assets/ui/entropy_coin-01.png");
 
 lylac.PreloadService.preloadSprite("assets/ui/direction-arrow.png", (50, 50));
 
 lylac.FontService.loadFont("rubik", "./fonts/RubikVinyl.ttf");
+lylac.FontService.loadFont("rubikPaint", "./fonts/RubikPaint.ttf");
 
 def MAIN_GAME():
     levelSelector = LevelSelector(mainRenderer);

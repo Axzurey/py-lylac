@@ -29,7 +29,7 @@ GUI_DEFAULT_PROPERTIES = {
     "text": lambda: 'Hello World!',
     "textColor": lambda: Color4(.5, .5, .5),
     "textSize": lambda: 16,
-    "textFont": lambda: "notosansmono-regular",
+    "textFont": lambda: "notomono",
     "textAlignX": lambda: "left",
     "textAlignY": lambda: "top",
     "zIndex": lambda: 1,

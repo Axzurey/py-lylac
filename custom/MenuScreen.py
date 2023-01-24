@@ -3,11 +3,11 @@ from pygame import Vector2
 import lylac
 
 CREDITS_TEXT = """
-Welcome to Blue Cradle!
+Welcome to Bloom TD!
 
 Credits:
 
-> Sanity Sparer: google™
+> google: google™
 > Code: Me
 > Assets: Me
 > Suffering: Me
@@ -30,6 +30,21 @@ class MenuScreen:
         f.position = lylac.Udim2();
         f.cornerRadius = 0;
         f.backgroundColor = lylac.Color4.fromRGB(195, 177, 225);
+
+        title = lylac.TextObject();
+        title.textAlignX = "center";
+        title.textAlignY = "center";
+        title.textFont = "rubikPaint";
+        title.anchorPoint = Vector2(.5, .5);
+        title.textSize = 100;
+        title.position = lylac.Udim2.fromScale(.5, .2);
+        title.size = lylac.Udim2.fromScale(1, .2);
+        title.text = "Bloom TD";
+        title.textColor = lylac.Color4(0, 1, 1);
+        title.backgroundColor = lylac.Color4.invisible();
+        title.borderColor = lylac.Color4.invisible();
+        title.dropShadowColor = lylac.Color4.invisible();
+        title.parent = f;
         
         playButton = lylac.TextButton();
         playButton.text = "PLAY";
