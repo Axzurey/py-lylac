@@ -247,24 +247,9 @@ class TowerWidget:
         towerFrame.backgroundColor = lylac.Color4.fromRGB(25, 25, 25);
         towerFrame.borderWidth = 5;
         towerFrame.cornerRadius = 15;
-        
-        destroyButton = lylac.TextButton();
-        destroyButton.text = "SELL";
-        destroyButton.anchorPoint = Vector2(.5, .5);
-        destroyButton.position = lylac.Udim2.fromScale(.5, .85);
-        destroyButton.size = lylac.Udim2.fromScale(.7, .15);
-        destroyButton.textAlignX = "center";
-        destroyButton.textAlignY = "center";
-        destroyButton.parent = towerFrame;
-
-        destroyButton.onMouseButton1Up.connect(lambda _: self.destroy_selected_tower());
 
         self.toggleButton = toggle;
 
         self.updateTowerDisplay();
 
         toggle.onMouseButton1Up.connect(lambda _: self.close() if self.widgetOpen else self.open());
-
-    def destroy_selected_tower(self):
-        ...
-        #TODO: implement. This will give them back 50% of the coins they spent on the tower in total

@@ -1,8 +1,9 @@
 Required Packages: pygame@2.1.3.dev8, geomdl@latest, cachetools@latest
+This project was made with python 3.11.1 so to avoid issues, i recommend using that version when running it.
 
 Installation Instructions (2 ways):
 
-[git]: 
+Via Git: 
 
 Step 1: clone it
 ```bash
@@ -16,8 +17,6 @@ cd py-lylac
 ```
 
 Step 3: Install dependencies
-
-This was made with python 3.11 in mind so if you have multiple versions you may use
 
 If you only have python 3.11.1:
 ```bash
@@ -41,7 +40,7 @@ If you have mutliple versions you may need to specify:
 py -3.11 main.py
 ```
 
-[github]:
+Via Github:
 
 Step 1: Download the folder by clicking the green "<> Code" button and then clicking "Download Zip"
 
@@ -54,8 +53,6 @@ cd py-lylac-master
 ```
 
 Step 3: Install dependencies
-
-This was made with python 3.11 in mind so if you have multiple versions you may use
 
 If you only have python 3.11.1:
 ```bash

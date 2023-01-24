@@ -26,6 +26,3 @@ welcomeScreen = MenuScreen(mainRenderer);
 welcomeScreen.onMenuExit.connect(lambda _: MAIN_GAME());
 
 mainRenderer.start(); #always goes at the bottom!
-
-#TODO: make the levels balanced lmfao
-#TODO: water level background is done. create path and placements and put buoys in there c:
