@@ -1,7 +1,7 @@
+# Installation Instructions (2 ways):
+
 Required Packages: pygame@2.1.3.dev8, geomdl@latest, cachetools@latest
 This project was made with python 3.11.1 so to avoid issues, i recommend using that version when running it.
-
-Installation Instructions (2 ways):
 
 # Via Git: 
 
