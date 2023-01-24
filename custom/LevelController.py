@@ -9,6 +9,7 @@ from custom.towerUpgrader import TowerUpgrader;
 from custom.towerWidget import TowerWidget;
 from data.Enemy import EnemyManager;
 from data.enemies.MidnightEye import MidnightEye
+from data.enemies.Scarfish import Scarfish
 from data.tower import TowerManager
 from data.towers.HylocRaygun import HylocRaygun;
 from data.towers.Marionette import Marionette
@@ -21,7 +22,8 @@ from lylac.services.InputService import InputMouseBuffer
 from lylac.services.RenderService import RenderService;
 
 ENEMY_NAMES = {
-    "Midnight Eye": MidnightEye
+    "Midnight Eye": MidnightEye,
+    "Scarfish": Scarfish
 }
 
 class WaveSpawnStatsDiff(TypedDict):

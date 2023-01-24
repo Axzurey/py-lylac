@@ -3,7 +3,7 @@
         "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
-                "enemyName": "Midnight Eye",
+                "enemyName": "Scarfish",
                 "enemyDelay": 1,
                 "enemyCount": 30,
                 "enemyStats": {
@@ -16,7 +16,7 @@
         "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
-                "enemyName": "Midnight Eye",
+                "enemyName": "Scarfish",
                 "enemyDelay": 1,
                 "enemyStats": {
                     "speedBonus": 30,
@@ -30,7 +30,7 @@
         "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
-                "enemyName": "Midnight Eye",
+                "enemyName": "Scarfish",
                 "enemyDelay": 0.75,
                 "enemyStats": {
                     "speedBonus": 30,
@@ -44,7 +44,7 @@
         "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
-                "enemyName": "Midnight Eye",
+                "enemyName": "Scarfish",
                 "enemyDelay": 0.75,
                 "enemyStats": {
                     "speedBonus": 40,
@@ -58,7 +58,7 @@
         "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
-                "enemyName": "Midnight Eye",
+                "enemyName": "Scarfish",
                 "enemyDelay": 0.75,
                 "enemyStats": {
                     "speedBonus": 50,
@@ -72,7 +72,7 @@
         "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
-                "enemyName": "Midnight Eye",
+                "enemyName": "Scarfish",
                 "enemyDelay": 0.75,
                 "enemyStats": {
                     "speedBonus": 75,
@@ -86,7 +86,7 @@
         "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
-                "enemyName": "Midnight Eye",
+                "enemyName": "Scarfish",
                 "enemyDelay": 0.75,
                 "enemyStats": {
                     "speedBonus": 100,
@@ -100,7 +100,7 @@
         "prewaveMessage": "Wave %wavenumber",
         "enemies": [
             {
-                "enemyName": "Midnight Eye",
+                "enemyName": "Scarfish",
                 "enemyDelay": 0.5,
                 "enemyStats": {
                     "speedBonus": 150,
