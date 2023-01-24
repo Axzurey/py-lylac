@@ -155,14 +155,15 @@ class TowerUpgrader:
                     upgradeButton.backgroundColor = lylac.Color4(.3, .3, .3);
                 elif TowerManager.playerEntropy >= tower.upgradeCosts[tower.upgradeLevel] and upgradeButton.backgroundColor != lylac.Color4():
                     upgradeButton.backgroundColor = lylac.Color4();
-
-                upgText = f"Upgrade Tower {tower.upgradeLevel}/{tower.maxUpgradeLevel}\n${tower.upgradeCosts[tower.upgradeLevel]}";
-                if upgradeButton.text != upgText:
-                    upgradeButton.text = upgText;
                 
-                nxtText = f"Next Upgrade: {tower.upgradePerks[tower.upgradeLevel]}";
-                if nextUpgrade.text != nxtText:
-                    nextUpgrade.text = nxtText;
+                if tower.upgradeLevel < tower.maxUpgradeLevel:
+                    upgText = f"Upgrade Tower {tower.upgradeLevel}/{tower.maxUpgradeLevel}\n${tower.upgradeCosts[tower.upgradeLevel]}";
+                    if upgradeButton.text != upgText:
+                        upgradeButton.text = upgText;
+                
+                    nxtText = f"Next Upgrade: {tower.upgradePerks[tower.upgradeLevel]}";
+                    if nextUpgrade.text != nxtText:
+                        nextUpgrade.text = nxtText;
 
             elif upgradeButton.text != "MAX LEVEL" or nextUpgrade.text != "MAX LEVEL":
                 upgradeButton.text = "MAX LEVEL";
