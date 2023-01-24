@@ -3,7 +3,7 @@ This project was made with python 3.11.1 so to avoid issues, i recommend using t
 
 Installation Instructions (2 ways):
 
-Via Git: 
+### Via Git: 
 
 Step 1: clone it
 ```bash
@@ -40,7 +40,7 @@ If you have mutliple versions you may need to specify:
 py -3.11 main.py
 ```
 
-Via Github:
+### Via Github:
 
 Step 1: Download the folder by clicking the green "<> Code" button and then clicking "Download Zip"
 
