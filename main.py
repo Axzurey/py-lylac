@@ -7,12 +7,11 @@ c:
 Culminating assignment for ICS year 2022-2023
 """
 
-
 from custom.LevelSelector import LevelSelector
 from custom.MenuScreen import MenuScreen
 import lylac;
 
-mainRenderer = lylac.Renderer((1280, 720), 200);
+mainRenderer = lylac.Renderer("Blue Storm [@lylac.fpsfps]", (1280, 720), 200, "assets/ui/entropy_coin-01.png");
 
 lylac.PreloadService.preloadSprite("assets/ui/direction-arrow.png", (50, 50));
 
@@ -27,6 +26,5 @@ welcomeScreen.onMenuExit.connect(lambda _: MAIN_GAME());
 
 mainRenderer.start(); #always goes at the bottom!
 
-#TODO: chess board map
 #TODO: make the levels balanced lmfao
 #TODO: water level background is done. create path and placements and put buoys in there c:

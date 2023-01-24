@@ -33,8 +33,11 @@ class LylacSignal(Generic[A]):
     def __init__(self):
         self.listeners = [];
 
-    def wait(self, pollingRate: int = 60):
-        conArgs = [];
+    def wait(self, pollingRate: int = 60, breakCondition: Callable[[], bool | None] | None = None) -> list[A] | None:
+        """
+        If you use the breakcondition parameter, then you can expect to get a "None" return value when it returns true;
+        """
+        conArgs: list[A] = [];
         conFired = False;
 
         def setFired(*args: Any):
@@ -46,6 +49,8 @@ class LylacSignal(Generic[A]):
         self.listeners.append(connection);
 
         while not conFired:
+            if breakCondition and breakCondition():
+                return None;
             time.sleep(1 / pollingRate);
         return conArgs
 

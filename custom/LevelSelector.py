@@ -7,7 +7,6 @@ class LevelData(TypedDict):
     area_for_towers: str;
     path_of_enemies: str;
     backdrop: str;
-    permittedTowers: list[str];
     wavePath: str;
     startingEntropy: int;
     startingHealth: int;
@@ -18,9 +17,6 @@ GAME_LEVELS: dict[str, LevelData] = {
         "path_of_enemies": "levels/grass_patch/enemyPath.json",
         "backdrop": "assets/environment/grass patch-01.png",
         "wavePath": "levels/grass_patch/waveData.json",
-        "permittedTowers": [
-            "Star Blue", "Marionette", "Particle Collider"
-        ],
         "startingEntropy": 150,
         "startingHealth": 45,
     },
@@ -29,12 +25,17 @@ GAME_LEVELS: dict[str, LevelData] = {
         "path_of_enemies": "levels/grass_patch_2/enemyPath.json",
         "backdrop": "assets/environment/grass patch 2-01.png",
         "wavePath": "levels/grass_patch_2/waveData.json",
-        "permittedTowers": [
-            "Star Blue", "Marionette", "Particle Collider"
-        ],
         "startingEntropy": 200,
         "startingHealth": 15
     },
+    "water world": {
+        "area_for_towers": "levels/water_world/towerAreas.json",
+        "path_of_enemies": "levels/water_world/enemyPath.json",
+        "backdrop": "assets/environment/aqua stage-01.png",
+        "wavePath": "levels/water_world/waveData.json",
+        "startingEntropy": 200,
+        "startingHealth": 15
+    }
 }
 
 def boxLayout(index: int, grid: pygame.Vector2, size: pygame.Vector2, padding: pygame.Vector2):

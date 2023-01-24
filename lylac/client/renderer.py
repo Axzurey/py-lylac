@@ -52,12 +52,27 @@ class Renderer():
     screen: pygame.surface.Surface;
     resolution: tuple[int, int];
 
-    children: list[Instance]
+    children: list[Instance];
 
-    def __init__(self, resolution: tuple[int, int], framerate: int = 60) -> None:
+    title: str;
+
+    icon: str | None;
+
+    def setIcon(self, iconPath: str):
+        s = pygame.image.load(iconPath).convert_alpha();
+        pygame.display.set_icon(s);
+
+    def __init__(self, title: str, resolution: tuple[int, int], framerate: int = 60, icon: str | None = None) -> None:
+        self.title = title;
+        
+        self.icon = icon;
+
         self.framerate = framerate;
 
         self.screen = pygame.display.set_mode(resolution);
+
+        if self.icon:
+            self.setIcon(self.icon);
 
         self.children = [];
     
@@ -329,7 +344,8 @@ class Renderer():
             RenderService.postRender.dispatch(dt);
 
             pygame.display.flip();
-            pygame.display.set_caption(f"Blind Nue [@{str(round(clock.get_fps()))}fps]");
+            title = self.title.replace("@lylac.fps", str(round(clock.get_fps())));
+            pygame.display.set_caption(title);
             clock.tick(self.framerate);
 
 from lylac.services.InputService import InputMouseBuffer, InputService

@@ -86,11 +86,17 @@ class LevelController:
 
         waveData: list[Wave] = json.load(file);
 
-        TowerManager.healthChanged.connect(lambda n: (self.backdrop.destroy(), self.onLevelComplete.dispatch(None), TowerManager.purgeTowers()) if n <= 0 else...);
+        def SET_LEVEL_END():
+            nonlocal LEVEL_END;
+            LEVEL_END = True;
+
+        LEVEL_END = False;
+
+        TowerManager.healthChanged.connect(lambda n: (SET_LEVEL_END()) if n <= 0 else...);
 
         waveNumber = 0;
         for wave in waveData:
-            if not self.backdrop.parent: return;
+            if LEVEL_END: break;
             msg = wave['prewaveMessage'];
             if msg:
                 self.broadcastMessage(msg.replace("%wavenumber", str(waveNumber + 1)));
@@ -99,22 +105,24 @@ class LevelController:
 
             for enemyWave in wave['enemies']:
 
-                if not self.backdrop.parent: return;
+                if LEVEL_END: break;
                 
                 enemyName = enemyWave['enemyName'];
                 enemyStats = enemyWave['enemyStats'] if 'enemyStats' in enemyWave else None;
                 enemyCount = enemyWave['enemyCount'];
 
                 for _ in range(enemyCount):
-                    if not self.backdrop.parent: return;
+                    if LEVEL_END: break;
                     timeOrigin = time.time();
-                    while True:
+                    while not LEVEL_END:
                         time.sleep(1 / RenderService.renderer.framerate)
                         timeNow = time.time();
                         if WorldClock.timeStep == 0: continue;
 
                         if timeNow - timeOrigin > enemyWave["enemyDelay"] / WorldClock.timeStep:
                             break;
+
+                    if LEVEL_END: break;
 
                     enemy = ENEMY_NAMES[enemyName](self.backdrop);
                     EnemyManager.addEnemy(enemy);
@@ -124,12 +132,15 @@ class LevelController:
                     if enemyStats and 'speedBonus' in enemyStats:
                         enemy.speed += enemyStats['speedBonus']; #type: ignore it's definitely in there
 
-            EnemyManager.enemiesEmpty.wait();
+            if LEVEL_END:
+                break
+
+            EnemyManager.enemiesEmpty.wait(breakCondition=lambda: LEVEL_END);
 
             waveNumber += 1;
             self.towerWidget.hide();
 
-        self.broadcastMessage("Level Complete!");
+        self.broadcastMessage("Level Complete!" if not LEVEL_END else f"Level Failed on Wave {waveNumber}; Nice try!");
 
         time.sleep(2);
 
